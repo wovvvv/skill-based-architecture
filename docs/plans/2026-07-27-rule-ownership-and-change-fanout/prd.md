@@ -1,8 +1,14 @@
 ---
 date: 2026-07-27
-status: executing
+status: done
 distilled_to:
   - docs/sba-bible.md § 不可妥协的原则 #8
+  - templates/skill/workflows/maintain-docs.md
+  - templates/skill/workflows/plan-feature.md
+  - references/business-global-model.md
+  - templates/skill/workflows/update-rules.md
+  - templates/skill/workflows/task-execution.md
+  - templates/skill/workflows/task-closure.md
 ---
 
 # Rule Ownership and Change-Fanout Convergence
@@ -128,7 +134,7 @@ Use lifecycle owners and thin links inside one skill source, but allow generatio
 
 ## Chosen Approach
 
-The chosen architecture is Option D plus controlled local repetition from Option A. D5 confirms the local-repetition judgment boundary, D6 confines generation to independently delivered or independently used artifacts, and D7 confirms behavioral/ownership validation instead of a file-count target. The design is approved; implementation has not started.
+The chosen architecture is Option D plus controlled local repetition from Option A. D5 confirms the local-repetition judgment boundary, D6 confines generation to independently delivered or independently used artifacts, and D7 confirms behavioral/ownership validation instead of a file-count target. The approved design is implemented upstream, adapted at the Chaos packaging boundary, assembled into the requested downstream workspace, and handed off for review without merging.
 
 ### Proposed total-cost judgment
 
@@ -205,3 +211,12 @@ No sibling angle file exists yet. Add `architecture.md`, `integration.md`, or `a
 - **Consumes**: the approved upstream ownership map, D5 local-action boundary, D6 generation boundary, and passing Task 3 evidence.
 - **Produces**: project-adapted semantic owners and local consumers in each independently installed app skill, deterministic assembled copies, and a final report separating semantic owners, activated consumers, generated targets, and validation files.
 - **Acceptance**: both app-skill smoke/conformance suites pass; assembled `.codex` and `.claude` copies match their canonical meta sources; a cloned/pulled downstream remains complete without an SBA-upstream runtime dependency; the D7 simulation requires one semantic decision per independently owned product adaptation and leaves no conflicting full definition.
+
+### Final execution evidence
+
+- Upstream ownership convergence landed in commit `5a9785d`. The complete Drift Gate is owned by `task-execution.md`; Plan, information-model, distillation, documentation-maintenance, and Closure responsibilities remain with their own routed owners. Consumers retain only the local trigger, immediate action, current-task acceptance, and owner link.
+- Upstream closure passed `scripts/check-all.sh`, including both temporary downstream journeys, self-hosting scenarios, template/self-hosting conformance, shell/path integrity, and orphan/reachability checks. The D7 simulation found one complete runtime Gate owner and eight direct upstream consumers without copied transition procedures.
+- Chaos adaptation landed in exact meta commit `5bad9fd` and was pushed on `codex/rule-ownership-local-action-20260727`. Codeup MR [#17](https://codeup.aliyun.com/60dd34bf4690c27532d3d021/aiinfra/chaos/change/17) is open and pending from that branch to `master`; it was not merged.
+- Backend validation passed conformance `354/354`, smoke `61/61`, orphan `0/32`, and unreachable `0/33`; frontend passed conformance `352/352`, smoke `61/61`, orphan `0/35`, and unreachable `0/35`. Routing, route health, `aii lint`, `git diff --check`, and the D7 semantic-change simulation are green.
+- Two independent semantic reviews caught frontend `plan-large.md` and `business-global-model.md` retaining competing full transitions after structural checks were green. Both copies were reduced to owner links plus local responsibilities, negative conformance was added, and the final review reported no blocker.
+- The requested `chaos-release-0.75_shiqi` workspace was assembled from exact commit `5bad9fd`; backend/frontend `.codex` and `.claude` copies match their canonical sources and each other. Existing business-code HEADs and dirty-path ownership were preserved; concurrently advancing backend business edits were left intact rather than restored or overwritten.
