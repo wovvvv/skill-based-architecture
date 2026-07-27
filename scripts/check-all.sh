@@ -16,6 +16,7 @@ Runs the self-hosting upstream maintenance checks used before commit/push:
   - template routing manifest check
   - template SessionStart hook runtime contract
   - temporary downstream scaffold smoke test
+  - existing-project first-migration journey
   - self-hosting shells + activation check
   - whitespace diff check
   - single-root + two-root integrity contracts
@@ -63,25 +64,10 @@ run() {
   "$@"
 }
 
-check_downstream_scaffold() {
-  local tmp name summary upstream_ref upstream_sha status
-  tmp="$(mktemp -d)"
-  name="sample-skill"
-  summary="Sample downstream scaffold for upstream regression checks"
-  upstream_ref="$(git -C "$ROOT" config --get remote.origin.url 2>/dev/null || printf '%s' "$ROOT")"
-  upstream_sha="$(git -C "$ROOT" rev-parse HEAD)"
-
-  set +e
+fill_sample_scaffold() {
+  local target="$1" name="$2" summary="$3"
   (
-    set -euo pipefail
-    cd "$tmp"
-    mkdir -p "skills/$name"
-    cp -R "$ROOT/templates/skill/." "skills/$name/"
-    mv "skills/$name/SKILL.md.template" "skills/$name/SKILL.md"
-    cp -R "$ROOT/templates/shells/." .
-    mv ".cursor/skills/{{NAME}}/SKILL.md.template" ".cursor/skills/{{NAME}}/SKILL.md"
-    mv ".cursor/skills/{{NAME}}" ".cursor/skills/$name"
-
+    cd "$target"
     find "skills/$name" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor \
       -type f \( -name '*.md' -o -name '*.mdc' -o -name '*.yaml' \) \
       -exec sed -i.bak \
@@ -95,10 +81,13 @@ check_downstream_scaffold() {
         -e "s/FILL:/FILLED:/g" \
         {} +
     find . -name '*.bak' -type f -delete
+  )
+}
 
-    printf 'upstream: %s\nsynced_sha: %s\nsynced_date: %s\n' \
-      "$upstream_ref" "$upstream_sha" "$(date +%F)" > "skills/$name/.upstream-sync"
-
+validate_downstream_scaffold() {
+  local target="$1" name="$2"
+  (
+    cd "$target"
     bash "skills/$name/scripts/sync-routing.sh" "$name" --check
     bash "skills/$name/scripts/smoke-test.sh" "$name" --phase 8
     (
@@ -107,11 +96,68 @@ check_downstream_scaffold() {
       bash scripts/route-reachability.sh
     )
   )
-  status=$?
-  set -e
-  rm -rf "$tmp"
-  return "$status"
 }
+
+check_downstream_scaffold() (
+  set -euo pipefail
+  local tmp name summary
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  name="sample-skill"
+  summary="Sample downstream scaffold for upstream regression checks"
+
+  bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary" --apply
+  fill_sample_scaffold "$tmp" "$name" "$summary"
+  validate_downstream_scaffold "$tmp" "$name"
+)
+
+check_existing_project_scaffold_journey() (
+  set -euo pipefail
+  local tmp before after_apply name summary preview conflict_output conflict_status
+  tmp="$(mktemp -d)"
+  before="$(mktemp -d)"
+  after_apply="$(mktemp -d)"
+  trap 'rm -rf "$tmp" "$before" "$after_apply"' EXIT
+  name="existing-project"
+  summary="Existing project migration journey"
+
+  mkdir -p "$tmp/.cursor/rules"
+  printf '# Existing Agent Rules\n\nKeep the release approval rule.\n' > "$tmp/AGENTS.md"
+  printf '# Existing Cursor Rule\n\nRun the repository formatter before review.\n' > "$tmp/.cursor/rules/workflow.mdc"
+  cp -R "$tmp/." "$before/"
+
+  preview="$(bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary")"
+  [[ "$preview" == *"PRESERVE: AGENTS.md"* ]]
+  [[ "$preview" == *"PRESERVE: .cursor/rules/workflow.mdc"* ]]
+  diff -r "$before" "$tmp"
+
+  bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary" --apply
+  cmp "$before/AGENTS.md" "$tmp/AGENTS.md"
+  cmp "$before/.cursor/rules/workflow.mdc" "$tmp/.cursor/rules/workflow.mdc"
+
+  cp -R "$tmp/." "$after_apply/"
+  set +e
+  conflict_output="$(bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary" 2>&1)"
+  conflict_status=$?
+  set -e
+  [[ $conflict_status -eq 2 ]]
+  [[ "$conflict_output" == *"CONFLICT: skills/$name already exists"* ]]
+  diff -r "$after_apply" "$tmp"
+
+  cp "$before/AGENTS.md" "$tmp/skills/$name/rules/project-rules.md"
+  cp "$before/.cursor/rules/workflow.mdc" "$tmp/skills/$name/rules/coding-standards.md"
+  cp "$ROOT/templates/shells/AGENTS.md" "$tmp/AGENTS.md"
+  cp "$ROOT/templates/shells/.cursor/rules/workflow.mdc" "$tmp/.cursor/rules/workflow.mdc"
+  fill_sample_scaffold "$tmp" "$name" "$summary"
+
+  cmp "$before/AGENTS.md" "$tmp/skills/$name/rules/project-rules.md"
+  cmp "$before/.cursor/rules/workflow.mdc" "$tmp/skills/$name/rules/coding-standards.md"
+  validate_downstream_scaffold "$tmp" "$name"
+)
 
 check_two_root_integrity() {
   local tmp skill_root code_root routing
@@ -384,6 +430,7 @@ run "upstream supersedes refs check" bash scripts/check-upstream-supersedes.sh
 run "template routing manifest check" bash templates/skill/scripts/sync-routing.sh templates/skill --check
 run "template SessionStart hook runtime contract" bash scripts/check-template-hooks.sh
 run "temporary downstream scaffold smoke test" check_downstream_scaffold
+run "existing-project first-migration journey" check_existing_project_scaffold_journey
 run "single-root + two-root integrity contracts" check_two_root_integrity
 run "conformance option-like phrase contract" check_conformance_option_like_phrases
 run "vendor owner + path guards" check_vendor_sync_guards

@@ -1,39 +1,25 @@
 # Ambiguous Request Gate
 
-Drop this block into any shell, workflow, or SKILL.md where the agent needs a pre-routing check on request clarity. It complements `workflows/task-closure.md` § Red Flags (discipline erosion) and `protocol-blocks/reboot-check.md` (mid-task disorientation); this one catches ambiguity **at the start** before any work begins.
+Use this before mutation when wording leaves the requested outcome unclear. Vague wording is a signal, not an automatic blocker: the Agent should improve its decision view before transferring technical discovery back to the user.
 
-## Trigger
+## Evidence-First Decision
 
-A request is **ambiguous** and must not be routed when it satisfies BOTH:
+1. Route the request by its likely intent and inspect the smallest read-only evidence set that can resolve it: loaded rules, code, docs, config, tests, runtime evidence, and prior Session context.
+2. Derive the likely technical scope, constraints, and verifiable outcome. Separate confirmed facts, reasonable assumptions, and unknowns.
+3. Proceed with bounded investigation when evidence can narrow the problem. Surface non-blocking assumptions without asking the user to choose details the repository can answer.
+4. Ask one minimum question only when the remaining unknown is a normative product or business preference, an authority boundary, or a choice that produces materially different outcomes.
+5. Do not mutate until the requested outcome is concrete enough to verify.
 
-1. **Vague improvement verb** is present: `refactor / clean up / optimize / make it better / streamline / modernize / restructure / 整理 / 重构 / 优化 / 让它更好 / 让 X 更清晰 / 清理一下`
-2. **Scope is underspecified** — at least one missing: concrete module/file/page, specific behavior change, verifiable outcome ("faster than X ms", "no more of error Y", "passes test Z").
+## Boundaries
 
-If only one condition holds (e.g. "refactor the `auth` module for readability" — vague verb but concrete scope), route normally.
+- Read-only discovery is allowed when it directly reduces the request ambiguity; speculative implementation or architecture is not.
+- A concrete module/file is not required when evidence can identify the owning boundary.
+- Prior-turn scope remains valid until contradicted.
+- If evidence exposes several plausible product outcomes, report the distinction and ask for the missing owner decision; do not silently select one.
 
-## Action
+## Failure Modes
 
-**Stop.** Apply `rules/agent-behavior.md` Principle 1 (Think Before Coding):
-
-1. Name which part is ambiguous (verb only, scope only, both)
-2. Ask the user: which module/file/page? what does "better" mean (faster, more readable, fewer bugs, something else)?
-3. Wait for an answer. If the user answers with another ambiguous phrase, repeat — do not start planning.
-4. Only after scope is concrete, route via the task table.
-
-## Anti-patterns (all forbidden pre-clarification)
-
-- **"Let me scan the project first, then ask"** — the scan itself is unrequested work and primes a biased answer
-- **"Here are 3 possible directions, pick one"** — still offers plans; just ask what the user meant
-- **"Let me give a rough plan so you can steer"** — starts speculative work before the ambiguity gate and Principle 1 are satisfied
-- **"This looks big, I'll propose phases"** — authority transfer; you are guessing scope
-- **"I'll use the planner agent to generate a detailed plan"** — delegates the gate violation to another agent
-
-## When the gate does NOT fire
-
-- Scope was established in a prior turn of the same session and has not been contradicted
-- The task table matches the request by a specific verb+noun ("add page X", "fix bug in Y", "update rule Z")
-- The user has answered the clarifying question and scope is now concrete
-
-## Origin
-
-Observed in Haiku 4.5 tests against wj-small-tools (2026-04): Haiku systematically produced partial-plan responses ("here's a 4-phase refactor", "2 options, which one?", "I'll use planner agent") when the original request lacked a concrete target — even with a convention-level routing-table warning against it. Moving the warning OUT of the task table and INTO a pre-routing gate (this block) with explicit anti-patterns reduced but did not eliminate the behavior. The gate is still worth installing: it raises the bar, and for Sonnet-tier models it closes the loophole entirely.
+- Lexical stop: treating `refactor / optimize / clean up / 整理 / 重构 / 优化` as blockers without reading project evidence.
+- User-as-index: asking which file or module before checking the repository's source of truth.
+- Speculative plan: proposing phases or target architecture before the outcome and constraints are evidenced.
+- Hidden assumption: mutating on an unresolved product preference instead of requesting the minimum clarification.

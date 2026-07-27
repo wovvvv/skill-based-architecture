@@ -4,6 +4,17 @@
 # their own checks.
 
 required_sections:
+  - file: protocol-blocks/ambiguous-request-gate.md
+    must_contain:
+      - "Vague wording is a signal, not an automatic blocker"
+      - "smallest read-only evidence set"
+      - "normative product or business preference"
+      - "Do not mutate until the requested outcome is concrete enough to verify"
+      - "User-as-index"
+    must_not_contain:
+      - "Let me scan the project first, then ask"
+      - "**Stop.**"
+
   - file: workflows/task-execution.md
     must_contain:
       - "## Task Classifier"

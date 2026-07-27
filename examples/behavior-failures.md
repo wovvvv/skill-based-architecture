@@ -180,25 +180,25 @@ Cost: two days of debugging, a revert, a re-implementation with actual measureme
 
 ---
 
-## Scenario 5 — Vague "refactor / optimize / clean up" prompt bypasses routing
+## Scenario 5 — Vague wording triggers either blind planning or a lexical stop
 
 **Observed:** Haiku 4.5 tests against wj-small-tools, 2026-04. Prompt: "我想把后端代码重构一下,让结构更清晰。你能帮我开始吗?"
 
-### ❌ Agent behavior without Ambiguous Request Gate
+### ❌ Agent behavior without evidence-first judgment
 
-Agent scans the project structure, identifies "15+ business modules", produces a 4-phase refactor plan with a new target architecture diagram, then — at the end — asks the user for goals/time/risk. All without reading `project-rules.md` which explicitly says "**保持现有 Java 包结构稳定，不做大规模重命名或拆分**". The Agent treats "让结构更清晰" as a legitimate routed task and sets off planning. Project-specific rules are ignored because they're behind routing that Agent never matched.
+One failure mode scans superficially, invents a 4-phase target architecture, and asks for goals only after planning. The opposite failure mode sees the word "重构", refuses even read-only discovery, and asks the user to name a file and define "clearer". Both miss `project-rules.md`, which explicitly says "**保持现有 Java 包结构稳定，不做大规模重命名或拆分**"; one guesses past the constraint, the other transfers repository discovery to the user.
 
-### ✅ Agent behavior with Ambiguous Request Gate
+### ✅ Agent behavior with evidence-first judgment
 
-Agent reads SKILL.md, hits the pre-routing check: verb "重构" + "让结构更清晰" (vague verb + vague outcome "clearer" = both conditions satisfied). Agent **stops immediately** and asks: "改哪个具体模块 / 文件?'更清晰'是指分包更一致、函数更小、依赖更少、还是更易新人上手?" No scanning, no partial plan, no "here are 3 options". Only after the user specifies scope + outcome does the Agent route.
+Agent reads the Always Read rules, treats "重构 / 更清晰" as an uncertainty signal, and performs a bounded read-only inspection of package constraints, dependency structure, recent changes, and tests. It discovers that large package moves are forbidden, narrows the technical candidates without designing a replacement architecture, and proceeds with diagnosis when evidence identifies an owning boundary. It asks one minimum question only if several materially different product outcomes remain, such as dependency isolation versus newcomer readability. No mutation starts until the chosen outcome has verifiable evidence.
 
-**Mechanism:** Ambiguous Request Gate — `templates/skill/protocol-blocks/ambiguous-request-gate.md`. The gate fires BEFORE the routing table as a Principle 1 pre-check, not AS a routing option (that was the v2 design that didn't hold — Haiku matched it as a task row and still proposed plans).
+**Mechanism:** Ambiguous Request Gate — `templates/skill/protocol-blocks/ambiguous-request-gate.md`. It is a pre-mutation judgment contract: route likely intent, gather the smallest decision-changing evidence, then clarify only the owner decision evidence cannot supply.
 
 ### Lessons folded back upstream
 
 1. **Shells must list Always Read files in a preamble**, not only in per-task routing rows. Agents answering meta-queries ("what should I prepare before修 bug?") retrieve from shells and miss the global Always Read if it's not surfaced there.
-2. **Vague-verb detection is convention-level for Haiku**. Even with the gate, Haiku still sometimes offers "here are 3 directions, pick one" — the gate raises the bar but does not close the loophole completely for the weakest model tier. For Sonnet+ the gate is fully effective.
-3. The gate's anti-patterns section must explicitly forbid "scan first, ask later" and "delegate to planner agent" — both observed evasion routes.
+2. **Vague verbs are uncertainty signals, not objectives or blockers.** The Agent must not plan from them, but it also must not demand repository facts from the user before checking available evidence.
+3. The stop condition belongs at mutation: read-only diagnosis may continue; an unresolved normative preference, authority boundary, or materially different outcome requires minimum clarification before editing.
 
 ## Scenario 6 — Absolute paths in subagent prompts bypass `isolation: worktree`
 

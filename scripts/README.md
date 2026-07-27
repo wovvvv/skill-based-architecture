@@ -14,6 +14,7 @@ Each retained check covers a different blocking drift dimension. Scripts under `
 | Shell + activation source-of-truth (self-hosting) | Did this repo's root shells drift from generated content, or `skill.yaml` description drift from `SKILL.md`? | `check-self-shells.sh` |
 | Template hook runtime contract | Does `templates/hooks/session-start` emit the right per-harness JSON shape and inject at most one router? | `check-template-hooks.sh` *(upstream-only)* |
 | Routing trigger coverage | Do `trigger_examples` actually route to the intended workflow? | `check-self-scenarios.sh` (upstream-only) |
+| First-migration user journey | Does Quick Start preview without writes, preserve existing project entries byte-for-byte, relocate their instructions into routed skill rules, and still produce a scaffold that passes structural checks? | `scaffold-downstream.sh` + the empty/existing-project journeys in `check-all.sh` *(upstream-only)* |
 | Structural budgets + content | SKILL.md dual budget (desc ≤ 25 + body ≤ 90), FILL/placeholder residue, broken links, SessionStart-hook presence, description keyword-stuffing, and content conformance (§9, when `conformance.yaml` exists) | `smoke-test.sh` |
 | Orphan content-tier + workflow files | Recursively scan `rules/`/`references/`/`architecture/`/`gotchas/`/`conventions/`/`workflows/` for zero inbound links. Workflows match by basename (sibling same-dir links + routing `workflow:`/`required_reads` both count) | `audit-orphans.sh` |
 | Unactivated task files | Active-tier files, `workflows/`, and nested `references/business/` leaves on no task route/overlay — link-reachable but never read (stored-not-activated) | `route-reachability.sh` |
@@ -31,6 +32,7 @@ Each retained check covers a different blocking drift dimension. Scripts under `
 | `check-self-scenarios.sh` | `scripts/` | Upstream-only (self-hosting trigger routing) |
 | `check-upstream-changes.sh` | `scripts/` | Upstream-only (UPSTREAM-CHANGES.md guard) |
 | `check-upstream-supersedes.sh` | `scripts/` | Upstream-only (validates `Status: superseded by` refs in UPSTREAM-CHANGES{.md,-archive.md}) |
+| `scaffold-downstream.sh` | `scripts/` | Upstream Quick Start entry — dry-run preview, collision guard, preserved existing entries, rollback of newly created paths |
 | `sync-self-shells.sh` | `scripts/` | Upstream-only (generates root shells from `self-hosting-shell-base.md` + `self-hosting-shells.yaml`) |
 | `skill-asset` | `scripts/` | Upstream-only consolidation helper; it is not copied by the scaffold |
 | `smoke-test.sh` | `templates/skill/scripts/` | Downstream — Phase-aware structural gate |

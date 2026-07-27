@@ -59,7 +59,7 @@ Line counts trigger review, not automatic splitting. The SKILL dual budget and s
 
 | Path | Budget | Enforcement |
 |---|---|---|
-| `shells/*` | ≤ 60 lines | Thin shells must stay thin; > 60 = content leaking in. Must include generated Always Read + `routing.yaml` bootstrap + route-before-routing check for vague verbs (see `protocol-blocks/ambiguous-request-gate.md`) |
+| `shells/*` | ≤ 60 lines | Thin shells must stay thin; > 60 = content leaking in. Must include generated Always Read + `routing.yaml` bootstrap + evidence-first request-clarity judgment (see `protocol-blocks/ambiguous-request-gate.md`) |
 | `skill/routing.yaml` | ≤ 120 lines | Single source of truth for generated Always Read, Common Tasks, trigger examples, required reads, workflows, and thin-shell bootstraps; project-specific after fill |
 | `skill/rules/project-rules.md`, `skill/rules/coding-standards.md` | ≤ 20 lines, ≥ 60% must be `<!-- FILL: -->` | Rule stubs are scaffolding, not content |
 | `skill/rules/agent-behavior.md` | ≤ 100 lines, fully pre-filled | Universal defaults; additions require evidence or equal-weight replacement per `ANTI-TEMPLATES.md` |

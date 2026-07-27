@@ -178,6 +178,25 @@ assert_not_contains \
 echo ""
 echo "==> task execution contracts"
 
+clarity_gate="$(<templates/skill/protocol-blocks/ambiguous-request-gate.md)"
+assert_contains "$clarity_gate" "Vague wording is a signal, not an automatic blocker" "request clarity uncertainty signal"
+assert_contains "$clarity_gate" "smallest read-only evidence set" "request clarity evidence-first discovery"
+assert_contains "$clarity_gate" "normative product or business preference" "request clarity owner-question boundary"
+assert_contains "$clarity_gate" "Do not mutate until the requested outcome is concrete enough to verify" "request clarity mutation stop"
+assert_not_contains "$clarity_gate" "Let me scan the project first, then ask" "request clarity old lexical stop"
+
+for shell in \
+  templates/shells/AGENTS.md \
+  templates/shells/CLAUDE.md \
+  templates/shells/CODEX.md \
+  templates/shells/GEMINI.md \
+  templates/shells/.cursor/rules/workflow.mdc; do
+  shell_content="$(<"$shell")"
+  assert_contains "$shell_content" "Request-clarity judgment" "$shell clarity activation"
+  assert_contains "$shell_content" "vague wording is a signal, not an automatic blocker" "$shell evidence-first summary"
+  assert_not_contains "$shell_content" "stop and ask for scope" "$shell old lexical stop"
+done
+
 task_execution="$(<templates/skill/workflows/task-execution.md)"
 assert_contains "$task_execution" "Simple tasks skip this protocol" "task execution Simple no-ceremony boundary"
 assert_contains "$task_execution" "After any needed alignment, proceed without waiting unless" "task execution auto-start default"

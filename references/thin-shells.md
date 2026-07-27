@@ -51,7 +51,7 @@ Conflicts between loaded project instructions → formal docs in `skills/<name>/
 - `skills/<name>/rules/coding-standards.md`
 - `skills/<name>/rules/agent-behavior.md` — universal behavior defaults
 
-**Route-before-routing check**: if the request contains vague improvement verbs ("refactor / clean up / optimize / make it better") **without** a concrete module/file or verifiable outcome → stop and ask for scope. See `skills/<name>/protocol-blocks/ambiguous-request-gate.md` if present.
+**Request-clarity judgment**: vague wording is a signal, not an automatic blocker. Use bounded read-only project evidence to derive scope and ask only when a normative preference, authority boundary, or materially different outcome remains unresolved. Do not mutate before the outcome is verifiable. See `skills/<name>/protocol-blocks/ambiguous-request-gate.md` if present.
 
 </always-applicable>
 
@@ -101,7 +101,7 @@ The pattern is adopted from [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s
 
 | Tag | Wraps | Runs on |
 |---|---|---|
-| `<always-applicable>` | Always Read list + universal gates (route-before-routing, session discipline) | **Every task**, no match required |
+| `<always-applicable>` | Always Read list + universal gates (request-clarity judgment, session discipline) | **Every task**, no match required |
 | `<task-routing>` | Pointer to `routing.yaml` + route matching protocol | **Only the matched route**, task-dependent |
 
 ### Rules of use

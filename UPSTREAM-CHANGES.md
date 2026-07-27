@@ -48,6 +48,17 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-27 - Evidence-first request judgment and safe first-migration journey
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - The Ambiguous Request Gate and every downstream shell summary now treat vague wording as an uncertainty signal rather than an automatic stop. Agents route likely intent, inspect the smallest read-only evidence set, derive technical scope from project truth, and ask only for an unresolved normative preference, authority boundary, or materially different outcome. Mutation still waits for a verifiable requested outcome.
+  - NEW `scripts/scaffold-downstream.sh` replaces the Quick Start raw `cp -R templates/shells/. .` path. It defaults to dry-run, reports create/preserve/conflict decisions, rejects reruns over an existing skill or Cursor registration, never overwrites existing project entry files, substitutes placeholders only in new scaffold content, records the upstream baseline, and rolls back newly created paths on apply failure.
+  - `WORKFLOW.md` profiles and inventories existing instruction sources before writes. Preserved entries are semantically merged by the Agent; ordinary users are not asked to compare files. Structural smoke green is explicitly separated from source-to-destination migration evidence.
+  - `scripts/check-all.sh` now calls the real scaffolder for both an empty-project happy path and an existing-project journey. The latter proves dry-run leaves the target unchanged, apply preserves old entries byte-for-byte, migrated instruction content survives byte-for-byte in routed skill rules, and the integrated scaffold still passes smoke, routing, orphan, and reachability checks.
+- Why it matters: the previous lexical gate weakened Agent judgment by blocking evidence gathering, while the previous empty-directory scaffold test stayed green even though the documented first-use command silently overwrote real `AGENTS.md` and `CLAUDE.md` files. These changes align the executable path with SBA's product direction: absorb technical discovery cost, preserve user-owned semantics, and never use structural green as a proxy for user success.
+- Downstream refresh guidance: re-vendor the Ambiguous Request Gate and update thin-shell summaries together. Existing downstream projects do not rerun the first-migration scaffolder; use their normal `update-upstream` workflow. New migrations should invoke the upstream scaffold command from `WORKFLOW.md`, preserve every existing entry, and require source-to-destination evidence in addition to smoke-test results.
+
 ## 2026-07-23 - Orthogonal domain context and knowledge-retirement integrity
 
 - Upstream commit: pending in this working tree

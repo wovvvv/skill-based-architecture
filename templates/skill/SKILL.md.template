@@ -37,7 +37,7 @@ These files apply to every task. Read them first:
 - **If you cannot tell whether context was compacted, re-read** — partial memory is worse than no memory.
 - Before final validation/commit after a long or interrupted task, run `protocol-blocks/reboot-check.md`: restate the original user constraints and chosen route; if you cannot, re-read the request, the route's files, and the workflow before proceeding.
 
-**Route-before-routing check (Principle 1 gate)** — if the request contains vague improvement verbs ("refactor / clean up / optimize / make it better / 整理 / 重构 / 优化") **without** a concrete module, file, or verifiable outcome, **stop and ask** for scope before matching below. Offering partial plans, scanning the project "to get started", or proposing options is forbidden — the gate blocks forward movement until scope is clarified. See `protocol-blocks/ambiguous-request-gate.md` for full protocol.
+**Request-clarity judgment (Principle 1 gate)** — vague wording is a signal, not an automatic blocker. Match the likely intent, use the smallest read-only project evidence to derive scope and constraints, and ask only when a normative preference, authority boundary, or materially different outcome remains unresolved. Do not mutate until the requested outcome is concrete enough to verify. See `protocol-blocks/ambiguous-request-gate.md`.
 
 </always-applicable>
 

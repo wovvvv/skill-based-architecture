@@ -22,60 +22,7 @@ Answer these questions to decide:
 
 If the project has only one small skill, no duplicated entry files, and no growing rule/reference sprawl yet, **do not force the full architecture immediately**. Start with a single well-written `SKILL.md` using the minimal starter template in [TEMPLATES-GUIDE.md](TEMPLATES-GUIDE.md), and upgrade only when one of the conditions above becomes true.
 
-**Step 1 — Scaffold from pre-built templates.** Don't regenerate file bodies inline — the upstream ships byte-for-byte files under [`templates/`](templates/). Copy them into the target project and run a single `sed` pass.
-
-```bash
-# Assumes skill-based-architecture is cloned as a sibling, or $UPSTREAM points at it.
-UPSTREAM="${UPSTREAM:-../skill-based-architecture}"
-NAME="<name>"          # project identifier, kebab-case
-SUMMARY="<one-line project summary>"
-
-# 1) Copy skill tree: templates/skill/ → skills/$NAME/
-mkdir -p "skills/$NAME"
-cp -R "$UPSTREAM/templates/skill/." "skills/$NAME/"
-mv "skills/$NAME/SKILL.md.template" "skills/$NAME/SKILL.md"
-
-# 2) Copy entry shells to repo root (AGENTS.md, CLAUDE.md, CODEX.md, GEMINI.md, .cursor/)
-cp -R "$UPSTREAM/templates/shells/." .
-
-# 3) Cursor registration entry: materialize SKILL.md, then rename the {{NAME}} placeholder directory
-mv ".cursor/skills/{{NAME}}/SKILL.md.template" ".cursor/skills/{{NAME}}/SKILL.md"
-mv ".cursor/skills/{{NAME}}" ".cursor/skills/$NAME"
-
-# 4) Substitute mechanical placeholders (macOS sed syntax; on Linux drop the '' after -i)
-find "skills/$NAME" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor \
-  -type f \( -name '*.md' -o -name '*.mdc' \) \
-  -exec sed -i '' \
-    -e "s/{{NAME}}/$NAME/g" \
-    -e "s/{{SUMMARY}}/$SUMMARY/g" \
-    {} +
-
-# 5) Record the upstream baseline so future "update from upstream" is automatic
-UPSTREAM_REF="$(git -C "$UPSTREAM" config --get remote.origin.url 2>/dev/null || printf '%s' "$UPSTREAM")"
-UPSTREAM_SHA="$(git -C "$UPSTREAM" rev-parse HEAD 2>/dev/null || true)"
-if [ -n "$UPSTREAM_SHA" ]; then
-  printf 'upstream: %s\nsynced_sha: %s\nsynced_date: %s\n' \
-    "$UPSTREAM_REF" "$UPSTREAM_SHA" "$(date +%F)" > "skills/$NAME/.upstream-sync"
-fi
-
-# 6) (Optional) install hooks — router restore, workflow-state hints, behavior gate
-# mkdir -p .claude/hooks
-# cp "$UPSTREAM/templates/hooks/session-start" .claude/hooks/session-start
-# cp "$UPSTREAM/templates/hooks/workflow-state" .claude/hooks/workflow-state
-# cp "$UPSTREAM/templates/hooks/agent-behavior-gate.sh" .claude/hooks/agent-behavior-gate.sh
-# chmod +x .claude/hooks/session-start .claude/hooks/workflow-state .claude/hooks/agent-behavior-gate.sh
-# test -f .claude/settings.json || cp "$UPSTREAM/templates/hooks/hooks.json" .claude/settings.json
-# # If settings exists, merge the top-level "hooks" object instead.
-
-# 7) Done — scaffold equivalent to completing Phases 3–7 in one pass
-echo "✅ Scaffold created at skills/$NAME/"
-echo "Next: ask the agent to profile the project, fill the remaining project-specific markers, and run smoke-test.sh for Phase 8."
-echo "If this step fails partway through, run: rm -rf skills/$NAME .cursor/skills/$NAME && rerun this script."
-```
-
-**Why copy instead of generate?** Inline heredoc generation lost sections under pressure (Auto-Triggers dropped, routing tables mangled, description field left as trigger-phrase-less boilerplate). The `templates/` tree is the single source of truth — see [`templates/README.md`](templates/README.md) for byte budgets, placeholder conventions, and the "would two real projects disagree?" admission test. Template source files use `SKILL.md.template` so skill loaders do not treat them as real skills when this repo is installed; Quick Start renames them into real `SKILL.md` files after copying.
-
-**Step 1.5 — Profile the project before filling content.** Follow `skills/$NAME/workflows/profile-project.md` (copied from `templates/skill/workflows/profile-project.md`) before writing project-specific `<!-- FILL: -->` content. Start with a user brainstorm gate: ask whether the user wants to brainstorm the target project's purpose, modules, common tasks, boundaries, and known pitfalls.
+**Step 1 — Profile and inventory before writing.** Read the target repository plus the upstream [`templates/skill/workflows/profile-project.md`](templates/skill/workflows/profile-project.md) before creating scaffold files. Inventory every existing instruction entry (`AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, `.cursor/rules/workflow.mdc`, and any project-specific equivalents) so their meaning can be migrated instead of overwritten. Start with the workflow's user brainstorm gate.
 
 - If the user says yes / "没问题" / otherwise agrees: **do not read code yet**. First run the brainstorm, restate a short calibrated summary, and ask the user to correct or confirm it.
 - Treat user feedback as **calibration input**, not verified fact. Use it to check whether your initial summary is aligned, then read local code/config to verify it.
@@ -85,11 +32,32 @@ echo "If this step fails partway through, run: rm -rf skills/$NAME .cursor/skill
 
 After the evidence scan, product projects may present **business-global-model candidates**: modules whose stable types, macro flow, states, boundaries, or invariants are repeatedly needed and not obvious from code. Explain why each candidate matters and ask `model now / later / not needed`. Only `now` adopts `workflows/profile-business-model.md.example` and creates a routed model after evidence search + user calibration. `later` and `not needed` create no file, directory, index, route, or persistent queue.
 
-**Step 2 — Fill content.** Two kinds of placeholders, two different mechanisms:
+**Step 2 — Preview and apply the scaffold.** The upstream command is the only Quick Start write path. It defaults to dry-run, reports every create/preserve/conflict decision, rejects reruns over an existing skill, and never overwrites existing project entry files.
+
+```bash
+# Assumes skill-based-architecture is cloned as a sibling, or $UPSTREAM points at it.
+UPSTREAM="${UPSTREAM:-../skill-based-architecture}"
+NAME="<name>"          # project identifier, kebab-case
+SUMMARY="<one-line project summary>"
+
+# Read-only preflight. Existing entries are reported as PRESERVE.
+bash "$UPSTREAM/scripts/scaffold-downstream.sh" \
+  --target "$PWD" --name "$NAME" --summary "$SUMMARY"
+
+# Apply only after the Agent has inspected the inventory and profile evidence.
+bash "$UPSTREAM/scripts/scaffold-downstream.sh" \
+  --target "$PWD" --name "$NAME" --summary "$SUMMARY" --apply
+```
+
+For every `PRESERVE` row, the Agent owns the semantic merge: extract durable project rules into the appropriate skill files, keep only entry-specific instructions in the thin shell, and integrate the generated routing bootstrap without dropping the old meaning. Do not ask the user to compare files or decide technical destinations that project evidence can establish. Before declaring migration complete, trace each inventoried source instruction to its migrated/merged destination or an explicit exclusion reason in the current task evidence.
+
+**Why a scaffold command instead of raw copy?** Inline heredoc generation lost sections, while `cp -R templates/shells/. .` silently replaced real project instructions. `scripts/scaffold-downstream.sh` still materializes the byte-for-byte template sources, but it previews the path plan, creates only missing entry files, records the upstream baseline, and rolls back newly created paths if apply fails. Existing entry content remains untouched until the Agent performs the evidence-backed semantic merge.
+
+**Step 3 — Fill content.** Two kinds of placeholders, two different mechanisms:
 
 | Marker | How to fill |
 |---|---|
-| `{{NAME}}`, `{{SUMMARY}}` | Done by the `sed` pass in Step 1 |
+| `{{NAME}}`, `{{SUMMARY}}` | Done by the scaffold command in Step 2 |
 | `<!-- FILL: … -->` | Requires judgment — you must read each marker and write real project content |
 
 Agent-facing check for pending project-specific content:
@@ -108,7 +76,7 @@ bash "skills/$NAME/scripts/sync-routing.sh" "$NAME"
 
 Do not hand-edit generated Always Read / Common Tasks in `SKILL.md` or generated blocks in thin shells.
 
-**Step 3 — Verify.** After all FILLs are resolved, run the automated smoke test:
+**Step 4 — Verify structure and migration evidence.** After all FILLs and preserved-entry merges are resolved, run the automated smoke test:
 
 ```bash
 # Fully automated — checks structure, routing, placeholders, line budgets, and description quality
@@ -121,7 +89,7 @@ bash "skills/$NAME/scripts/sync-routing.sh" "$NAME" --check
 (cd "skills/$NAME" && bash scripts/audit-orphans.sh)
 ```
 
-`smoke-test.sh` covers everything: file existence, line count budgets, placeholder/FILL residue, description word count / trigger phrases / keyword-stuffing, routing-manifest drift, routing completeness (parses Common Tasks and verifies every referenced file exists), description consistency between SKILL.md and Cursor entry, shell bootstrap consistency, SessionStart-hook presence, broken markdown links, and content conformance (§9, when a `conformance.yaml` exists). Zero manual input needed.
+`smoke-test.sh` covers structure and routing: file existence, line count budgets, placeholder/FILL residue, description word count / trigger phrases / keyword-stuffing, routing-manifest drift, routing completeness, description consistency, shell bootstrap consistency, SessionStart-hook presence, broken markdown links, and content conformance. It does **not** prove that pre-existing user instructions survived. Migration completion also requires the Step 1 source inventory and Step 2 source-to-destination evidence.
 
 For description-quality judgment (too narrow / weak or off-language trigger phrases) — re-read the `description` block aloud and check it uses the user's actual phrasing. `smoke-test.sh` now WARNs on the over-broad / keyword-stuffed case (> 12 quoted phrases), but no script substitutes for the rest of that judgment.
 
@@ -129,12 +97,7 @@ For complex migrations (large projects, heavily scattered rules), follow [`workf
 
 ## If a Phase Crashes
 
-Migration is a one-shot operation. If the shell exits mid-`sed`, `/compact` fires, or the laptop reboots, **don't** rerun from Phase 1 on a half-templated tree — placeholder residue and partial files will produce misleading phase passes.
-
-```bash
-rm -rf skills/$NAME .cursor/skills/$NAME
-# then rerun the Quick Start scaffold from the top
-```
+The scaffold command rolls back paths it created when apply itself fails. If interruption happens later during Agent-led content migration, do not rerun the scaffold over the existing skill: inspect `git status --short`, compare the current source-instruction inventory with migrated destinations, and resume from the first unverified item. Existing entry files preserved by the scaffold remain the recovery source until their semantic merge is verified.
 
 Use `bash skills/$NAME/scripts/smoke-test.sh $NAME --phase N` to verify a specific phase before moving on (the full smoke test only passes after Phase 8). Phase 9 is a manual attestation: at least one row in `workflows/task-closure.md` § Rationalizations to Reject came from a real pressure test.
 

@@ -93,7 +93,7 @@ The bucket lists are **per-repo** — they encode this repo's blast-radius
 layout. A downstream project using the meta-skill maintains its own list under
 the same A/B/C headings, anchored in its own `references/protocols.md`.
 
-> **Reconcile tip (gate 3)**: before writing a recorded lesson, run `bash scripts/skill-asset where <keywords>` to surface existing sections that may already cover the topic. Avoids duplicate sections accumulating across files. See [`scripts/README.md`](../scripts/README.md) for `where` / `related` / `group` usage.
+> **Reconcile tip (gate 3)**: before writing a recorded lesson, run `./scripts/skill-asset where <keywords>` to surface existing sections that may already cover the topic. Avoids duplicate sections accumulating across files. See [`scripts/README.md`](../scripts/README.md) for `where` / `related` / `group` usage.
 
 ### AAR Scan
 

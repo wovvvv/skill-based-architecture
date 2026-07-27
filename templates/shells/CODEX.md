@@ -17,7 +17,7 @@ Formal docs live under `skills/`. Read `skills/*/SKILL.md` — default to `prima
 - `skills/{{NAME}}/rules/agent-behavior.md`
 <!-- ALWAYS_READ_END -->
 
-**Route-before-routing check**: if the request contains vague improvement verbs ("refactor / clean up / optimize / make it better / 整理 / 重构 / 优化") **without** a concrete module/file or verifiable outcome → stop and ask for scope. Do not offer partial plans; see `skills/{{NAME}}/protocol-blocks/ambiguous-request-gate.md` if present.
+**Request-clarity judgment**: vague wording is a signal, not an automatic blocker. Use bounded read-only project evidence to derive scope; ask only for an unresolved normative preference, authority boundary, or materially different outcome. Do not mutate before the outcome is verifiable. See `skills/{{NAME}}/protocol-blocks/ambiguous-request-gate.md`.
 
 </always-applicable>
 

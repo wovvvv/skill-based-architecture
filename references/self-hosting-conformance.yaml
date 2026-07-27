@@ -97,6 +97,17 @@ required_sections:
       - "Quick Start"
       - "workflows/full-migration.md"
       - "workflows/upgrade-downstream.md"
+      - "scripts/scaffold-downstream.sh"
+      - "never overwrites existing project entry files"
+      - "source-to-destination evidence"
+      - "does **not** prove that pre-existing user instructions survived"
+
+  - file: references/thin-shells.md
+    must_contain:
+      - "Request-clarity judgment"
+      - "vague wording is a signal, not an automatic blocker"
+      - "bounded read-only project evidence"
+      - "Do not mutate before the outcome is verifiable"
 
   - file: workflows/full-migration.md
     must_contain:
