@@ -48,6 +48,17 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-27 - User-confirmed Plan mainline and immediate implementation-drift gate
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `plan-feature.md` makes the Plan folder the authority for decision-bearing brainstorm evidence. Clear user answers, selections, rejections, and corrections are recorded with question/context, `Authority: user-confirmed`, scope, and current-conversation provenance; unselected candidates remain proposed and clear answers are not redundantly reconfirmed.
+  - At design-to-implementation handoff, stable confirmed normative business meaning is distilled into the routed business owner as `desired business truth` with Plan provenance. Code, tests, and runtime remain separate `current implementation fact`; a known gap is explicit rather than hidden or treated as proof that the desired rule changed.
+  - Task Execution, Change Managed, Fix Bug, and Receiving Review replay the relevant Plan mainline before Plan edits, code reasoning/implementation, or review. The new User Decision Drift Gate pauses the affected path immediately when implementation diverges, presents constraints/cost/risk and options, and resumes only after an explicit user decision; first disclosure at Closure is invalid.
+  - Business-model guidance, rule recording, Plan lifecycle/archive docs, protocol summaries, conformance, and the SBA Bible now carry the same authority, provenance, activation, and drift semantics.
+- Why it matters: brainstorm answers were easy to lose as transient chat or freeze as inert Plan provenance, letting later work follow current code or Agent preference instead of the user's confirmed business mainline. This change keeps the evidence where it was decided, activates its stable meaning for delivery, and stops silent implementation compromise at discovery time rather than reporting it after the work is done.
+- Downstream refresh guidance: reconcile local Plan/Decision Context, business-model, Task Execution, feature/fix/review, recording, and Closure workflows together; do not port only the storage wording. Preserve project Plan and business-leaf paths. Record desired business truth at implementation handoff, keep implementation evidence separate, add conformance anchors for the immediate drift stop, and do not copy raw chat transcripts into business leaves or add a generic decisions directory.
+
 ## 2026-07-27 - Evidence-first request judgment and safe first-migration journey
 
 - Upstream commit: pending in this working tree

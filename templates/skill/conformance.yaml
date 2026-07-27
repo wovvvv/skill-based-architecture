@@ -39,6 +39,12 @@ required_sections:
       - "Before each main Plan step"
       - "Never silently overwrite a load-bearing conclusion"
       - "business owner's confirmation"
+      - "source Plan path"
+      - "only business-bearing decisions require a routed business rule"
+      - "## User Decision Drift Gate"
+      - "Code may expose constraints, cost, and risk"
+      - "Pause the affected implementation path immediately"
+      - "do not wait for review or Closure"
       - "bind the material risk, fitted evidence, and stop/escalation condition"
       - "do not narrate it before every tool call"
       - "does not create durable planning files or recover task state across Sessions"
@@ -51,12 +57,20 @@ required_sections:
     must_contain:
       - "## Complexity Gate"
       - "## Question Gate"
+      - "## User-Confirmed Decision Mainline"
       - "## Business-Semantics Gate"
       - "## Complex Plan"
       - "[workflow-state:planning]"
       - "it is not the runtime Native Plan"
       - "pass its chosen outcome, acceptance criteria, boundaries, and task breakdown"
       - "If new evidence overturns a load-bearing conclusion"
+      - "Authority: user-confirmed"
+      - "Evidence / Source: current conversation"
+      - "desired business truth"
+      - "current implementation fact"
+      - "Plan Mainline Handoff"
+      - "Before implementation handoff"
+      - "for business-bearing work, distilled confirmed business meaning"
       - "legacy source, active destination, owner, activation path, and validation"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
@@ -79,6 +93,11 @@ required_sections:
       - "### Red Flags"
       - "## After-Action Review"
       - "Test count is not evidence quality"
+      - "Replay the user-confirmed mainline"
+      - "desired business truth"
+      - "current implementation fact"
+      - "first time a material drift is surfaced"
+      - "for business-bearing decisions, also read the routed business rule"
       - "durable knowledge migrated/deleted/superseded"
       - "rather than creating a mandatory ledger"
 
@@ -89,7 +108,22 @@ required_sections:
       - "### Reconciliation Gate"
       - "### Activation Check"
       - "### Generalization Rule"
+      - "## Plan Decision Source"
+      - "Authority: user-confirmed"
+      - "Plan confirmed for implementation"
+      - "bypasses only the Recording Threshold"
+      - "Desired business truth and current implementation fact remain distinct"
       - "do not create a fixed ledger solely to satisfy the gate"
+
+  - file: workflows/profile-business-model.md.example
+    must_contain:
+      - "## User-Confirmed Input"
+      - "Authority: user-confirmed"
+      - "desired business truth"
+      - "current implementation fact"
+      - "Distill at Plan handoff"
+      - "pause the affected path immediately"
+      - "Do not ask code and the confirmed model to compete for authority"
 
   - file: scripts/sync-routing.sh
     must_contain:
@@ -125,6 +159,9 @@ required_sections:
       - "invariant-owning boundary"
       - "smallest semantically complete repair"
       - "full/incremental/read/write path"
+      - "user-confirmed Decision Context"
+      - "Purely technical Design-derived work replays the source Plan without requiring a business model"
+      - "User Decision Drift Gate"
       - "Task Closure Protocol"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
@@ -193,6 +230,9 @@ required_sections:
     must_contain:
       - "## Process"
       - "Verify every claim"
+      - "user-confirmed Decision Context"
+      - "Purely technical Design-derived work replays the source Plan without requiring a business model"
+      - "pause the affected path and ask the user immediately"
 
   - file: workflows/update-upstream.md
     must_contain:
@@ -209,6 +249,9 @@ required_sections:
       - "Map semantic fan-out"
       - "full/incremental/read/write path"
       - "smallest semantically complete change"
+      - "source Plan's relevant user-confirmed Decision Context"
+      - "Purely technical Design-derived work replays the source Plan without requiring a business model"
+      - "User Decision Drift Gate"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
       - "directly `spawn_agent`"

@@ -1,6 +1,6 @@
 # Rule Update Workflow
 
-Use this workflow after Task Closure decides knowledge is worth recording, when the user explicitly asks to record it, or when an existing rule is inaccurate. Closure decides **whether**; this file decides **what, where, and how**.
+Use this workflow when a confirmed Plan reaches implementation handoff, after Task Closure decides other knowledge is worth recording, when the user explicitly asks to record it, or when an existing rule is inaccurate. Plan handoff admits its user-confirmed load-bearing decisions; Closure decides other recording. This file decides **what, where, and how**.
 
 ## Classification Guide
 
@@ -17,9 +17,17 @@ Use this workflow after Task Closure decides knowledge is worth recording, when 
 
 [`task-closure.md`](task-closure.md) is the only正文 source for the Trigger Policy, closure steps, Rationalizations, Red Flags, and AAR. Do not copy those sections here. This workflow owns recording threshold, fidelity, reconciliation, destination, activation, durability, and retirement.
 
+## Plan Decision Source
+
+The Plan folder is the authority for decision-bearing brainstorm evidence. Before recording a user-confirmed decision, read its Decision Context and preserve `Authority: user-confirmed`, the Agent question or user correction, the direct answer/selection/rejection, load-bearing meaning, scope, and `Evidence / Source: current conversation`. Short answers remain verbatim with their context; long answers may be faithfully summarized. Unselected brainstorm candidates remain `proposed` and do not become active rules.
+
+At design-to-implementation handoff, stable confirmed normative business meaning enters the routed business model as `desired business truth` with Requirement Provenance to the Plan. Code/tests/runtime remain separate `current implementation fact`; an implementation gap is recorded, not hidden and not treated as authority to rewrite the desired truth.
+
+A confirmed Plan handoff bypasses only the Recording Threshold for its load-bearing, stable business meaning: Plan classification and user authority already provide admission. It must still pass Fidelity, Reconciliation, Activation, Generalization, and durability checks. If the Plan is purely technical or contains no stable business semantics, do not create a business leaf; other new records still run every gate below.
+
 ## Recording Gates
 
-Run these gates in order. A record that fails any gate does not ship.
+Run the applicable gates in order. A record that fails any required gate does not ship.
 
 ### Recording Threshold
 
@@ -48,7 +56,7 @@ Do not persist a lossy conversation summary. Preserve every fact that changes a 
 
 No fixed four-section template is required. The test is semantic: can a fresh Agent, reading only the proposed record, reconstruct the same key judgment without the conversation? If not, restore the missing load-bearing meaning before writing.
 
-Creating a business model or changing its macro types, flow direction, states, boundaries, or invariants also requires a user-facing read-back of the final durable meaning. Approved-but-unimplemented semantics stay in the Plan until code, tests, and behavior land.
+Creating a business model or changing its macro types, flow direction, states, boundaries, or invariants requires a user-facing read-back only when the recorded answer is materially ambiguous. A clear user-confirmed answer is not reconfirmed. Distill its stable desired meaning at Plan handoff; do not claim implementation alignment until code, tests, and behavior prove it.
 
 ### Reconciliation Gate (search before record)
 
@@ -112,8 +120,9 @@ Do not force business names out of a business model merely to make it cross-proj
 | New/renamed workflow or reference | update `routing.yaml`; run `scripts/sync-routing.sh` |
 | Route/Always Read/entry routing changed | regenerate SKILL.md and thin-shell blocks from `routing.yaml` |
 | Rule/reference meaning changed | grep workflows for repeated invariants and update stale copies |
-| Plan completed | reconcile load-bearing conclusions into active destinations; set truthful `distilled_to:` |
-| Business model implemented/changed | update model, code, tests, and routed activation in the same completing task |
+| Plan confirmed for implementation | reconcile load-bearing conclusions into active destinations; set truthful `distilled_to:` and Requirement Provenance before coding |
+| Plan or user-confirmed decision changed | replay the prior mainline, record the Delta/supersession, and reconcile affected rules before implementation resumes |
+| Business implementation aligned/changed | update current implementation evidence and reconcile any declared gap without rewriting desired truth |
 
 ## When NOT to Record
 
@@ -140,8 +149,10 @@ When deleting/renaming a file, update routing and inbound links, run sync, and i
 - [ ] Destination was classified before writing
 - [ ] New knowledge passed threshold/evidence gates; outdated content was corrected directly
 - [ ] Fidelity preserved definitions, conditions, boundaries/counterexamples, and reasons
+- [ ] User-confirmed records preserve question/correction, answer, authority, scope, and Plan provenance; proposed candidates were not promoted
 - [ ] Reconciliation selected no-write / extend / correct / retire / independent-add
 - [ ] Gotchas were merged by root cause and placed by topic, not appended chronologically
 - [ ] Generic content passed cross-project generalization; business models passed cross-implementation stability
 - [ ] New/changed content has an action-changing activation path
 - [ ] Routing, generated entries, consumers, and plan `distilled_to:` were synchronized where triggered
+- [ ] Desired business truth and current implementation fact remain distinct; known implementation gaps are explicit

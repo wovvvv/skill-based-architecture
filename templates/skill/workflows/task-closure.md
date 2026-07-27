@@ -25,20 +25,21 @@ If any condition is missing, return to [`task-execution.md`](task-execution.md);
 
 ### Closure Steps
 
-1. **Read back the contract** — restate the Task Anchor (or Simple-task outcome), matched route, Goal-level acceptance evidence, material Boundaries, and forbidden shortcuts. After a long/interrupted task, use `protocol-blocks/reboot-check.md`.
-2. **Verify with fresh, fitted evidence**:
+1. **Read back the contract** — restate the Task Anchor (or Simple-task outcome), matched route, Goal-level acceptance evidence, material Boundaries, forbidden shortcuts, and for Design-derived work the source Plan path. After a long/interrupted task, use `protocol-blocks/reboot-check.md`.
+2. **Replay the user-confirmed mainline** — read the relevant Decision Context; for business-bearing decisions, also read the routed business rule. Verify the question/correction, answer, `Authority: user-confirmed`, scope, and provenance remain intact. Compare any `desired business truth` with code/tests/runtime `current implementation fact`. Every later Delta must be reflected in the Plan, Task Anchor, implementation evidence, and any business rule. If Closure is the first time a material drift is surfaced, Closure fails: return to `task-execution.md` § User Decision Drift Gate and consult the user immediately.
+3. **Verify with fresh, fitted evidence**:
    - bind each material risk to the cheapest evidence that can falsify it and state the stop/escalation condition before running checks;
    - targeted command/test/typecheck first;
    - runtime/service/browser evidence only for wiring, config, permissions, serialization, data state, or UI behavior;
    - packaged/release/deploy evidence only when that chain changed or the user requires it.
    Stop when the bound evidence proves the contract; escalate only when a check fails, the risk crosses another boundary, or a stated uncertainty remains. Test count is not evidence quality. A fresh command against a stale artifact is not fresh evidence.
-3. **Run the AAR below.** Any yes enters `update-rules.md`; all no stops recording.
-4. **Run conditional integrity work**:
+4. **Run the AAR below.** Any yes enters `update-rules.md`; all no stops recording.
+5. **Run conditional integrity work**:
    - routing/shell/generated-block or structure/path changes → follow `maintain-docs.md` Step 6 and the repository's sync/smoke commands;
    - rule/reference meaning changes → search workflows for repeated invariants and reconcile them in the same change;
    - durable knowledge migrated/deleted/superseded → prove destination, owner, normal activation path, fitted validation, and intentionally unretained content before removing the legacy source; use the existing Plan/migration record rather than creating a mandatory ledger;
    - high-risk route, non-idempotent workflow, executable script contract, or external handoff → add/adjust a behavior contract only when structural checks cannot prove it.
-5. **Report honestly** — name verified evidence and any unverified risk; do not self-certify beyond the checks run.
+6. **Report honestly** — name verified evidence and any unverified risk; do not self-certify beyond the checks run.
 
 ### Rationalizations to Reject
 
@@ -47,6 +48,7 @@ If any condition is missing, return to [`task-execution.md`](task-execution.md);
 | “The change is small.” | Behavior/structure is the trigger; read-only work is already exempt. |
 | “Tests passed earlier.” | A completion claim requires fresh evidence after the final edit. |
 | “I will reconcile links/rules later.” | The decision context will be gone; do it in the same change. |
+| “I can mention the mainline drift in the final report.” | First disclosure at Closure is too late. Pause the affected path and consult the user when drift is discovered. |
 | “The file exists and smoke is green.” | Reachable structure can still be inert; state the next action it changes. |
 | “I should add a safeguard just in case.” | No concrete recurring failure means no new mechanism. |
 

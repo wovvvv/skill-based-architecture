@@ -1,8 +1,9 @@
 ---
 date: YYYY-MM-DD                       # day the plan was drafted; filename uses the same date
 status: draft                          # draft | executing | done | abandoned
-# distilled_to:                        # set on close — the live-structure files that received load-bearing content
+# distilled_to:                        # initialize at implementation handoff; reconcile final live targets on close
 #   - rules/<topic>.md                 # for "must / must not do X" conclusions
+#   - references/business/<domain>.md  # for user-confirmed stable desired business truth
 #   - references/gotchas.md            # for "we tried Y; here is why Y is wrong" anti-patterns
 #   - SKILL.md § Common Pitfalls #N    # if Pitfalls is the right home
 # Omit distilled_to entirely if status is abandoned, OR if you genuinely judged no
@@ -13,7 +14,7 @@ status: draft                          # draft | executing | done | abandoned
 
 > **Canonical structure lives in [`templates/skill/workflows/plan-feature.md` § Plan Skeleton](../../templates/skill/workflows/plan-feature.md).** This file mirrors it; if the two ever disagree, plan-feature.md wins. Do not redefine the section list here.
 >
-> Plans are frozen snapshots. Edit freely while `status: draft` or `executing`. Once `status: done` or `abandoned`, this file is read-only — lift any still-load-bearing content into `rules/` / `references/gotchas.md` / SKILL.md Pitfalls instead.
+> Plans are active decision records while `status: draft` or `executing`, then frozen snapshots at `done` / `abandoned`. At design-to-implementation handoff, distill user-confirmed stable business meaning into the routed business leaf and pass this Plan path/mainline to implementation. On final `done`, reconcile later deltas and all other load-bearing content before freezing.
 
 ## Context
 
@@ -22,6 +23,10 @@ Why are we drafting this plan? What changed?
 ## Problem
 
 The thing we are trying to solve, stated concretely.
+
+## Decision Context
+
+Include only when product/business decisions were confirmed. For each load-bearing answer or correction, record `Status: proposed | confirmed | superseded`, `Authority: user-confirmed` when applicable, the Agent question or user correction, the direct answer, its meaning and scope, and `Evidence / Source: current conversation`. Preserve short answers verbatim with their context; summarize long answers faithfully. Do not rewrite old decisions in place.
 
 ## Options Considered
 
