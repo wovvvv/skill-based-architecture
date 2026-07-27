@@ -14,7 +14,7 @@ Re-match the task route. No patch before expected behavior and the actual root c
 
 A Design Change leaves this workflow for an approved Plan. For insufficient context, search evidence first and ask only the missing macro question; a completely absent model is created only if the user chooses “now”. Obvious technical failures need no business model.
 
-If a source Plan exists, replay its relevant user-confirmed Decision Context before defining expected behavior or changing code; when the behavior is business-bearing, also read the routed business rule. Purely technical Design-derived work replays the source Plan without requiring a business model. Code/tests/runtime are `current implementation fact`, not authority to rewrite `desired business truth`. If the proposed or in-progress fix would drift from the confirmed mainline, invoke `task-execution.md` § User Decision Drift Gate immediately; pause the affected path and consult the user instead of smuggling the change through Bug Fix or reporting it only at Closure.
+If a source Plan exists, replay its relevant user-confirmed Decision Context before defining expected behavior or changing code; when the behavior is business-bearing, also read the routed business rule. Purely technical Design-derived work replays the source Plan without requiring a business model. Code/tests/runtime are `current implementation fact`, not authority to rewrite `desired business truth`. If the proposed or in-progress fix would drift from the confirmed mainline, invoke [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate) immediately; pause the affected path and consult the user instead of smuggling the change through Bug Fix or reporting it only at Closure.
 
 ## Steps
 

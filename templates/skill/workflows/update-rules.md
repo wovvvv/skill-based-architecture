@@ -19,9 +19,9 @@ Use this workflow when a confirmed Plan reaches implementation handoff, after Ta
 
 ## Plan Decision Source
 
-The Plan folder is the authority for decision-bearing brainstorm evidence. Before recording a user-confirmed decision, read its Decision Context and preserve `Authority: user-confirmed`, the Agent question or user correction, the direct answer/selection/rejection, load-bearing meaning, scope, and `Evidence / Source: current conversation`. Short answers remain verbatim with their context; long answers may be faithfully summarized. Unselected brainstorm candidates remain `proposed` and do not become active rules.
+[`plan-feature.md` § User-Confirmed Decision Mainline](plan-feature.md#user-confirmed-decision-mainline) owns Decision Delta capture and authority. This workflow consumes that record: read the Plan's relevant Decision Context and preserve its confirmed answer, authority, scope, load-bearing meaning, and evidence without recreating or reinterpreting the schema. Unselected brainstorm candidates remain `proposed` and do not become active rules.
 
-At design-to-implementation handoff, stable confirmed normative business meaning enters the routed business model as `desired business truth` with Requirement Provenance to the Plan. Code/tests/runtime remain separate `current implementation fact`; an implementation gap is recorded, not hidden and not treated as authority to rewrite the desired truth.
+This workflow owns distillation and reconciliation, not the Plan schema or business information model. At design-to-implementation handoff, transfer stable confirmed normative business meaning into the routed model as `desired business truth` with Requirement Provenance; keep separately evidenced `current implementation fact` and any known gap explicit.
 
 A confirmed Plan handoff bypasses only the Recording Threshold for its load-bearing, stable business meaning: Plan classification and user authority already provide admission. It must still pass Fidelity, Reconciliation, Activation, Generalization, and durability checks. If the Plan is purely technical or contains no stable business semantics, do not create a business leaf; other new records still run every gate below.
 

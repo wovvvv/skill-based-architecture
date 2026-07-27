@@ -9,7 +9,7 @@ Copy this file to `workflows/profile-business-model.md`, adapt the paths, and ad
 | No model, the gap affects the task, and no confirmed Plan owns stable business meaning | Explain what macro meaning is missing; ask whether to model now or continue without persistence |
 | Confirmed Plan reaches implementation handoff with stable business meaning but no model | Create the minimum routed owner; record desired truth and Plan provenance because handoff admission already passed |
 | Existing model is locally unclear | Inspect code/tests; ask only the missing business question; update the file in place |
-| Existing model conflicts with code/tests/runtime and has clear user-confirmed provenance | Treat the model as desired truth; route an implementation bug or User Decision Drift Gate. Do not ask code and the confirmed model to compete for authority |
+| Existing model conflicts with code/tests/runtime and has clear user-confirmed provenance | Treat the model as desired truth; route an implementation bug or [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate). Do not ask code and the confirmed model to compete for authority |
 | Existing model conflicts but provenance is absent/ambiguous, or the user is considering supersession | Ask only which normative intent should govern; then route bug/design/doc drift |
 | Existing model is sufficient | Use it without another question |
 
@@ -66,7 +66,7 @@ For business-sensitive work, compare in order:
 2. architecture/rules/contracts — how design intends to realize it;
 3. code/tests/runtime — what is true now.
 
-Before modifying the Plan, reasoning about code, implementing, or reviewing, replay the relevant user-confirmed Decision Context and the routed model. If current or in-progress implementation conflicts with that mainline, pause the affected path immediately, show the gap and trade-offs, and obtain a new user decision before continuing; do not silently compromise or wait until closure.
+Before modifying the Plan, reasoning about code, implementing, or reviewing, replay the relevant user-confirmed Decision Context and the routed model. A conflict invokes [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate); this workflow keeps only the immediate responsibility to pause the affected path and consult the user, not a second copy of the gate.
 
 Classify a reported bug before changing code:
 

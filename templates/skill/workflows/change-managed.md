@@ -10,7 +10,7 @@ Use this for non-bug changes whose partial edits can drift: features, refactors,
 4. **Choose the owning boundary** — default to Product Development and make every coordinated change needed for semantic completeness. Operational Stabilization requires an explicit production/availability/frozen-scope constraint and must expose unresolved structural work.
 5. **Make the smallest semantically complete change** — use minimality only to choose among complete solutions; preserve unrelated edits and avoid adjacent cleanup.
 6. **Sync derived files** with the owning generator/copy process.
-7. **Check drift** across all mapped targets, semantic paths, and the user-confirmed Plan mainline. If current or in-progress implementation diverges, invoke `task-execution.md` § User Decision Drift Gate immediately: pause the affected path, expose the gap/constraints/cost/risk, and obtain a user decision before continuing. Do not silently fit the requirement to existing code or wait until review/Closure.
+7. **Check drift** across all mapped targets, semantic paths, and the user-confirmed Plan mainline. If current or in-progress implementation diverges, invoke [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate) immediately: pause the affected path, expose the gap/constraints/cost/risk, and obtain a user decision before continuing. Do not silently fit the requirement to existing code or wait until review/Closure.
 8. **Validate behavior** with the cheapest sufficient fresh evidence; escalate only when concrete runtime/release risk requires it.
 9. **Run [Task Closure](task-closure.md)** once after the integrated change.
 

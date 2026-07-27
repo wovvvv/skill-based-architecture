@@ -42,8 +42,12 @@ required_sections:
       - "source Plan path"
       - "only business-bearing decisions require a routed business rule"
       - "## User Decision Drift Gate"
+      - "canonical owner of the gate's trigger"
       - "Code may expose constraints, cost, and risk"
       - "Pause the affected implementation path immediately"
+      - "Independent work may continue only when it cannot prejudge the decision"
+      - "Mark every alternative `proposed`"
+      - "mark the prior decision `superseded`"
       - "do not wait for review or Closure"
       - "bind the material risk, fitted evidence, and stop/escalation condition"
       - "do not narrate it before every tool call"
@@ -58,6 +62,7 @@ required_sections:
       - "## Complexity Gate"
       - "## Question Gate"
       - "## User-Confirmed Decision Mainline"
+      - "canonical owner of Decision Delta capture and Plan Mainline Handoff"
       - "## Business-Semantics Gate"
       - "## Complex Plan"
       - "[workflow-state:planning]"
@@ -94,9 +99,11 @@ required_sections:
       - "## After-Action Review"
       - "Test count is not evidence quality"
       - "Replay the user-confirmed mainline"
+      - "Closure owns final reconciliation"
       - "desired business truth"
       - "current implementation fact"
       - "first time a material drift is surfaced"
+      - "task-execution.md#user-decision-drift-gate"
       - "for business-bearing decisions, also read the routed business rule"
       - "durable knowledge migrated/deleted/superseded"
       - "rather than creating a mandatory ledger"
@@ -109,7 +116,8 @@ required_sections:
       - "### Activation Check"
       - "### Generalization Rule"
       - "## Plan Decision Source"
-      - "Authority: user-confirmed"
+      - "plan-feature.md#user-confirmed-decision-mainline"
+      - "owns distillation and reconciliation"
       - "Plan confirmed for implementation"
       - "bypasses only the Recording Threshold"
       - "Desired business truth and current implementation fact remain distinct"
@@ -122,7 +130,8 @@ required_sections:
       - "desired business truth"
       - "current implementation fact"
       - "Distill at Plan handoff"
-      - "pause the affected path immediately"
+      - "immediate responsibility to pause the affected path"
+      - "task-execution.md#user-decision-drift-gate"
       - "Do not ask code and the confirmed model to compete for authority"
 
   - file: scripts/sync-routing.sh
@@ -148,6 +157,11 @@ required_sections:
 
   - file: workflows/maintain-docs.md
     must_contain:
+      - "## Semantic Ownership and Local Actionability"
+      - "smallest task-specific trigger, immediate action, and current-task acceptance responsibility"
+      - "A complete repeated rule or workflow is exceptional"
+      - "generation is justified when a target must be independently delivered or independently used"
+      - "sentence quota, score, marker, or file-count target"
       - "## Step 2: Independent Load-Reason Audit"
       - "## Step 5: Semantic Before/After Reconciliation"
 
@@ -162,6 +176,7 @@ required_sections:
       - "user-confirmed Decision Context"
       - "Purely technical Design-derived work replays the source Plan without requiring a business model"
       - "User Decision Drift Gate"
+      - "task-execution.md#user-decision-drift-gate"
       - "Task Closure Protocol"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
@@ -233,6 +248,7 @@ required_sections:
       - "user-confirmed Decision Context"
       - "Purely technical Design-derived work replays the source Plan without requiring a business model"
       - "pause the affected path and ask the user immediately"
+      - "task-execution.md#user-decision-drift-gate"
 
   - file: workflows/update-upstream.md
     must_contain:
@@ -252,6 +268,7 @@ required_sections:
       - "source Plan's relevant user-confirmed Decision Context"
       - "Purely technical Design-derived work replays the source Plan without requiring a business model"
       - "User Decision Drift Gate"
+      - "task-execution.md#user-decision-drift-gate"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
       - "directly `spawn_agent`"

@@ -4,6 +4,20 @@ Keep the skills directory from degrading: no broken links, duplicated meaning, l
 
 **Core principle: line counts are signals, not commands.** A file boundary is justified by an independent loading, ownership, or generation reason. Short files may stay separate when tasks select them independently; long files may stay whole when every real task needs the whole meaning.
 
+## Semantic Ownership and Local Actionability
+
+Definitions, state transitions, normative conditions, and multi-step procedures normally have one complete semantic owner. A consumer may repeat the smallest task-specific trigger, immediate action, and current-task acceptance responsibility needed to act without exploratory navigation, then link to the owner before full detail is required. Do not make either extraction or repetition the default objective.
+
+Judge a repeated block from the real task path:
+
+1. **Semantic authority** — would the copy become a second place that can redefine the rule?
+2. **Change covariance** — must every copy change whenever the owner changes, or can the local hook remain valid?
+3. **Read-path cost** — would a link force a common task to load another file merely to discover its next action?
+4. **Drift consequence** — duplicated business authority, safety behavior, or stop conditions cost more than duplicated orientation.
+5. **Distribution boundary** — generation is justified when a target must be independently delivered or independently used, not merely because text repeats.
+
+Prefer one owner plus local action hooks inside one Skill. A complete repeated rule or workflow is exceptional: task/PR evidence must show that full repetition costs less than navigation, loading, or generation after drift risk is included. Generated copies have one source, are not hand-edited, and require deterministic equality/drift validation. Use judgment rather than a sentence quota, score, marker, or file-count target.
+
 ## When to Run
 
 - After completing the `update-rules.md` workflow, quickly check modified file line counts
@@ -191,6 +205,7 @@ For a two-root skill, run the last two structural checks once from each root wit
 - [ ] No orphaned files (file exists but no entry links to it)
 - [ ] `route-health.sh` shows no new routing-quality smells (no/weak triggers, overlap, language) — advisory
 - [ ] No duplicated content (each rule maintained in exactly one place)
+- [ ] Complete definitions/procedures have one owner; consumers retain only justified local action hooks, and any full-copy exception has task evidence
 - [ ] If a file was deleted, no other file still references it
 
 ## Completion Criteria

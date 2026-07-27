@@ -21,9 +21,9 @@ Ask one question at a time and offer concrete trade-offs for preferences.
 
 ## User-Confirmed Decision Mainline
 
-When the Agent asks a product/business question, or the user directly selects, rejects, or corrects a direction, that clear answer is the highest-authority input for the corresponding normative decision. If it identifies one load-bearing meaning, mark the Decision Delta `Status: confirmed` without reconfirming; clarify only materially different interpretations. For Complex/Large work, keep this mainline in `prd.md` Decision Context with `Authority: user-confirmed`, the question/correction, load-bearing meaning, scope, and `Evidence / Source: current conversation`. Preserve short answers verbatim with their context; summarize long answers faithfully. Simple work may stay in conversation unless a durable Plan exists.
+This section is the canonical owner of Decision Delta capture and Plan Mainline Handoff. When the Agent asks a product/business question, or the user directly selects, rejects, or corrects a direction, that clear answer is the highest-authority input for the corresponding normative decision. If it identifies one load-bearing meaning, mark the Delta `Status: confirmed` without reconfirming; clarify only materially different interpretations. For Complex/Large work, keep the question/correction, answer, `Authority: user-confirmed`, load-bearing meaning, scope, and `Evidence / Source: current conversation` in `prd.md`; preserve short answers verbatim with context and summarize long answers faithfully. Simple work may stay in conversation unless a durable Plan exists.
 
-The confirmed answer defines `desired business truth`; code, tests, and runtime prove `current implementation fact`. Agent inference, current implementation, older documents, or an earlier proposal may expose a gap but cannot silently overwrite the user-confirmed mainline. Replacing it requires a new explicit user decision and a `superseded` Delta.
+The confirmed answer remains normative. For business-bearing work, the routed business model owns `desired business truth` while code, tests, and runtime prove `current implementation fact`; those sources may expose a gap but cannot silently overwrite the Plan mainline. Replacing it requires a new explicit user decision and a `superseded` Delta.
 
 ## Business-Semantics Gate
 

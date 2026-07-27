@@ -74,6 +74,8 @@ Independent Subagents may work concurrently, but the main task keeps one integra
 
 ## User Decision Drift Gate
 
+This section is the canonical owner of the gate's trigger, pause/resume behavior, required evidence, and decision transition. Domain workflows may repeat a task-specific trigger, immediate pause, or acceptance check for local actionability, but they link here instead of copying the complete gate.
+
 Code may expose constraints, cost, and risk, but it has no authority to modify a user-confirmed business mainline. Trigger this gate when current or in-progress implementation conflicts with a confirmed product meaning, business rule, scope, flow, state, boundary, invariant, acceptance condition, or user-visible behavior. Ordinary implementation choices that preserve those decisions do not trigger it.
 
 On trigger:

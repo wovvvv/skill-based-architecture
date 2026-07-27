@@ -11,7 +11,7 @@ Use this when acting on user, reviewer, PR/MR, or agent review feedback. Evaluat
 5. For accepted items, implement the smallest correction. For rejected items, state concrete evidence without defensiveness or performative agreement.
 6. Re-run fresh targeted evidence, then [Task Closure](task-closure.md) if behavior changed.
 
-Push back when feedback breaks a real case, misses a binding constraint, has no actual usage, or conflicts with an explicit user decision. If accepting feedback would change the confirmed product/business mainline, pause the affected path and ask the user immediately with the code evidence, constraint/cost/risk, and options; do not let review silently supersede the Plan or defer disclosure to Closure.
+Push back when feedback breaks a real case, misses a binding constraint, has no actual usage, or conflicts with an explicit user decision. If accepting feedback would change the confirmed product/business mainline, invoke [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate): pause the affected path and ask the user immediately. Review owns this trigger and its acceptance check, not the gate's full evidence/decision procedure.
 
 ## Completion Check
 

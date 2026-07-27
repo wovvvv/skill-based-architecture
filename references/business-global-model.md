@@ -98,7 +98,7 @@ Full modeling follows: evidence scan → remove implementation/one-off details �
 
 ## Desired truth and implementation fact
 
-The routed business model owns stable, user-confirmed `desired business truth`: the normative types, flow, states, boundaries, invariants, and reasons future work must follow. When a Plan's design is confirmed for implementation, distill that stable meaning into the model immediately and retain Requirement Provenance to the Plan. Do not wait for code completion and do not copy the full chat transcript.
+This section is the canonical information-model definition for desired truth versus implementation fact. The routed business model owns stable, user-confirmed `desired business truth`: the normative types, flow, states, boundaries, invariants, and reasons future work must follow. When a Plan's design is confirmed for implementation, distill that stable meaning into the model immediately and retain Requirement Provenance to the Plan. Do not wait for code completion and do not copy the full chat transcript.
 
 Code, tests, and runtime separately prove `current implementation fact`. The model must not imply that desired truth is already implemented: state a known alignment gap or link to the implementation evidence when the distinction matters. Current code may expose constraints, cost, and risk, but it cannot silently redefine the confirmed business mainline.
 
@@ -115,7 +115,7 @@ code/tests/runtime     -> current implementation fact
 comparison             -> plan, bug fix, design change, or clarification
 ```
 
-Code proves current behavior, not correctness by itself. If implementation conflicts with or drifts from the user-confirmed mainline, stop the affected path immediately, expose the gap/constraints/cost/risk, and ask the user before continuing. Do not defer first disclosure to review or closure.
+Code proves current behavior, not correctness by itself. A conflict with the user-confirmed mainline triggers [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate): stop the affected path immediately and consult the user. That workflow owns the complete evidence, decision, and resume procedure; do not reproduce it here or defer first disclosure to review/Closure.
 
 Before a business-sensitive bug fix, classify:
 
