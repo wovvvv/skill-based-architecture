@@ -48,6 +48,17 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-28 - Business-domain progressive split gate
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `references/business-global-model.md` and `workflows/profile-business-model.md.example` define one business domain, not one code module, as the default file unit. Size and section count start a review but never force a split.
+  - A same-owner domain becomes a directory only when real task signals select independently understandable business submodules and the split reduces irrelevant context. Different business owners or domain boundaries become sibling domain leaves instead.
+  - Split directories use a selecting `index.md`, optional shared `overview.md`, and one leaf per business submodule or decision surface. Aspect slices such as `types.md` / `states.md` / `lifecycle.md` are rejected when callers still need them together.
+  - Conformance and self-hosting scenarios protect the review trigger, non-mechanical decision, business-submodule unit, and index boundary.
+- Why it matters: one-file-per-domain is cheap and predictable while a model is small, but without an explicit pressure gate it can harden into an oversized leaf. Splitting by document headings creates navigation without reducing task context; splitting by independently routed business submodules preserves domain ownership while allowing narrower reads.
+- Downstream refresh guidance: keep existing small domain leaves intact. Add review signals around 120 nonblank lines, more than 10 substantive H2 sections, or repeated independent task selection; then split only when the independent-load test passes. Convert the domain file into a directory with a selecting index and submodule leaves, preserve shared invariants once, and update domain overlays and inbound links.
+
 ## 2026-07-28 - Evidence-grounded business questions
 
 - Upstream commit: pending in this working tree

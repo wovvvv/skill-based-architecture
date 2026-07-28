@@ -45,18 +45,21 @@ When profiling a new product project:
 
 ## Progressive Split
 
-Do not create an index for one file. Split only when a real request reads one part without all siblings and routing can select it. If all callers co-load the parts, keep or restore one file.
+The default unit is one business domain, not one code module. Keep `references/business/<domain>.md` until a split review is justified. Review when the cleaned leaf grows beyond about 120 nonblank lines or more than 10 substantive H2 sections, when at least two real request patterns repeatedly select different parts, or when one part has a stable task signal and the rest is irrelevant. Size only triggers review; it never decides the split.
+
+If the candidate has a different stable business owner or domain boundary, create a sibling domain leaf. If it remains one domain and owner, split only when routing can select independently understandable business submodules and the split reduces irrelevant context. Do not split by document aspect into `types.md`, `states.md`, or `lifecycle.md` when callers still need those aspects together. If all callers co-load the parts, keep or restore one file.
 
 Example only after pressure:
 
 ```text
 references/business/<module>/
 ├── index.md
-├── types.md
-└── lifecycle.md
+├── overview.md          # optional shared domain invariants
+├── <submodule-a>.md
+└── <submodule-b>.md
 ```
 
-The index must select a leaf from task signals. A passive file list has no activation value.
+Each leaf owns one business submodule or decision surface. The index must select a leaf from task signals and carry no business body; a passive file list has no activation value. Create `overview.md` only when multiple submodules share domain-wide invariants that must not be duplicated.
 
 ## Plan and Fix Bug Handoff
 
@@ -90,3 +93,4 @@ Obvious technical failures do not require business modeling unless the correct b
 - [ ] New/changed macro meaning was confirmed by the user
 - [ ] The file has a specific routed load reason and is not Always Read
 - [ ] Every split leaf has a real task that loads it independently
+- [ ] Any split directory is organized by business submodule, not document aspect; its index routes and does not duplicate business body

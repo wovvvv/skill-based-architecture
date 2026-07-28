@@ -43,30 +43,41 @@ The content list is a menu, not a template quota. A module without a meaningful 
 
 ## Lifecycle and storage shape
 
-Start absent. Create the directory only when the first real model is confirmed:
+The default storage unit is a business domain, not a code module. Start absent. Create the directory only when the first real model is confirmed:
 
 ```text
 references/business/
 └── merge-task.md
 ```
 
-Do not create an `index.md` for one file. Split only when real tasks load the parts independently:
+Do not create an `index.md` for one file. Keep `references/business/<domain>.md` while the domain remains one independently selected decision surface.
+
+Run a split review, without splitting automatically, when any pressure appears:
+
+- after deduplication and heading cleanup, the leaf grows beyond about 120 nonblank lines or more than 10 substantive H2 sections, excluding routing and provenance boilerplate;
+- at least two real request patterns repeatedly use different parts of the leaf;
+- one part has a stable task signal and the rest is irrelevant to that task.
+
+Line and section counts only trigger review. First check the boundary: content with a different stable business owner or domain boundary becomes a sibling `references/business/<other-domain>.md`, not a nested submodule.
+
+For content that still belongs to the same domain and owner, split only into independently routed business submodules:
 
 ```text
-references/business/merge-task/
+references/business/<domain>/
 ├── index.md
-├── types.md
-└── lifecycle.md
+├── overview.md          # optional: shared domain-wide invariants
+├── <submodule-a>.md
+└── <submodule-b>.md
 ```
 
-Before splitting, answer all four:
+Each leaf represents one business submodule or decision surface. Do not split by document aspect into `types.md`, `states.md`, or `lifecycle.md` when real tasks still need those aspects together. Before splitting, answer all four:
 
 1. Which real request reads this candidate without all siblings?
 2. Which route, workflow, or index selects it?
 3. Can it be understood without loading the siblings?
 4. Does the split reduce irrelevant context?
 
-If every caller loads and changes the files together, merge them. Line count is only a review signal. Independent generation/ownership may justify separate files, but it does not justify co-loading them at runtime.
+If every caller loads and changes the files together, keep or restore one file. `index.md` selects a submodule from task signals and carries no business body. `overview.md` is optional and exists only when multiple submodules need the same domain-wide invariants without duplicating them. Independent generation/ownership may justify separate files, but it does not justify co-loading them at runtime.
 
 ## Trigger paths
 

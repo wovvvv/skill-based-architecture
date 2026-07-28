@@ -297,6 +297,13 @@ assert_contains "$business_profile" "carry an evidence-backed working conclusion
 assert_contains "$business_profile" "cross-check the evidence with existing user-confirmed answers" "business model cross-check hook"
 assert_contains "$business_profile" "accept the point and do not ask again" "business model aligned-answer stop hook"
 assert_contains "$business_profile" "Ask only an unresolved ambiguity that could change the current decision" "business model minimal-question hook"
+assert_contains "$business_profile" "The default unit is one business domain, not one code module" "business model default domain-file boundary"
+assert_contains "$business_profile" "about 120 nonblank lines" "business model split-review size signal"
+assert_contains "$business_profile" "more than 10 substantive H2 sections" "business model split-review section signal"
+assert_contains "$business_profile" "Size only triggers review; it never decides the split" "business model no mechanical split"
+assert_contains "$business_profile" "independently understandable business submodules" "business model submodule split unit"
+assert_contains "$business_profile" "Do not split by document aspect" "business model rejects aspect slicing"
+assert_contains "$business_profile" "The index must select a leaf from task signals and carry no business body" "business model selecting index boundary"
 
 fix_bug="$(<templates/skill/workflows/fix-bug.md)"
 assert_contains "$fix_bug" "IMPLEMENTATION_BUG" "fix-bug implementation classification"
