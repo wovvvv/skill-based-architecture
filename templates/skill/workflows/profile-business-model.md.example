@@ -17,7 +17,7 @@ Copy this file to `workflows/profile-business-model.md`, adapt the paths, and ad
 
 ## User-Confirmed Input
 
-When this workflow asks a missing product/business question, the user's clear direct answer, selection, rejection, or correction is the highest-authority input for that normative meaning. Preserve it in the active Plan's Decision Context with `Authority: user-confirmed`, the question/correction, load-bearing meaning, scope, and `Evidence / Source: current conversation`. Keep short answers verbatim with their context; summarize long answers faithfully. Do not ask the user to reconfirm a clear answer.
+When this workflow asks a missing product/business question, first invoke [`plan-feature.md` § Question Gate](plan-feature.md#question-gate): trace one concrete business flow, carry an evidence-backed working conclusion into the question, and cross-check the evidence with existing user-confirmed answers. When they align and no decision-relevant ambiguity remains, accept the point and do not ask again. Ask only an unresolved ambiguity that could change the current decision, and ask the user to correct or complete the working conclusion rather than define an abstract concept from scratch. The user's clear direct answer, selection, rejection, or correction is the highest-authority input for that normative meaning. Preserve it in the active Plan's Decision Context with `Authority: user-confirmed`, the question/correction, load-bearing meaning, scope, and `Evidence / Source: current conversation`. Keep short answers verbatim with their context; summarize long answers faithfully. Do not ask the user to reconfirm a clear answer.
 
 The answer defines `desired business truth`; code/tests/runtime prove `current implementation fact`. Current implementation may expose a gap but cannot silently overwrite the confirmed meaning.
 
@@ -36,7 +36,7 @@ When profiling a new product project:
 2. **Search evidence first** — inspect code, config, tests, contracts, and current docs. Extract only stable types, macro flow, business states, boundaries, relationships, and invariants.
 3. **Remove volatile detail** — drop classes, methods, endpoints, fields, config keys, UI behavior, one bug narrative, and one requirement's temporary decisions.
 4. **Draft evidence states** — separate `current implementation fact`, inferred meaning, user-confirmed `desired business truth`, and unknowns.
-5. **Brainstorm with the user** — ask only what evidence cannot decide: business names, historical intent, target meaning, forbidden directions, and hidden boundaries; record clear answers through User-Confirmed Input.
+5. **Brainstorm with the user** — cross-check the inspected flow against existing user-confirmed answers, accept aligned points without another question, and ask only unresolved normative ambiguity that could change the current decision. Anchor that question in the Agent's working conclusion, then let the user correct, complete, reject, or choose. Never turn modeling into an exhaustive questionnaire or hand the user a blank abstract-definition exercise; record clear answers through User-Confirmed Input.
 6. **Distill at Plan handoff** — when the design is confirmed for implementation, write stable desired truth into the routed business model with Requirement Provenance to the Plan; keep any implementation gap explicit rather than delaying or pretending it has landed.
 7. **Write the minimum sufficient file** — start with `references/business/<module>.md`; use only sections the module needs.
 8. **Run semantic read-back** — preserve the load-bearing definition, condition, boundary/counterexample, and reason. A fresh Agent must be able to reconstruct the same key decision.
@@ -84,6 +84,8 @@ Obvious technical failures do not require business modeling unless the correct b
 - [ ] The live model distinguishes desired business truth from current implementation fact and exposes any known gap
 - [ ] Implementation details and one-off requirements were excluded
 - [ ] Clear user answers retain their question/context, authority, scope, and Plan provenance without redundant reconfirmation
+- [ ] Every product/business question followed the Question Gate: concrete flow and evidence-backed working conclusion first, user comparison second
+- [ ] Implementation evidence and existing user-confirmed answers were cross-checked; aligned or decision-irrelevant points were accepted without another question
 - [ ] Semantic read-back preserved conditions, boundaries, and reasons
 - [ ] New/changed macro meaning was confirmed by the user
 - [ ] The file has a specific routed load reason and is not Always Read

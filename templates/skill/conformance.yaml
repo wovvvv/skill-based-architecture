@@ -61,6 +61,16 @@ required_sections:
     must_contain:
       - "## Complexity Gate"
       - "## Question Gate"
+      - "trace the smallest concrete business flow"
+      - "form an evidence-backed working conclusion"
+      - "ask the user to correct, complete, or choose against it"
+      - "decision-relevant uncertainty budget, not an exhaustive questionnaire"
+      - "cross-check implementation evidence against existing user-confirmed answers"
+      - "accept the point and stop asking"
+      - "never ask the user to restate an implementation fact"
+      - "ask only which normative meaning governs"
+      - "Do not open with abstract prompts"
+      - "working conclusion remains `proposed` / `current implementation fact`"
       - "## User-Confirmed Decision Mainline"
       - "canonical owner of Decision Delta capture and Plan Mainline Handoff"
       - "## Business-Semantics Gate"
@@ -110,6 +120,12 @@ required_sections:
 
   - file: workflows/update-rules.md
     must_contain:
+      - "## Active Bug-Fix Input"
+      - "The only business-recording source during Fix Bug is the user's explicit business statement"
+      - "Preserve the user's meaning faithfully"
+      - "Do not derive a business rule from the Bug"
+      - "Reusable engineering lessons discovered while fixing the Bug follow normal Closure/AAR"
+      - "Fix Bug owns noticing and immediate invocation"
       - "### Recording Threshold"
       - "### Fidelity Gate"
       - "### Reconciliation Gate"
@@ -126,6 +142,13 @@ required_sections:
   - file: workflows/profile-business-model.md.example
     must_contain:
       - "## User-Confirmed Input"
+      - "plan-feature.md#question-gate"
+      - "trace one concrete business flow"
+      - "carry an evidence-backed working conclusion into the question"
+      - "cross-check the evidence with existing user-confirmed answers"
+      - "accept the point and do not ask again"
+      - "Ask only an unresolved ambiguity that could change the current decision"
+      - "rather than define an abstract concept from scratch"
       - "Authority: user-confirmed"
       - "desired business truth"
       - "current implementation fact"
@@ -175,12 +198,26 @@ required_sections:
       - "full/incremental/read/write path"
       - "user-confirmed Decision Context"
       - "Purely technical Design-derived work replays the source Plan without requiring a business model"
+      - "plan-feature.md#question-gate"
+      - "trace the smallest concrete business flow"
+      - "form an evidence-backed working conclusion"
+      - "cross-check it against any existing user-confirmed answer"
+      - "continue without another question"
+      - "only an unresolved ambiguity that could change repair classification or expected behavior"
+      - "not request exhaustive detail or an abstract definition from scratch"
+      - "update-rules.md#active-bug-fix-input"
+      - "instead of waiting for Task Closure"
+      - "the only source eligible for a `references/business/<module>.md` record is the user's explicit business statement"
+      - "Bug symptoms, root cause, repaired behavior, code, tests, runtime evidence, and Agent summaries are not `desired business truth`"
+      - "Reusable engineering lessons discovered while fixing the Bug follow normal Closure/AAR"
+      - "No Bug-derived or Agent-derived content entered the business model"
       - "User Decision Drift Gate"
       - "task-execution.md#user-decision-drift-gate"
       - "Task Closure Protocol"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
       - "directly `spawn_agent`"
+      - "as candidate business knowledge"
 
   - file: rules/agent-behavior.md
     must_contain:

@@ -48,6 +48,26 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-28 - Evidence-grounded business questions
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/plan-feature.md` makes the Question Gate own an evidence-before-questioning contract: trace one concrete business flow, inspect the available implementation evidence, form a working conclusion, then cross-check it with existing user-confirmed answers. Aligned or decision-irrelevant points stop without another question; only unresolved ambiguity that could change the decision reaches the user.
+  - `workflows/profile-business-model.md.example` and `workflows/fix-bug.md` keep only local action hooks plus the Question Gate owner link.
+  - Conformance and self-hosting scenarios reject blank abstract-definition prompts when a concrete business flow is inspectable.
+- Why it matters: asking "what is this concept essentially, why does it exist, and when does it end?" before reading enough code transfers Agent discovery work to the user and produces detached, low-value business models. Turning later clarification into an exhaustive questionnaire repeats the same cost. Code does not define normative truth, but implementation evidence and existing user-confirmed answers can eliminate settled or decision-irrelevant questions before the Agent asks anything new.
+- Downstream refresh guidance: strengthen the local Plan Question Gate, then link business-model and Fix Bug clarification paths to it. Preserve the distinction that the Agent's conclusion is proposed/current implementation fact while the user's answer supplies normative business meaning.
+
+## 2026-07-28 - Active business-knowledge capture during Bug Fix
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/fix-bug.md` now treats the user's explicit business statement as the only possible business-recording source during diagnosis. The Agent may judge that content's durability and invoke `update-rules.md` immediately instead of waiting for Task Closure, but must not derive a business rule from the Bug, repair, evidence, or its own summary.
+  - `workflows/update-rules.md` owns the Active Bug-Fix Input admission path, user-meaning fidelity, provenance, and the user-content-only boundary. Reusable engineering lessons still flow through normal Closure/AAR into gotcha, rule, or reference destinations rather than business.
+  - Conformance and self-hosting scenarios protect the immediate owner link, non-deferral behavior, explicit-user-source rule, Bug/Agent-derived exclusion, and engineering-lesson destination without copying the complete recording procedure into Fix Bug.
+- Why it matters: a user can state durable business truth while reporting or clarifying a Bug even when no source Plan exists. That user statement can be lost if evaluation waits until Closure, but the Bug and its repair are evidence about implementation, not authority for inventing user intent.
+- Downstream refresh guidance: add a small active-recording trigger and completion check to the local Fix Bug workflow, link it to the local `update-rules.md` owner, and add an Active Bug-Fix Input entry there. Allow only explicit user business content into that path; preserve its meaning faithfully, keep Bug/repair/evidence/Agent summaries out of business leaves, and send reusable engineering lessons through Closure/AAR. Preserve project-specific owner paths and do not duplicate the complete recording gates inside Fix Bug.
+
 ## 2026-07-27 - User-confirmed Plan mainline and immediate implementation-drift gate
 
 - Upstream commit: pending in this working tree

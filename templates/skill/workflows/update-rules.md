@@ -1,6 +1,6 @@
 # Rule Update Workflow
 
-Use this workflow when a confirmed Plan reaches implementation handoff, after Task Closure decides other knowledge is worth recording, when the user explicitly asks to record it, or when an existing rule is inaccurate. Plan handoff admits its user-confirmed load-bearing decisions; Closure decides other recording. This file decides **what, where, and how**.
+Use this workflow when a confirmed Plan reaches implementation handoff, Fix Bug forwards explicit user business content for possible admission before Closure, Task Closure decides other knowledge is worth recording, the user explicitly asks to record it, or an existing rule is inaccurate. Plan handoff admits its user-confirmed load-bearing decisions; active Bug Fix supplies only what the user said; Closure decides other recording. This file decides **what, where, and how**.
 
 ## Classification Guide
 
@@ -24,6 +24,12 @@ Use this workflow when a confirmed Plan reaches implementation handoff, after Ta
 This workflow owns distillation and reconciliation, not the Plan schema or business information model. At design-to-implementation handoff, transfer stable confirmed normative business meaning into the routed model as `desired business truth` with Requirement Provenance; keep separately evidenced `current implementation fact` and any known gap explicit.
 
 A confirmed Plan handoff bypasses only the Recording Threshold for its load-bearing, stable business meaning: Plan classification and user authority already provide admission. It must still pass Fidelity, Reconciliation, Activation, Generalization, and durability checks. If the Plan is purely technical or contains no stable business semantics, do not create a business leaf; other new records still run every gate below.
+
+## Active Bug-Fix Input
+
+The only business-recording source during Fix Bug is the user's explicit business statement: a correction, answer, expected rule, rationale, boundary, or rejected direction that carries business meaning. [`fix-bug.md`](fix-bug.md) may invoke this workflow before Closure, and the Agent may decide whether that user content is durable enough to persist. Preserve the user's meaning faithfully, then apply Recording Threshold (unless correcting existing content), Fidelity, Reconciliation, Activation, Generalization, and provenance here.
+
+Do not derive a business rule from the Bug. Bug symptoms, root cause, repaired behavior, code, tests, runtime evidence, and Agent summaries are not `desired business truth`; an implementation suggestion is not business content merely because the user said it. Reusable engineering lessons discovered while fixing the Bug follow normal Closure/AAR into gotcha, rule, or reference destinations, never into business as user intent. Fix Bug owns noticing and immediate invocation; this workflow owns admission, fidelity, reconciliation, provenance, activation, and the user-content-only boundary.
 
 ## Recording Gates
 

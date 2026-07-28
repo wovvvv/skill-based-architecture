@@ -15,9 +15,9 @@ Use this for planning requests. It resolves what should be done; it is not the r
 
 ## Question Gate
 
-- **Gate A: Derivable?** Inspect evidence first; **Gate B: Meta/lazy?** never ask the user to do Agent-available discovery; **Gate C: Blocking/preference?** ask only blocking or preference questions.
+- This section owns the evidence-before-questioning contract. **Gate A: Derivable?** Inspect evidence first; before any product/business question, trace the smallest concrete business flow relevant to the decision (`actor/trigger -> business object/state change -> downstream carrier/exit`) and form an evidence-backed working conclusion. **Gate B: Meta/lazy?** never ask the user to do Agent-available discovery; **Gate C: Blocking/preference?** ask only blocking or preference questions.
 
-Ask one question at a time and offer concrete trade-offs for preferences.
+Ask one question at a time and offer concrete trade-offs for preferences. Present the working conclusion and ask the user to correct, complete, or choose against it. Treat questions as a decision-relevant uncertainty budget, not an exhaustive questionnaire: cross-check implementation evidence against existing user-confirmed answers. If they agree and no unresolved ambiguity could change the current decision, accept the point and stop asking; never ask the user to restate an implementation fact the evidence already proves. If they conflict, show the conflict and ask only which normative meaning governs. Do not open with abstract prompts such as "what is X essentially, why does it exist, and when does it end?" when a concrete flow can be inspected. The working conclusion remains `proposed` / `current implementation fact`; only existing or new user-confirmed input can establish normative business meaning.
 
 ## User-Confirmed Decision Mainline
 
