@@ -212,6 +212,15 @@ assert_contains "$task_execution" "Steps must be numbered" "task execution full 
 assert_contains "$task_execution" "do not collapse the brief into prose" "task execution full brief remains scannable"
 assert_contains "$task_execution" "## Recitation Loop" "task execution recitation section"
 assert_contains "$task_execution" "Before each main Plan step" "task execution per-step Anchor checkpoint"
+assert_contains "$task_execution" "source Plan path" "task execution design-source handoff"
+assert_contains "$task_execution" "only business-bearing decisions require a routed business rule" "task execution technical-plan business-leaf boundary"
+assert_contains "$task_execution" "## User Decision Drift Gate" "task execution immediate user-drift gate"
+assert_contains "$task_execution" "canonical owner of the gate's trigger" "task execution canonical drift owner"
+assert_contains "$task_execution" "Pause the affected implementation path immediately" "task execution drift pauses affected path"
+assert_contains "$task_execution" "Independent work may continue only when it cannot prejudge the decision" "task execution affected-path concurrency boundary"
+assert_contains "$task_execution" 'Mark every alternative `proposed`' "task execution proposed-alternative transition"
+assert_contains "$task_execution" 'mark the prior decision `superseded`' "task execution superseded-mainline transition"
+assert_contains "$task_execution" "never treat a late disclosure in review/Closure" "task execution rejects deferred drift disclosure"
 assert_contains "$task_execution" "do not narrate it before every tool call" "task execution no per-tool narration"
 assert_contains "$task_execution" "does not create durable planning files or recover task state across Sessions" "task execution session-only boundary"
 assert_contains "$task_execution" "new independent outcome -> re-match the route and replace the old Anchor/Plan" "task execution new-task reset"
@@ -237,10 +246,19 @@ task_closure="$(<templates/skill/workflows/task-closure.md)"
 assert_contains "$task_closure" "### Entry Gate" "closure execution entry gate"
 assert_contains "$task_closure" 'return to [`task-execution.md`](task-execution.md)' "closure cannot finish execution"
 assert_contains "$task_closure" "final Anchor Checkpoint" "closure final Anchor checkpoint"
+assert_contains "$task_closure" "Replay the user-confirmed mainline" "closure decision-mainline replay"
+assert_contains "$task_closure" "Closure owns final reconciliation" "closure reconciliation owner"
+assert_contains "$task_closure" "first time a material drift is surfaced" "closure rejects first drift disclosure"
+assert_contains "$task_closure" "for business-bearing decisions, also read the routed business rule" "closure optional business-leaf boundary"
+assert_contains "$task_closure" "task-execution.md#user-decision-drift-gate" "closure drift-owner link"
 
 plan_feature="$(<templates/skill/workflows/plan-feature.md)"
 assert_contains "$plan_feature" "it is not the runtime Native Plan" "design plan runtime boundary"
 assert_contains "$plan_feature" "pass its chosen outcome, acceptance criteria, boundaries, and task breakdown" "design to execution transition"
+assert_contains "$plan_feature" "## User-Confirmed Decision Mainline" "plan user-confirmed decision source"
+assert_contains "$plan_feature" "canonical owner of Decision Delta capture and Plan Mainline Handoff" "plan decision owner"
+assert_contains "$plan_feature" "Authority: user-confirmed" "plan user-answer authority"
+assert_contains "$plan_feature" "Plan Mainline Handoff" "plan business-rule handoff"
 
 subagent_driven="$(<templates/skill/workflows/subagent-driven.md)"
 assert_contains "$subagent_driven" "Worker-local status never advances the Native Plan" "worker status main-plan boundary"
@@ -256,10 +274,15 @@ echo ""
 echo "==> business-model and persistence contracts"
 
 business_profile="$(<templates/skill/workflows/profile-business-model.md.example)"
-assert_contains "$business_profile" "No model and the gap affects the task" "business model missing state"
+assert_contains "$business_profile" "No model, the gap affects the task" "business model missing state"
 assert_contains "$business_profile" "Existing model is locally unclear" "business model local calibration state"
 assert_contains "$business_profile" "Existing model conflicts with code/tests/runtime" "business model conflict state"
+assert_contains "$business_profile" "Do not ask code and the confirmed model to compete for authority" "business model confirmed-authority conflict boundary"
 assert_contains "$business_profile" '"Later" is session-only' "business model no-placeholder deferral"
+assert_contains "$business_profile" "desired business truth" "business model desired-truth source"
+assert_contains "$business_profile" "current implementation fact" "business model implementation-fact boundary"
+assert_contains "$business_profile" "Distill at Plan handoff" "business model Plan-handoff distillation"
+assert_contains "$business_profile" "task-execution.md#user-decision-drift-gate" "business model drift-owner link"
 
 fix_bug="$(<templates/skill/workflows/fix-bug.md)"
 assert_contains "$fix_bug" "IMPLEMENTATION_BUG" "fix-bug implementation classification"
@@ -270,24 +293,66 @@ assert_contains "$fix_bug" "Repair-depth gate" "fix-bug repair-depth gate"
 assert_contains "$fix_bug" "invariant-owning boundary" "fix-bug owning-boundary repair"
 assert_contains "$fix_bug" "smallest semantically complete repair" "fix-bug minimality tie-breaker"
 assert_contains "$fix_bug" "full/incremental/read/write path" "fix-bug all-path inspection"
+assert_contains "$fix_bug" "user-confirmed Decision Context" "fix-bug Plan-mainline activation"
+assert_contains "$fix_bug" "Purely technical Design-derived work replays the source Plan without requiring a business model" "fix-bug technical-plan business-leaf boundary"
+assert_contains "$fix_bug" "User Decision Drift Gate" "fix-bug immediate drift escalation"
+assert_contains "$fix_bug" "task-execution.md#user-decision-drift-gate" "fix-bug drift-owner link"
 
 change_managed="$(<templates/skill/workflows/change-managed.md)"
 assert_contains "$change_managed" "Map semantic fan-out" "change-managed invariant fan-out"
 assert_contains "$change_managed" "full/incremental/read/write path" "change-managed all-path map"
 assert_contains "$change_managed" "smallest semantically complete change" "change-managed minimality tie-breaker"
+assert_contains "$change_managed" "source Plan's relevant user-confirmed Decision Context" "change-managed Plan-mainline activation"
+assert_contains "$change_managed" "Purely technical Design-derived work replays the source Plan without requiring a business model" "change-managed technical-plan business-leaf boundary"
+assert_contains "$change_managed" "User Decision Drift Gate" "change-managed immediate drift escalation"
+assert_contains "$change_managed" "task-execution.md#user-decision-drift-gate" "change-managed drift-owner link"
 
 assert_contains "$plan_feature" "business-model impact: unchanged / proposed change / unknown" "plan business-model impact"
-assert_contains "$plan_feature" "update the formal model only when code, tests, and behavior land" "plan current-baseline contract"
+assert_contains "$plan_feature" "Before implementation handoff" "plan distills desired truth before coding"
+assert_contains "$plan_feature" "for business-bearing work, distilled confirmed business meaning" "plan handoff optional business-distillation boundary"
+assert_contains "$plan_feature" "current implementation fact" "plan preserves implementation-fact boundary"
 
 update_rules="$(<templates/skill/workflows/update-rules.md)"
 for outcome in "No write" "Extend in place" "Correct in place" "Retire" "Add independently"; do
   assert_contains "$update_rules" "$outcome" "gotcha reconciliation outcome"
 done
 assert_contains "$update_rules" "can a fresh Agent, reading only the proposed record, reconstruct the same key judgment" "persistence fidelity reconstruction"
+assert_contains "$update_rules" "## Plan Decision Source" "persistence Plan-decision source"
+assert_contains "$update_rules" "plan-feature.md#user-confirmed-decision-mainline" "persistence Plan-owner link"
+assert_contains "$update_rules" "owns distillation and reconciliation" "persistence distillation owner"
+assert_contains "$update_rules" "Plan confirmed for implementation" "persistence Plan-handoff sync"
+assert_contains "$update_rules" "bypasses only the Recording Threshold" "persistence Plan-handoff admission"
+
+receiving_review="$(<templates/skill/workflows/receiving-review.md)"
+assert_contains "$receiving_review" "user-confirmed Decision Context" "review Plan-mainline activation"
+assert_contains "$receiving_review" "Purely technical Design-derived work replays the source Plan without requiring a business model" "review technical-plan business-leaf boundary"
+assert_contains "$receiving_review" "pause the affected path and ask the user immediately" "review immediate drift escalation"
+assert_contains "$receiving_review" "task-execution.md#user-decision-drift-gate" "review drift-owner link"
 
 maintain_docs="$(<templates/skill/workflows/maintain-docs.md)"
+assert_contains "$maintain_docs" "## Semantic Ownership and Local Actionability" "semantic ownership judgment owner"
+assert_contains "$maintain_docs" "smallest task-specific trigger, immediate action, and current-task acceptance responsibility" "local action repetition boundary"
+assert_contains "$maintain_docs" "A complete repeated rule or workflow is exceptional" "complete-copy exception boundary"
+assert_contains "$maintain_docs" "independently delivered or independently used" "generation distribution boundary"
 assert_contains "$maintain_docs" "## Step 2: Independent Load-Reason Audit" "independent load-reason audit"
 assert_contains "$maintain_docs" "## Step 5: Semantic Before/After Reconciliation" "semantic before-after audit"
+
+# Affected-path change simulation: task-execution owns the complete transition;
+# every runtime consumer links to it and must not become another full owner.
+for consumer_file in \
+  templates/skill/workflows/change-managed.md \
+  templates/skill/workflows/fix-bug.md \
+  templates/skill/workflows/receiving-review.md \
+  templates/skill/workflows/task-closure.md \
+  templates/skill/workflows/profile-business-model.md.example \
+  references/business-global-model.md \
+  references/protocols.md \
+  WORKFLOW.md; do
+  consumer_content="$(<"$consumer_file")"
+  assert_contains "$consumer_content" "task-execution.md#user-decision-drift-gate" "$consumer_file canonical drift-owner link"
+  assert_not_contains "$consumer_content" 'Mark every alternative `proposed`' "$consumer_file does not copy proposed transition"
+  assert_not_contains "$consumer_content" 'mark the prior decision `superseded`' "$consumer_file does not copy superseded transition"
+done
 
 plan_large="$(<templates/skill/workflows/plan-large.md)"
 assert_contains "$plan_large" "Read this file only after" "large-plan conditional read"

@@ -16,7 +16,7 @@
 
 The canonical workflow templates live under `templates/skill/workflows/`. Every project should adopt at least these:
 
-- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — cross-cutting task-start and progress contract: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, evidence-backed advancement, and replan/new-message gates.
+- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — cross-cutting task-start and progress contract: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
 - [`task-closure.md`](../templates/skill/workflows/task-closure.md) — cross-cutting closure gate (Task Closure Protocol, AAR, Rationalizations, Red Flags); referenced by every behavior-changing workflow at closure.
 - [`update-rules.md`](../templates/skill/workflows/update-rules.md) — recording mechanics the gate calls into: threshold, fidelity, reconciliation, activation, destination durability, sync, and retirement.
 - [`maintain-docs.md`](../templates/skill/workflows/maintain-docs.md) — independent-load-reason audit, semantic before/after reconciliation, file health, split/merge/index decisions, and reference integrity.
@@ -27,7 +27,9 @@ For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES
 
 Canonical source: [`templates/skill/workflows/task-execution.md`](../templates/skill/workflows/task-execution.md).
 
-Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple and pays no planning cost. Other tasks establish Task Anchor state: one observable Goal, Done When evidence, and material Boundaries only when present. That state is not a fixed chat template. Default Managed work uses a short natural-language alignment only when it helps the user verify direction; a visible native Plan owns step display and is not repeated in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work may use one complete structured task brief. Before each main step and after correction, failed/surprising evidence, Subagent return, or interruption, a compact Anchor Checkpoint brings Goal, remaining Done When evidence, current-step output/check, and relevant Boundaries back into current attention. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that contract is satisfied rather than treating test count as evidence quality. It is Session recitation, not durable planning-file state.
+Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple; other tasks establish Task Anchor state and use the visible native Plan for step display rather than duplicating it in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work escalates presentation while the state remains runtime state, not a fixed chat template. Design-derived work carries the source Plan path and relevant user-confirmed Decision Context; each main step refreshes the applicable decision and its evidence boundary through an Anchor Checkpoint.
+
+If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. This reference keeps the activation consequence—pause the affected path and consult the user—but does not duplicate the gate's trigger, state transition, evidence, or resume procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
 
 The separation is load-bearing: Workflow owns the reusable domain procedure and mandatory gates; Task Anchor owns this task's outcome; Native Plan owns current runtime step state; Task Closure owns the final completion decision. A user-visible Plan may group Workflow steps but cannot replace the Workflow or weaken a gate. New independent tasks re-route and replace the old Anchor/Plan; refinements update the current one.
 
@@ -133,7 +135,7 @@ Use the lightest useful destination:
 
 - Stable constraint or convention → `rules/`
 - Pitfall, lifecycle gotcha, architecture note, source index → `references/`
-- Stable project-specific macro business types, flows, states, boundaries, or invariants → routed `references/business/<module>.md`; only current effective semantics, using the cross-implementation stability test
+- Stable project-specific user-confirmed macro business types, flows, states, boundaries, invariants, and reasons → routed `references/business/<module>.md` at Plan implementation handoff; preserve `desired business truth`, Requirement Provenance, and any known gap from separately evidenced `current implementation fact`
 - Ordered task step or completion check → `workflows/`
 - Task routing changed → `routing.yaml`, then `scripts/sync-routing.sh`
 - Always-read set changed → `routing.yaml`, then `scripts/sync-routing.sh`

@@ -4,18 +4,19 @@ Use this when acting on user, reviewer, PR/MR, or agent review feedback. Evaluat
 
 ## Process
 
-1. Read the whole review before acting on any item.
+1. Read the whole review before acting on any item. For Design-derived work, also read the source Plan's relevant user-confirmed Decision Context before accepting a change; for business-bearing work, read the routed business rule. Purely technical Design-derived work replays the source Plan without requiring a business model.
 2. Restate each technical claim; clarify genuinely ambiguous feedback before editing.
 3. Verify every claim against current code, behavior, and constraints. Reviewers can be wrong or stale.
 4. Check whether the suggested change is warranted: inspect real usage and reject speculative “proper” implementations.
 5. For accepted items, implement the smallest correction. For rejected items, state concrete evidence without defensiveness or performative agreement.
 6. Re-run fresh targeted evidence, then [Task Closure](task-closure.md) if behavior changed.
 
-Push back when feedback breaks a real case, misses a binding constraint, has no actual usage, or conflicts with an explicit user decision. Surface conflicts rather than silently overriding either side.
+Push back when feedback breaks a real case, misses a binding constraint, has no actual usage, or conflicts with an explicit user decision. If accepting feedback would change the confirmed product/business mainline, invoke [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate): pause the affected path and ask the user immediately. Review owns this trigger and its acceptance check, not the gate's full evidence/decision procedure.
 
 ## Completion Check
 
 - Whole review was read first.
 - Every accepted/rejected item has code or runtime evidence.
+- Relevant user-confirmed Plan decisions were replayed when a source Plan exists; review-driven mainline drift has an explicit user resolution.
 - No praise/apology substituted for verification.
 - Accepted changes were re-verified; rejected changes have concise evidence.

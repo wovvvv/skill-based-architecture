@@ -7,7 +7,7 @@ Use this optional pattern for product/business projects where an Agent repeatedl
 - [What belongs here](#what-belongs-here)
 - [Lifecycle and storage shape](#lifecycle-and-storage-shape)
 - [Trigger paths](#trigger-paths)
-- [Current baseline, not future fiction](#current-baseline-not-future-fiction)
+- [Desired truth and implementation fact](#desired-truth-and-implementation-fact)
 - [Plan and bug-fix consumption](#plan-and-bug-fix-consumption)
 - [Semantic read-back](#semantic-read-back)
 - [Routing recipe](#routing-recipe)
@@ -87,31 +87,35 @@ Classify the current module knowledge before acting:
 
 | State | Action |
 |---|---|
-| No model, and the gap affects the decision | Explain the missing macro meaning; ask whether to model now or continue without persistence |
+| No model, the gap affects the decision, and no confirmed Plan owns stable business meaning | Explain the missing macro meaning; ask whether to model now or continue without persistence |
+| Confirmed Plan reaches implementation handoff with stable business meaning but no model | Create the minimum routed owner and record desired truth plus Plan provenance; this handoff has already passed admission |
 | Model exists but one area is unclear | Inspect code/tests; ask only the minimal business question; update the existing file in place |
-| Model conflicts with code/tests/runtime | Surface the conflict; ask which side is the correct business intent; then classify bug/design/doc drift |
+| Model conflicts with code/tests/runtime and has clear user-confirmed provenance | Treat the model as desired truth; classify an implementation bug or invoke the User Decision Drift Gate. Do not ask code and the confirmed model to compete for authority |
+| Model conflicts but provenance is absent/ambiguous, or the user is considering supersession | Ask only which normative intent should govern; then classify bug/design/doc drift |
 | Model is sufficient | Use it without asking again |
 
-Full modeling follows: evidence scan → remove implementation/one-off details → user brainstorm → semantic read-back → write the minimum sufficient model → activate it in routing.
+Full modeling follows: evidence scan → remove implementation/one-off details → user brainstorm → preserve the user-confirmed decision in the Plan → semantic read-back → write the minimum sufficient model → activate it in routing.
 
-## Current baseline, not future fiction
+## Desired truth and implementation fact
 
-The active model describes the confirmed, effective business baseline. An approved but unimplemented semantic change stays in the plan until code, tests, and behavior land. Update the active model in the same completing task as the implementation.
+This section is the canonical information-model definition for desired truth versus implementation fact. The routed business model owns stable, user-confirmed `desired business truth`: the normative types, flow, states, boundaries, invariants, and reasons future work must follow. When a Plan's design is confirmed for implementation, distill that stable meaning into the model immediately and retain Requirement Provenance to the Plan. Do not wait for code completion and do not copy the full chat transcript.
 
-When code and intended business meaning differ, keep the temporary gap and repair design in the current plan or gotcha. Do not make the live model claim behavior that has not landed.
+Code, tests, and runtime separately prove `current implementation fact`. The model must not imply that desired truth is already implemented: state a known alignment gap or link to the implementation evidence when the distinction matters. Current code may expose constraints, cost, and risk, but it cannot silently redefine the confirmed business mainline.
+
+When later Plan work changes the desired truth, replay the existing user-confirmed decision before editing, record the new answer as a Decision Delta, mark the old decision `superseded`, and reconcile the business model before affected implementation continues.
 
 ## Plan and bug-fix consumption
 
 For a routed business module, use this order:
 
 ```text
-business global model  -> what should be true
+business global model  -> user-confirmed desired business truth
 architecture/rules     -> how the design intends to realize it
-code/tests/runtime     -> what is true now
+code/tests/runtime     -> current implementation fact
 comparison             -> plan, bug fix, design change, or clarification
 ```
 
-Code proves current behavior, not correctness by itself.
+Code proves current behavior, not correctness by itself. A conflict with the user-confirmed mainline triggers [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate): stop the affected path immediately and consult the user. That workflow owns the complete evidence, decision, and resume procedure; do not reproduce it here or defer first disclosure to review/Closure.
 
 Before a business-sensitive bug fix, classify:
 
@@ -123,12 +127,13 @@ Obvious technical failures such as compilation errors, crashes, or unconditional
 
 ## Semantic read-back
 
-Do not silently compress a brainstorm into a lossy sentence. Before writing or changing macro semantics:
+Do not silently compress a brainstorm into a lossy sentence. The Plan folder remains the authority for the decision-bearing discussion; the business model contains its stable conclusion. Before writing or changing macro semantics:
 
-1. List the load-bearing definition, condition, boundary/counterexample, and reason actually needed for future decisions.
-2. Draft the durable text without forcing four fixed headings.
-3. Ask whether a fresh Agent could reconstruct the same key decision from the draft alone.
-4. Show the user the final meaning for confirmation when creating a model or changing macro semantics.
+1. Preserve the Agent question or user correction, direct answer/selection/rejection, `Authority: user-confirmed`, scope, and `Evidence / Source: current conversation` in the Plan Decision Context. Keep short answers verbatim with their question/options; summarize long answers faithfully.
+2. List the load-bearing definition, condition, boundary/counterexample, and reason actually needed for future decisions.
+3. Draft the durable business text without forcing fixed headings or copying the transcript.
+4. Ask whether a fresh Agent could reconstruct the same key decision from the draft alone.
+5. Show the user the final meaning for confirmation only when the prior answer remains materially ambiguous; do not reconfirm a clear answer.
 
 "Type 4 is a version merge" is insufficient if the confirmed meaning also depends on source/target identities, distinction from another type, or a forbidden target.
 
@@ -191,6 +196,6 @@ Without `--workspace-root`, the validator may prove syntax, declared ownership, 
 
 ## Provenance and retirement
 
-Requirement provenance is conditional, not a permanent double-maintenance protocol. When a requirement creates or changes durable business meaning, let the requirement name the active destination and let the active leaf retain the source requirement needed to reconstruct that decision. A migration dossier, when needed for many legacy sources, is a temporary reconciliation artifact and freezes after migration; ordinary future requirements do not keep updating it.
+Requirement provenance is conditional, not a permanent double-maintenance protocol. When a confirmed Plan creates or changes durable business meaning, let the Plan name the active destination and let the active leaf retain the source Plan needed to reconstruct that decision. At implementation handoff the Plan is still active: later Decision Deltas reconcile both sides before affected code continues; after final `done`, the Plan freezes and the leaf remains the routed source. A migration dossier, when needed for many legacy sources, is a temporary reconciliation artifact and freezes after migration; ordinary future requirements do not keep updating it.
 
 Before deleting or superseding durable knowledge, prove destination, owner, normal activation path, fitted validation, and any intentionally unretained content. Keep that proof in the existing Plan or migration record; do not create a fixed ledger or extra file when the same contract already fits there.
