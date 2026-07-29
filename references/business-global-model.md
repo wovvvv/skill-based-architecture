@@ -8,6 +8,7 @@ Use this optional pattern for product/business projects where an Agent repeatedl
 - [Lifecycle and storage shape](#lifecycle-and-storage-shape)
 - [Trigger paths](#trigger-paths)
 - [Desired truth and implementation fact](#desired-truth-and-implementation-fact)
+- [Confirmed implementation gap intake](#confirmed-implementation-gap-intake)
 - [Plan and bug-fix consumption](#plan-and-bug-fix-consumption)
 - [Semantic read-back](#semantic-read-back)
 - [Routing recipe](#routing-recipe)
@@ -101,19 +102,35 @@ Classify the current module knowledge before acting:
 | No model, the gap affects the decision, and no confirmed Plan owns stable business meaning | Explain the missing macro meaning; ask whether to model now or continue without persistence |
 | Confirmed Plan reaches implementation handoff with stable business meaning but no model | Create the minimum routed owner and record desired truth plus Plan provenance; this handoff has already passed admission |
 | Model exists but one area is unclear | Inspect code/tests; ask only the minimal business question; update the existing file in place |
+| Newly confirmed desired truth is demonstrably unmet by current implementation | Write the truth and explicit gap into the model immediately; create or reuse one draft gap dossier, continue the agreed modeling scope, then hand the complete gap set to planning |
 | Model conflicts with code/tests/runtime and has clear user-confirmed provenance | Treat the model as desired truth; classify an implementation bug or invoke the User Decision Drift Gate. Do not ask code and the confirmed model to compete for authority |
 | Model conflicts but provenance is absent/ambiguous, or the user is considering supersession | Ask only which normative intent should govern; then classify bug/design/doc drift |
 | Model is sufficient | Use it without asking again |
 
-Full modeling follows: evidence scan → remove implementation/one-off details → user brainstorm → preserve the user-confirmed decision in the Plan → semantic read-back → write the minimum sufficient model → activate it in routing.
+Full modeling follows: evidence scan → remove implementation/one-off details → close decision-relevant implementation facts → user brainstorm → preserve stable confirmed meaning in the model → semantic read-back → activate it in routing. Standalone modeling does not create a Plan merely because the interview is long or complex; reuse an existing feature/design Plan only when modeling is already part of it, or use the narrow confirmed-gap intake below.
 
 ## Desired truth and implementation fact
 
-This section is the canonical information-model definition for desired truth versus implementation fact. The routed business model owns stable, user-confirmed `desired business truth`: the normative types, flow, states, boundaries, invariants, and reasons future work must follow. When a Plan's design is confirmed for implementation, distill that stable meaning into the model immediately and retain Requirement Provenance to the Plan. Do not wait for code completion and do not copy the full chat transcript.
+This section is the canonical information-model definition for desired truth versus implementation fact. The routed business model owns stable, user-confirmed `desired business truth`: the normative types, flow, states, boundaries, invariants, and reasons future work must follow. Standalone modeling writes that meaning directly into the model with compact Modeling Provenance when useful; a confirmed feature/design Plan writes it at implementation handoff with Requirement Provenance. Do not wait for code completion and do not copy the full chat transcript.
 
 Code, tests, and runtime separately prove `current implementation fact`. The model must not imply that desired truth is already implemented: state a known alignment gap or link to the implementation evidence when the distinction matters. Current code may expose constraints, cost, and risk, but it cannot silently redefine the confirmed business mainline.
 
 When later Plan work changes the desired truth, replay the existing user-confirmed decision before editing, record the new answer as a Decision Delta, mark the old decision `superseded`, and reconcile the business model before affected implementation continues.
+
+## Confirmed implementation gap intake
+
+Standalone modeling defaults to the routed business model, not a PRD. A difference becomes a `confirmed implementation gap` and opens the narrow dossier exception only when all four conditions hold:
+
+1. the `desired business truth` is stable, cross-implementation, and explicitly user-confirmed;
+2. code, tests, or runtime evidence proves the current implementation does not satisfy it;
+3. the difference, applicability, and impact are explicit enough to classify as an implementation gap rather than an inference, candidate, or evidence-needed item;
+4. the gap needs implementation design, acceptance, or delivery tracking rather than a documentation-only correction.
+
+On admission, write both the confirmed truth and the explicit gap into the business model immediately. If a feature/design Plan already exists, reuse it. Otherwise create one draft `docs/plans/YYYY-MM-DD-<domain>-implementation-gaps/prd.md` on the first admitted gap and collect later gaps from the same agreed modeling scope into that dossier. Never create one PRD per gap or a second dossier for the same scope.
+
+The intake dossier stores only implementation-handoff material: user-confirmed Decision Context, `Authority: user-confirmed`, `Evidence / Source: current conversation`, current implementation evidence, the explicit gap and impact, the unique owner model, and Knowledge Impact. It is not an interview transcript; Agent reading history, unconfirmed candidates, and differences without implementation evidence do not enter it.
+
+The first gap does not interrupt the modeling task. Finish the user's agreed leaf scope, then show the deduplicated gap set, shared dependencies/root causes, and impact boundaries before handing the existing draft to Plan Feature. Planning completes solution and acceptance details and discusses one substantial topic at a time. If the user pauses, keep the dossier draft and leave the confirmed truth plus gap active in the business model.
 
 ## Plan and bug-fix consumption
 
@@ -138,9 +155,9 @@ Obvious technical failures such as compilation errors, crashes, or unconditional
 
 ## Semantic read-back
 
-Do not silently compress a brainstorm into a lossy sentence. The Plan folder remains the authority for the decision-bearing discussion; the business model contains its stable conclusion. Before writing or changing macro semantics:
+Do not silently compress a brainstorm into a lossy sentence. The business model is the default authority for stable standalone-modeling conclusions. An existing feature/design Plan or confirmed-gap dossier additionally owns its decision-bearing discussion. Before writing or changing macro semantics:
 
-1. Preserve the Agent question or user correction, direct answer/selection/rejection, `Authority: user-confirmed`, scope, and `Evidence / Source: current conversation` in the Plan Decision Context. Keep short answers verbatim with their question/options; summarize long answers faithfully.
+1. Preserve the Agent question or user correction, direct answer/selection/rejection, authority, scope, and source. For standalone modeling, keep only compact Modeling Provenance in the leaf when durable traceability is useful. For an existing Plan or admitted gap dossier, preserve Decision Context with `Authority: user-confirmed` and `Evidence / Source: current conversation`. Keep short answers verbatim with context; summarize long answers faithfully.
 2. List the load-bearing definition, condition, boundary/counterexample, and reason actually needed for future decisions.
 3. Draft the durable business text without forcing fixed headings or copying the transcript.
 4. Ask whether a fresh Agent could reconstruct the same key decision from the draft alone.
@@ -207,6 +224,6 @@ Without `--workspace-root`, the validator may prove syntax, declared ownership, 
 
 ## Provenance and retirement
 
-Requirement provenance is conditional, not a permanent double-maintenance protocol. When a confirmed Plan creates or changes durable business meaning, let the Plan name the active destination and let the active leaf retain the source Plan needed to reconstruct that decision. At implementation handoff the Plan is still active: later Decision Deltas reconcile both sides before affected code continues; after final `done`, the Plan freezes and the leaf remains the routed source. A migration dossier, when needed for many legacy sources, is a temporary reconciliation artifact and freezes after migration; ordinary future requirements do not keep updating it.
+Requirement provenance is conditional, not a permanent double-maintenance protocol. Standalone modeling normally uses the active leaf alone, with compact Modeling Provenance only when useful. When a confirmed Plan creates or changes durable business meaning, or a confirmed implementation gap opens the narrow intake exception, let the dossier name the active destination and let the active leaf retain the source needed to reconstruct that decision. At implementation handoff the Plan is still active: later Decision Deltas reconcile both sides before affected code continues; after final `done`, the Plan freezes and the leaf remains the routed source. A migration dossier, when needed for many legacy sources, is a temporary reconciliation artifact and freezes after migration; ordinary future requirements do not keep updating it.
 
 Before deleting or superseding durable knowledge, prove destination, owner, normal activation path, fitted validation, and any intentionally unretained content. Keep that proof in the existing Plan or migration record; do not create a fixed ledger or extra file when the same contract already fits there.

@@ -2,9 +2,11 @@
 
 > **Inline by default.** Planning evidence and decisions belong in the main context. Read [`subagent-auxiliary.md`](subagent-auxiliary.md) only for an independent, result-only research workstream with real overlap and positive Net Benefit; planned multi-workstream execution uses [`subagent-driven.md`](subagent-driven.md).
 
-Use this for planning requests. It resolves what should be done; it is not the runtime Native Plan. Simple plans stay inline unless the user asks for a file.
+Use this for feature/design planning and for an admitted implementation-gap dossier after standalone business modeling finishes its agreed scope. It resolves what should be done; it is not the runtime Native Plan. If the request only discusses, profiles, supplements, or migrates a business leaf, route to `profile-business-model.md` when installed; modeling duration, file count, and interview depth do not create a PRD. Simple plans stay inline unless the user asks for a file.
 
 ## Complexity Gate
+
+First confirm the deliverable is a feature/design Plan or an admitted Modeling Gap Intake. Standalone business modeling does not enter this workflow merely because it is complex.
 
 | Size | Signal | Action |
 |---|---|---|
@@ -15,13 +17,15 @@ Use this for planning requests. It resolves what should be done; it is not the r
 
 ## Question Gate
 
-- This section owns the evidence-before-questioning contract. **Gate A: Derivable?** Inspect evidence first; before any product/business question, trace the smallest concrete business flow relevant to the decision (`actor/trigger -> business object/state change -> downstream carrier/exit`) and form an evidence-backed working conclusion. **Gate B: Meta/lazy?** never ask the user to do Agent-available discovery; **Gate C: Blocking/preference?** ask only blocking or preference questions.
+- This section owns the evidence-before-questioning contract. **Gate A: Implementation facts closed?** execute [`agent-behavior.md` § Implementation-Fact Question Gate](../rules/agent-behavior.md#implementation-fact-question-gate), then trace the smallest concrete business flow relevant to the decision (`actor/trigger -> caller and actual write target/branch/state -> ordering, guards, and failure -> UI/API carrier/exit`). Close every decision-bearing hop, trace distinct flows independently, and form an evidence-backed working conclusion. **Gate B: Meta/lazy?** never ask the user to do Agent-available discovery. **Gate C: Normative and blocking?** ask only a remaining normative decision that could change the future rule, invariant, failure semantics, or acceptance.
 
-Ask one question at a time and offer concrete trade-offs for preferences. Present the working conclusion and ask the user to correct, complete, or choose against it. Treat questions as a decision-relevant uncertainty budget, not an exhaustive questionnaire: cross-check implementation evidence against existing user-confirmed answers. If they agree and no unresolved ambiguity could change the current decision, accept the point and stop asking; never ask the user to restate an implementation fact the evidence already proves. If they conflict, show the conflict and ask only which normative meaning governs. Do not open with abstract prompts such as "what is X essentially, why does it exist, and when does it end?" when a concrete flow can be inspected. The working conclusion remains `proposed` / `current implementation fact`; only existing or new user-confirmed input can establish normative business meaning.
+Do not ask before implementation fact closure, and do not combine two incomplete flows into a binary choice. Which API a page calls, whether it directly writes the target, which endpoint creates a merge/review request, which existing branch or task flow feeds a target, branch protection, current call order, and current state progression are `current implementation fact`; state them with evidence. Ask the user only whether the future path may bypass the current flow, whether failure must block, which business object is a prerequisite, or whether an existing process/invariant should change.
+
+Ask one question at a time and offer concrete trade-offs for preferences. Present the working conclusion and ask the user to correct, complete, or choose against it. Treat questions as a decision-relevant uncertainty budget, not an exhaustive questionnaire: cross-check implementation evidence against existing user-confirmed answers. If they agree and no unresolved normative ambiguity could change the current decision, accept the point and stop asking; never ask the user to restate an implementation fact the evidence already proves. If they conflict, show the conflict and ask only which normative meaning governs. Do not open with abstract prompts such as "what is X essentially, why does it exist, and when does it end?" when a concrete flow can be inspected. If the user says the answer is in code, stop the question, finish the trace, state the implementation conclusion, and ask only any remaining normative ambiguity. The working conclusion remains `proposed` / `current implementation fact`; only existing or new user-confirmed input can establish normative business meaning.
 
 ## User-Confirmed Decision Mainline
 
-This section is the canonical owner of Decision Delta capture and Plan Mainline Handoff. When the Agent asks a product/business question, or the user directly selects, rejects, or corrects a direction, that clear answer is the highest-authority input for the corresponding normative decision. If it identifies one load-bearing meaning, mark the Delta `Status: confirmed` without reconfirming; clarify only materially different interpretations. For Complex/Large work, keep the question/correction, answer, `Authority: user-confirmed`, load-bearing meaning, scope, and `Evidence / Source: current conversation` in `prd.md`; preserve short answers verbatim with context and summarize long answers faithfully. Simple work may stay in conversation unless a durable Plan exists.
+This section is the canonical owner of Decision Delta capture and Plan Mainline Handoff for feature/design Plans. When the Agent asks a product/business question, or the user directly selects, rejects, or corrects a direction, that clear answer is the highest-authority input for the corresponding normative decision. If it identifies one load-bearing meaning, mark the Delta `Status: confirmed` without reconfirming; clarify only materially different interpretations. For Complex/Large work, keep the question/correction, answer, `Authority: user-confirmed`, load-bearing meaning, scope, and `Evidence / Source: current conversation` in `prd.md`; preserve short answers verbatim with context and summarize long answers faithfully. Simple work may stay in conversation unless a durable Plan exists. Standalone business modeling writes clear stable meaning directly into the routed leaf; it does not create a feature Plan merely to store the interview.
 
 The confirmed answer remains normative. For business-bearing work, the routed business model owns `desired business truth` while code, tests, and runtime prove `current implementation fact`; those sources may expose a gap but cannot silently overwrite the Plan mainline. Replacing it requires a new explicit user decision and a `superseded` Delta.
 
@@ -37,9 +41,41 @@ Record `business-model impact: unchanged / proposed change / unknown`. A propose
 
 If new evidence overturns a load-bearing conclusion, do not silently replace it: re-check the user-confirmed mainline, chosen approach, acceptance criteria, boundaries, and Task Anchor before continuing. The Agent may verify facts, constraints, cost, and risk, but a normative business judgment requires confirmation from the business owner.
 
+## Modeling Gap Intake Handoff
+
+Accept confirmed implementation gaps only after `profile-business-model.md` finishes the user's agreed modeling scope. Do not let planning preempt active leaf modeling and do not create another dossier.
+
+1. Reuse the existing draft gap dossier or feature/design Plan; never create one PRD per gap.
+2. Require each item to contain user-confirmed desired truth, current implementation evidence, an explicit gap and impact, the unique owner leaf, and Knowledge Impact. Return incomplete items to `proposed` / evidence-needed rather than turning them into implementation promises.
+3. Show the full deduplicated gap set first: topics, shared dependencies/root causes, boundaries, risks, and recommended order. Gaps sharing one owner or repair boundary become one Plan topic instead of mechanical separate tasks.
+4. Complete Chosen Approach, Requirements & Acceptance Criteria, Out of Scope, Task Breakdown, and Open Questions while preserving confirmed Decisions without reconfirming the business rule.
+5. Use the Plan-Complete Brainstorm Handoff below to discuss one substantial topic at a time. Facts already established by implementation evidence are adopted directly.
+6. If the user pauses, keep the dossier `draft` and stop. Run Plan Mainline Handoff only after load-bearing topics converge and the user requests implementation.
+
 ## Brainstorm — Diverge Before Converging
 
-For Complex/Large work, inspect adjacent evidence, then generate at least two genuinely different solution shapes with honest trade-offs. Every candidate remains `proposed` until the user directly answers, selects, rejects, or corrects it; the clear response enters the user-confirmed mainline. For Large or highly ambiguous work, present the chosen design and obtain buy-in before writing Task Breakdown. Trivial/Simple work skips this.
+Before a Plan is complete, Complex/Large work inspects adjacent evidence and generates at least two genuinely different solution shapes with honest trade-offs. Every candidate remains `proposed` until the user directly answers, selects, rejects, or corrects it; the clear response enters the user-confirmed mainline. For Large or highly ambiguous work, present the chosen design and obtain buy-in before writing Task Breakdown. Trivial work skips divergence; Simple work does not invent a second option but still applies the handoff below when a real question remains.
+
+### Plan-Complete Brainstorm Handoff
+
+A written and internally checked Plan does not end the planning conversation. Unless the user explicitly asked for the artifact only, paused, or stopped discussion, automatically enter a detailed user-facing brainstorm before offering implementation.
+
+Depth follows real decision pressure, not a fixed question or word count:
+
+- **Simple**: discuss one topic only when a remaining question could change implementation, acceptance, or user experience; adopt points already proved by code plus user answers.
+- **Complex**: discuss at least the most decision-bearing open topic. If Open Questions is empty, pressure-test the highest-blast-radius or easiest-to-miss assumption in Chosen Approach.
+- **Large**: reuse the independent perspectives selected by `plan-large.md` and discuss them one at a time in risk/uncertainty order; never compress them into one confirmation checklist.
+
+Before the first topic, replay enough mainline context that the user need not reopen the PRD or code: Problem, Chosen Approach, key business/data/state flow, preserved behavior and boundaries, and why the evidence supports this direction. Then cover exactly one topic with:
+
+1. **Current conclusion** — what the Plan intends to do, not just a field or option label;
+2. **Evidence and constraints** — what code, config, tests, contracts, or prior confirmed decisions establish;
+3. **Remaining question** — what is still `proposed` and why evidence cannot decide it for the user;
+4. **Impact and trade-offs** — concrete effects on flow, compatibility/migration, implementation, testing, or recovery;
+5. **Agent recommendation** — preferred direction, reason, cost, and boundary where it does not apply;
+6. **User decision point** — ask the user to correct, complete, reject, or choose against that conclusion.
+
+The topic must be detailed enough to decide. Do not collapse it into a three-line summary, a naming/default/editability checklist, or an instruction to read the PRD first. After each answer, write the Decision Delta and update affected Chosen Approach, acceptance, and Open Questions before moving to the next independent topic. Stop only when no substantial ambiguity can change the design/acceptance, the user defers it, or the user ends discussion. Never invent options or repeat confirmed facts for ceremony.
 
 ## Complex Plan
 
@@ -73,10 +109,11 @@ Task heading maps to Task Ref; Role is chosen at dispatch; Files+Produces map to
 4. Run the Question Gate; keep unknowns explicit instead of converting them into assumptions. Record clear answers, selections, rejections, and corrections through User-Confirmed Decision Mainline.
 5. State scope, `business-model impact`, acceptance criteria, and out-of-scope items.
 6. Record at least two real options when a choice exists, then the chosen trade-off. Load [`plan-large.md`](plan-large.md) only if the Complexity Gate classified the task Large.
-7. Give implementers/reviewers the exact Plan path, relevant user-confirmed decisions, reading list, and task interfaces. Invoke Mode 2 only for the independent subset with real overlap and positive Net Benefit; keep serial/core work with the main agent.
-8. Before implementation handoff, distill load-bearing conclusions through `update-rules.md`: constraints → rules; rejected alternatives → gotchas/Pitfalls; business-bearing stable confirmed meaning → routed model as desired truth; pure provenance stays in Plan. Apply the required gates; initialize `distilled_to:` with actual targets.
-9. Read back the user-confirmed mainline, requirements, acceptance, chosen approach, out-of-scope, unresolved decisions, and the Plan path. On later Plan edits, repeat this replay before changing a confirmed decision.
-10. If implementation starts now, instantiate the approved result through `task-execution.md`; otherwise stop at the approved design. At final `done`, reconcile any later Decision Deltas and implementation evidence before freezing.
+7. After internal Plan checks, run Plan-Complete Brainstorm Handoff: replay the mainline, discuss one real topic in decision-ready detail, and write each answer back before proceeding.
+8. Give implementers/reviewers the exact Plan path, relevant user-confirmed decisions, reading list, and task interfaces. Invoke Mode 2 only for the independent subset with real overlap and positive Net Benefit; keep serial/core work with the main agent.
+9. Before implementation handoff, distill load-bearing conclusions through `update-rules.md`: constraints → rules; rejected alternatives → gotchas/Pitfalls; business-bearing stable confirmed meaning → routed model as desired truth; pure provenance stays in Plan. Apply the required gates; initialize `distilled_to:` with actual targets.
+10. Read back the user-confirmed mainline, requirements, acceptance, chosen approach, out-of-scope, unresolved decisions, and the Plan path. On later Plan edits, repeat this replay before changing a confirmed decision.
+11. Only after the Brainstorm Handoff converges and the user requests implementation, instantiate the approved result through `task-execution.md`; otherwise keep the Plan active and continue discussion. At final `done`, reconcile any later Decision Deltas and implementation evidence before freezing.
 
 ## Decision Completeness
 
@@ -85,6 +122,9 @@ Before declaring ready, check decisions rather than section count: external depe
 ## Completion Checklist
 
 - [ ] Complexity, Question, Brainstorm, and Business-Semantics gates were applied where relevant
+- [ ] Implementation facts were closed before questioning; distinct flows were traced separately and no interface, write target, branch protection, call order, or state progression was presented as a user choice
+- [ ] Plan completion automatically entered a detailed Brainstorm Handoff unless the user requested artifact-only/pause/stop; no three-line summary or batch confirmation ended the conversation early
+- [ ] Each brainstorm topic explained current conclusion, evidence, remaining question, impact/trade-offs, recommendation, and one user decision point
 - [ ] Clear user answers/corrections were faithfully recorded in the Decision Context and not redundantly reconfirmed or silently overwritten
 - [ ] Complex plan uses only warranted canonical sections and testable acceptance criteria
 - [ ] Multi-task entries declare Files / Consumes / Produces / Acceptance
@@ -96,5 +136,5 @@ Before declaring ready, check decisions rather than section count: external depe
 - [ ] `.skill-workflow-state` was removed or reflects the active state
 
 [workflow-state:planning]
-Keep `prd.md` short, inspect evidence before asking, and apply the business-semantics gate when macro business meaning affects the plan.
+Keep `prd.md` short, close implementation facts before asking, apply the business-semantics gate when macro business meaning affects the plan, and enter detailed Brainstorm Handoff after internal Plan checks.
 [/workflow-state:planning]

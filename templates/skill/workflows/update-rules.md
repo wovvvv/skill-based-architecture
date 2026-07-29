@@ -1,6 +1,6 @@
 # Rule Update Workflow
 
-Use this workflow when a confirmed Plan reaches implementation handoff, Fix Bug forwards explicit user business content for possible admission before Closure, Task Closure decides other knowledge is worth recording, the user explicitly asks to record it, or an existing rule is inaccurate. Plan handoff admits its user-confirmed load-bearing decisions; active Bug Fix supplies only what the user said; Closure decides other recording. This file decides **what, where, and how**.
+Use this workflow when standalone business modeling delivers a leaf, a confirmed Plan reaches implementation handoff, Fix Bug forwards explicit user business content for possible admission before Closure, Task Closure decides other knowledge is worth recording, the user explicitly asks to record it, or an existing rule is inaccurate. Standalone modeling delivers stable confirmed meaning directly; Plan handoff admits its user-confirmed load-bearing decisions; active Bug Fix supplies only what the user said; Closure decides other recording. This file decides **what, where, and how**.
 
 ## Classification Guide
 
@@ -11,6 +11,7 @@ Use this workflow when a confirmed Plan reaches implementation handoff, Fix Bug 
 - Pitfall, footgun, failed approach → `references/gotchas.md` or a routed domain pitfall file; promote a short warning to SKILL.md only when it must surface earlier
 - Agent behavior miss → `references/behavior-failures.md`
 - Frozen plan provenance → `docs/plans/`; load-bearing conclusions must also enter an active destination above
+- Standalone modeling provenance → compact `Modeling Provenance` in the routed business leaf; do not create a PRD for the interview, except for an admitted confirmed implementation gap
 - Personal preference useful only to this user → the harness memory system, not project skill docs
 
 ## Task Closure Boundary
@@ -24,6 +25,12 @@ Use this workflow when a confirmed Plan reaches implementation handoff, Fix Bug 
 This workflow owns distillation and reconciliation, not the Plan schema or business information model. At design-to-implementation handoff, transfer stable confirmed normative business meaning into the routed model as `desired business truth` with Requirement Provenance; keep separately evidenced `current implementation fact` and any known gap explicit.
 
 A confirmed Plan handoff bypasses only the Recording Threshold for its load-bearing, stable business meaning: Plan classification and user authority already provide admission. It must still pass Fidelity, Reconciliation, Activation, Generalization, and durability checks. If the Plan is purely technical or contains no stable business semantics, do not create a business leaf; other new records still run every gate below.
+
+## Standalone Business-Model Input
+
+Explicit standalone modeling routes to `profile-business-model.md` when the project adopts that workflow. Stable, clear, user-confirmed, cross-implementation business meaning is written directly into the unique routed leaf with conditions, reasons, boundaries/counterexamples, and compact Modeling Provenance when useful. Do not require a feature Plan, apply the ordinary Recording Threshold as a reason to re-justify the modeling task, or create a PRD for interview history.
+
+When the project adopts business modeling, its local `business-global-model.md` section **Confirmed implementation gap intake** owns the narrow exception. When a confirmed truth is demonstrably unmet and passes all four admission conditions, write truth and gap into the leaf immediately, then let `profile-business-model.md` create or reuse one draft gap dossier, continue the agreed modeling scope, and hand the complete gap set to Plan Feature. Unconfirmed candidates, Agent reading history, and differences without implementation evidence never trigger the exception. Projects without that routed model/workflow do not activate this path.
 
 ## Active Bug-Fix Input
 
@@ -62,7 +69,7 @@ Do not persist a lossy conversation summary. Preserve every fact that changes a 
 
 No fixed four-section template is required. The test is semantic: can a fresh Agent, reading only the proposed record, reconstruct the same key judgment without the conversation? If not, restore the missing load-bearing meaning before writing.
 
-Creating a business model or changing its macro types, flow direction, states, boundaries, or invariants requires a user-facing read-back only when the recorded answer is materially ambiguous. A clear user-confirmed answer is not reconfirmed. Distill its stable desired meaning at Plan handoff; do not claim implementation alignment until code, tests, and behavior prove it.
+Creating a business model or changing its macro types, flow direction, states, boundaries, or invariants requires a user-facing read-back only when the recorded answer is materially ambiguous. A clear user-confirmed answer is not reconfirmed. Deliver stable desired meaning directly for standalone modeling or at Plan handoff for feature/design work; do not claim implementation alignment until code, tests, and behavior prove it.
 
 ### Reconciliation Gate (search before record)
 
@@ -126,6 +133,8 @@ Do not force business names out of a business model merely to make it cross-proj
 | New/renamed workflow or reference | update `routing.yaml`; run `scripts/sync-routing.sh` |
 | Route/Always Read/entry routing changed | regenerate SKILL.md and thin-shell blocks from `routing.yaml` |
 | Rule/reference meaning changed | grep workflows for repeated invariants and update stale copies |
+| Standalone modeling confirms stable business meaning | reconcile it directly into the routed leaf; add compact Modeling Provenance when useful and no PRD unless the confirmed-gap exception passes |
+| Standalone modeling confirms an implementation gap | write truth and gap into the leaf; create/reuse one draft gap dossier, continue the agreed modeling scope, then hand the complete gap set to Plan Feature |
 | Plan confirmed for implementation | reconcile load-bearing conclusions into active destinations; set truthful `distilled_to:` and Requirement Provenance before coding |
 | Plan or user-confirmed decision changed | replay the prior mainline, record the Delta/supersession, and reconcile affected rules before implementation resumes |
 | Business implementation aligned/changed | update current implementation evidence and reconcile any declared gap without rewriting desired truth |
@@ -155,7 +164,7 @@ When deleting/renaming a file, update routing and inbound links, run sync, and i
 - [ ] Destination was classified before writing
 - [ ] New knowledge passed threshold/evidence gates; outdated content was corrected directly
 - [ ] Fidelity preserved definitions, conditions, boundaries/counterexamples, and reasons
-- [ ] User-confirmed records preserve question/correction, answer, authority, scope, and Plan provenance; proposed candidates were not promoted
+- [ ] User-confirmed records preserve question/correction, answer, authority, scope, and applicable leaf/Plan provenance; ordinary standalone modeling created no PRD, confirmed gaps use one dossier, and proposed candidates were not promoted
 - [ ] Reconciliation selected no-write / extend / correct / retire / independent-add
 - [ ] Gotchas were merged by root cause and placed by topic, not appended chronologically
 - [ ] Generic content passed cross-project generalization; business models passed cross-implementation stability

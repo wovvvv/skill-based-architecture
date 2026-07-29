@@ -48,6 +48,38 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-29 - Implementation facts before business questions
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `rules/agent-behavior.md` adds the evidence-backed Implementation-Fact Question Gate: close decision-relevant entry/caller/write-target/branch-or-state/order/guard/failure/UI-API hops before asking, trace distinct flows independently, and never ask the user to choose current implementation facts.
+  - Plan, business-modeling, and Fix Bug workflows activate the owner locally and keep only their task-specific next action and acceptance check.
+  - `examples/behavior-failures.md` records the real downstream failure that justified spending Always Read surface: two incomplete branch/merge flows were collapsed into a user-facing binary question even though code contained the answer.
+- Why it matters: a question can mention business concepts yet still transfer repository discovery to the user. Closing only one nearby endpoint is not evidence closure, and relating two incomplete flows produces false choices instead of a normative decision.
+- Downstream refresh guidance: preserve project-specific code paths and route wording, but add one shared fact-closure owner plus local workflow hooks. When users say the answer is in code, stop the question, finish the trace, state the current fact, and ask only whether the future rule should change.
+
+## 2026-07-29 - Standalone modeling and confirmed-gap Plan upgrade
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `references/business-global-model.md` makes the routed leaf the default standalone-modeling deliverable. Interview length, file count, and complexity no longer create a PRD.
+  - A four-condition `confirmed implementation gap` gate is the only narrow exception: user-confirmed stable truth, implementation evidence of noncompliance, explicit difference/impact, and real implementation-handoff value.
+  - `profile-business-model.md.example` writes truth and gap into the leaf immediately, creates/reuses one draft dossier, continues the agreed modeling scope, then hands the complete deduplicated gap set to `plan-feature.md`.
+  - `update-rules.md` owns direct leaf admission and prevents transcripts, Agent reading history, unconfirmed candidates, and evidence-poor differences from becoming PRDs.
+- Why it matters: forcing every business interview through Plan Feature creates duplicate process records, while forbidding active truth until implementation lands loses confirmed business meaning. The narrow upgrade keeps the leaf authoritative and creates an implementation artifact only when delivery work genuinely exists.
+- Downstream refresh guidance: route pure modeling directly to the domain owner leaf. Reuse an existing Plan when present; otherwise allow only one draft gap dossier per agreed modeling scope, keep collecting until that scope is complete, then discuss implementation themes without reconfirming settled business truth.
+
+## 2026-07-29 - Detailed brainstorm after Plan completion
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/plan-feature.md` separates pre-Plan option divergence from the new Plan-Complete Brainstorm Handoff.
+  - After internal checks, Simple/Complex/Large Plans automatically enter user-facing discussion unless the user requested artifact-only delivery, paused, or stopped.
+  - Each topic must replay enough mainline context and explain current conclusion, evidence/constraints, remaining normative question, concrete impacts/trade-offs, Agent recommendation, and one user decision point; each answer updates Decision Delta and affected Plan sections immediately.
+  - Conformance rejects three-line summaries, batch confirmation checklists, and implementation offers before the substantive discussion converges.
+- Why it matters: a syntactically complete PRD can still leave the user without enough context to judge its load-bearing choices. Short summaries make the user reopen code/PRD and hide the exact trade-off that still needs owner authority.
+- Downstream refresh guidance: preserve local Plan paths and terminology, but make Plan completion a discussion handoff rather than a stop signal. Choose discussion depth from real decision pressure, explain one topic in decision-ready detail, and never invent extra options merely to satisfy a quota.
+
 ## 2026-07-28 - Business-domain progressive split gate
 
 - Upstream commit: pending in this working tree
