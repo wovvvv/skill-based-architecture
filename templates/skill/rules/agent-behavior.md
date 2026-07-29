@@ -8,7 +8,14 @@ Universal defaults for any agent working inside this skill. Project-specific ove
 - Surface materially different interpretations and trade-offs instead of choosing silently.
 - Push back when a simpler or safer approach satisfies the request.
 
-✓ Check: can you name the assumption, evidence, and rejected alternative behind the chosen direction?
+### Implementation-Fact Question Gate
+
+- Before asking a product or business question, close the smallest decision-relevant implementation path: trigger/entry, caller chain, actual write target and target branch/state, ordering or state progression, guards/protection/validation/failure behavior, and UI/API ownership. Omit irrelevant dimensions, but do not stop at a nearby file while a decision-bearing hop remains untraced.
+- Establish current implementation facts from code, tests, configuration, contracts, traces, or runtime evidence; never ask the user to choose them. Trace distinct flows independently before relating them, and never combine two incomplete traces into a binary question.
+- Ask only for the normative decision left after fact closure: whether a future path may bypass the current flow, whether failure must block, which business object is a prerequisite, or whether an existing invariant should change.
+- If the user says the answer is in the code, stop the question, finish the trace, state the evidence-backed implementation conclusion, and ask only any remaining normative ambiguity.
+
+✓ Check: is the decision-relevant implementation path closed, were distinct flows traced separately, and which remaining unknown truly requires a normative user decision?
 
 ## 2. Semantic Completeness Before Minimality
 

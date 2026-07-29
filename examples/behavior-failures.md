@@ -221,6 +221,28 @@ Test author uses **relative paths** in subagent prompts ("in this repo, edit `ru
 
 ---
 
+## Scenario 7 — Agent asks the user to choose implementation facts already present in code
+
+**Observed:** a downstream business-modeling session in `chaos`, 2026-07-29. The Agent mixed the version-to-Tag merge flow with developer-code ingress into a protected release branch, then asked the user whether developers could push directly to the release branch or had to enter through another branch. The user stopped the discussion: "这些东西代码里面都有,你为什么还在问我,你都没有代码吧".
+
+### ❌ Agent behavior without implementation-fact closure
+
+The Agent traces one nearby merge path, leaves the page entry, MR-creation endpoint, source branch, target branch protection, and backend guard unresolved, then turns the missing discovery into a user-facing binary choice. The question appears business-oriented but actually asks the user to reconstruct current code behavior.
+
+### ✅ Agent behavior with implementation-fact closure
+
+The Agent traces the two flows independently across frontend entry, API call, backend write/merge owner, target branch, and protection checks. It states the current implementation conclusion directly, cross-checks it with prior user answers, and asks only whether the future business rule should change, permit bypass, or fail closed.
+
+**Mechanism:** [`templates/skill/rules/agent-behavior.md` § Implementation-Fact Question Gate](../templates/skill/rules/agent-behavior.md#implementation-fact-question-gate), activated locally by Plan, business-modeling, and Fix Bug workflows.
+
+### Lessons folded back upstream
+
+1. A concrete-flow question is still lazy when a decision-bearing implementation hop remains untraced.
+2. Two incomplete flows must be completed separately before their relationship is discussed.
+3. Code establishes current implementation fact; the user decides only the remaining normative rule.
+
+---
+
 ## How to add new scenarios here
 
 This file grows only via **real pressure-test failures** — same rule as the Rationalizations Table:

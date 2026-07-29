@@ -157,9 +157,48 @@ required_sections:
       - "not a permanent double-maintenance protocol"
       - "## Desired truth and implementation fact"
       - "canonical information-model definition"
+      - "## Confirmed implementation gap intake"
+      - "Standalone modeling defaults to the routed business model, not a PRD"
+      - "all four conditions hold"
+      - "Never create one PRD per gap"
+      - "The first gap does not interrupt the modeling task"
       - "Do not ask code and the confirmed model to compete for authority"
       - "User Decision Drift Gate"
       - "task-execution.md#user-decision-drift-gate"
+
+  - file: templates/skill/rules/agent-behavior.md
+    must_contain:
+      - "### Implementation-Fact Question Gate"
+      - "close the smallest decision-relevant implementation path"
+      - "Trace distinct flows independently"
+      - "remaining normative ambiguity"
+
+  - file: templates/skill/workflows/plan-feature.md
+    must_contain:
+      - "## Modeling Gap Intake Handoff"
+      - "### Plan-Complete Brainstorm Handoff"
+      - "automatically enter a detailed user-facing brainstorm"
+      - "exactly one topic"
+      - "three-line summary"
+
+  - file: templates/skill/workflows/profile-business-model.md.example
+    must_contain:
+      - "does not create a PRD merely because the scope is long or complex"
+      - "Implementation-Fact Question Gate"
+      - "## Confirmed Implementation Gap Collection and Handoff"
+      - "Continue the user's agreed modeling scope"
+
+  - file: templates/skill/workflows/fix-bug.md
+    must_contain:
+      - "Implementation-Fact Question Gate"
+      - "Never ask the user to choose a current implementation fact"
+      - "If the user says the answer is in code"
+
+  - file: templates/skill/workflows/update-rules.md
+    must_contain:
+      - "## Standalone Business-Model Input"
+      - "Do not require a feature Plan"
+      - "create or reuse one draft gap dossier"
 
   - file: docs/plans/README.md
     must_contain:

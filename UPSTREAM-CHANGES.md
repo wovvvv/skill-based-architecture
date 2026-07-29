@@ -48,6 +48,69 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-29 - Implementation facts before business questions
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `rules/agent-behavior.md` adds the evidence-backed Implementation-Fact Question Gate: close decision-relevant entry/caller/write-target/branch-or-state/order/guard/failure/UI-API hops before asking, trace distinct flows independently, and never ask the user to choose current implementation facts.
+  - Plan, business-modeling, and Fix Bug workflows activate the owner locally and keep only their task-specific next action and acceptance check.
+  - `examples/behavior-failures.md` records the real downstream failure that justified spending Always Read surface: two incomplete branch/merge flows were collapsed into a user-facing binary question even though code contained the answer.
+- Why it matters: a question can mention business concepts yet still transfer repository discovery to the user. Closing only one nearby endpoint is not evidence closure, and relating two incomplete flows produces false choices instead of a normative decision.
+- Downstream refresh guidance: preserve project-specific code paths and route wording, but add one shared fact-closure owner plus local workflow hooks. When users say the answer is in code, stop the question, finish the trace, state the current fact, and ask only whether the future rule should change.
+
+## 2026-07-29 - Standalone modeling and confirmed-gap Plan upgrade
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `references/business-global-model.md` makes the routed leaf the default standalone-modeling deliverable. Interview length, file count, and complexity no longer create a PRD.
+  - A four-condition `confirmed implementation gap` gate is the only narrow exception: user-confirmed stable truth, implementation evidence of noncompliance, explicit difference/impact, and real implementation-handoff value.
+  - `profile-business-model.md.example` writes truth and gap into the leaf immediately, creates/reuses one draft dossier, continues the agreed modeling scope, then hands the complete deduplicated gap set to `plan-feature.md`.
+  - `update-rules.md` owns direct leaf admission and prevents transcripts, Agent reading history, unconfirmed candidates, and evidence-poor differences from becoming PRDs.
+- Why it matters: forcing every business interview through Plan Feature creates duplicate process records, while forbidding active truth until implementation lands loses confirmed business meaning. The narrow upgrade keeps the leaf authoritative and creates an implementation artifact only when delivery work genuinely exists.
+- Downstream refresh guidance: route pure modeling directly to the domain owner leaf. Reuse an existing Plan when present; otherwise allow only one draft gap dossier per agreed modeling scope, keep collecting until that scope is complete, then discuss implementation themes without reconfirming settled business truth.
+
+## 2026-07-29 - Detailed brainstorm after Plan completion
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/plan-feature.md` separates pre-Plan option divergence from the new Plan-Complete Brainstorm Handoff.
+  - After internal checks, Simple/Complex/Large Plans automatically enter user-facing discussion unless the user requested artifact-only delivery, paused, or stopped.
+  - Each topic must replay enough mainline context and explain current conclusion, evidence/constraints, remaining normative question, concrete impacts/trade-offs, Agent recommendation, and one user decision point; each answer updates Decision Delta and affected Plan sections immediately.
+  - Conformance rejects three-line summaries, batch confirmation checklists, and implementation offers before the substantive discussion converges.
+- Why it matters: a syntactically complete PRD can still leave the user without enough context to judge its load-bearing choices. Short summaries make the user reopen code/PRD and hide the exact trade-off that still needs owner authority.
+- Downstream refresh guidance: preserve local Plan paths and terminology, but make Plan completion a discussion handoff rather than a stop signal. Choose discussion depth from real decision pressure, explain one topic in decision-ready detail, and never invent extra options merely to satisfy a quota.
+
+## 2026-07-28 - Business-domain progressive split gate
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `references/business-global-model.md` and `workflows/profile-business-model.md.example` define one business domain, not one code module, as the default file unit. Size and section count start a review but never force a split.
+  - A same-owner domain becomes a directory only when real task signals select independently understandable business submodules and the split reduces irrelevant context. Different business owners or domain boundaries become sibling domain leaves instead.
+  - Split directories use a selecting `index.md`, optional shared `overview.md`, and one leaf per business submodule or decision surface. Aspect slices such as `types.md` / `states.md` / `lifecycle.md` are rejected when callers still need them together.
+  - Conformance and self-hosting scenarios protect the review trigger, non-mechanical decision, business-submodule unit, and index boundary.
+- Why it matters: one-file-per-domain is cheap and predictable while a model is small, but without an explicit pressure gate it can harden into an oversized leaf. Splitting by document headings creates navigation without reducing task context; splitting by independently routed business submodules preserves domain ownership while allowing narrower reads.
+- Downstream refresh guidance: keep existing small domain leaves intact. Add review signals around 120 nonblank lines, more than 10 substantive H2 sections, or repeated independent task selection; then split only when the independent-load test passes. Convert the domain file into a directory with a selecting index and submodule leaves, preserve shared invariants once, and update domain overlays and inbound links.
+
+## 2026-07-28 - Evidence-grounded business questions
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/plan-feature.md` makes the Question Gate own an evidence-before-questioning contract: trace one concrete business flow, inspect the available implementation evidence, form a working conclusion, then cross-check it with existing user-confirmed answers. Aligned or decision-irrelevant points stop without another question; only unresolved ambiguity that could change the decision reaches the user.
+  - `workflows/profile-business-model.md.example` and `workflows/fix-bug.md` keep only local action hooks plus the Question Gate owner link.
+  - Conformance and self-hosting scenarios reject blank abstract-definition prompts when a concrete business flow is inspectable.
+- Why it matters: asking "what is this concept essentially, why does it exist, and when does it end?" before reading enough code transfers Agent discovery work to the user and produces detached, low-value business models. Turning later clarification into an exhaustive questionnaire repeats the same cost. Code does not define normative truth, but implementation evidence and existing user-confirmed answers can eliminate settled or decision-irrelevant questions before the Agent asks anything new.
+- Downstream refresh guidance: strengthen the local Plan Question Gate, then link business-model and Fix Bug clarification paths to it. Preserve the distinction that the Agent's conclusion is proposed/current implementation fact while the user's answer supplies normative business meaning.
+
+## 2026-07-28 - Active business-knowledge capture during Bug Fix
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/fix-bug.md` now treats the user's explicit business statement as the only possible business-recording source during diagnosis. The Agent may judge that content's durability and invoke `update-rules.md` immediately instead of waiting for Task Closure, but must not derive a business rule from the Bug, repair, evidence, or its own summary.
+  - `workflows/update-rules.md` owns the Active Bug-Fix Input admission path, user-meaning fidelity, provenance, and the user-content-only boundary. Reusable engineering lessons still flow through normal Closure/AAR into gotcha, rule, or reference destinations rather than business.
+  - Conformance and self-hosting scenarios protect the immediate owner link, non-deferral behavior, explicit-user-source rule, Bug/Agent-derived exclusion, and engineering-lesson destination without copying the complete recording procedure into Fix Bug.
+- Why it matters: a user can state durable business truth while reporting or clarifying a Bug even when no source Plan exists. That user statement can be lost if evaluation waits until Closure, but the Bug and its repair are evidence about implementation, not authority for inventing user intent.
+- Downstream refresh guidance: add a small active-recording trigger and completion check to the local Fix Bug workflow, link it to the local `update-rules.md` owner, and add an Active Bug-Fix Input entry there. Allow only explicit user business content into that path; preserve its meaning faithfully, keep Bug/repair/evidence/Agent summaries out of business leaves, and send reusable engineering lessons through Closure/AAR. Preserve project-specific owner paths and do not duplicate the complete recording gates inside Fix Bug.
+
 ## 2026-07-27 - User-confirmed Plan mainline and immediate implementation-drift gate
 
 - Upstream commit: pending in this working tree
