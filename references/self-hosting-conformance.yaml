@@ -184,6 +184,7 @@ required_sections:
   - file: templates/skill/workflows/profile-business-model.md.example
     must_contain:
       - "does not create a PRD merely because the scope is long or complex"
+      - "Reconcile leaf / Gotcha ownership"
       - "Implementation-Fact Question Gate"
       - "## Confirmed Implementation Gap Collection and Handoff"
       - "Continue the user's agreed modeling scope"
@@ -196,6 +197,8 @@ required_sections:
 
   - file: templates/skill/workflows/update-rules.md
     must_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "Never copy the complete definition into both destinations"
       - "## Standalone Business-Model Input"
       - "Do not require a feature Plan"
       - "create or reuse one draft gap dossier"
@@ -206,10 +209,14 @@ required_sections:
       - "authority for its user-confirmed brainstorm and implementation mainline"
       - "initialize `distilled_to:` with actual targets"
       - "Purely technical Plans create no business leaf"
+      - "One active destination owns the complete definition"
+    must_not_contain:
+      - "it goes in both places"
 
   - file: templates/skill/workflows/maintain-docs.md
     must_contain:
       - "## Semantic Ownership and Local Actionability"
+      - "business-truth owner inversion"
       - "one complete semantic owner"
       - "smallest task-specific trigger, immediate action, and current-task acceptance responsibility"
       - "A complete repeated rule or workflow is exceptional"

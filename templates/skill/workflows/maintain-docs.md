@@ -18,6 +18,8 @@ Judge a repeated block from the real task path:
 
 Prefer one owner plus local action hooks inside one Skill. A complete repeated rule or workflow is exceptional: task/PR evidence must show that full repetition costs less than navigation, loading, or generation after drift risk is included. Generated copies have one source, are not hand-edited, and require deterministic equality/drift validation. Use judgment rather than a sentence quota, score, marker, or file-count target.
 
+For business leaf / Gotcha pairs, apply [`update-rules.md` § Business Leaf and Gotcha Ownership](update-rules.md#business-leaf-and-gotcha-ownership) before ordinary dedup or split decisions. Flag three forms of owner drift: the same complete business rule appears in both files; stable business truth exists only inside a Gotcha; or volatile classes, fields, endpoints, storage details, and repair recipes have entered the leaf. Reconcile the complete normative meaning into the leaf, keep the implementation failure in the Gotcha, and leave only the smallest cross-link needed for local action.
+
 ## When to Run
 
 - After completing the `update-rules.md` workflow, quickly check modified file line counts
@@ -206,6 +208,7 @@ For a two-root skill, run the last two structural checks once from each root wit
 - [ ] `route-health.sh` shows no new routing-quality smells (no/weak triggers, overlap, language) — advisory
 - [ ] No duplicated content (each rule maintained in exactly one place)
 - [ ] Complete definitions/procedures have one owner; consumers retain only justified local action hooks, and any full-copy exception has task evidence
+- [ ] Business leaf / Gotcha pairs have no complete-rule duplication, business-truth owner inversion, or implementation-detail leakage into the leaf
 - [ ] If a file was deleted, no other file still references it
 
 ## Completion Criteria

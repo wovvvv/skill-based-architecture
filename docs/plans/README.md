@@ -78,7 +78,7 @@ Sort each surviving conclusion (wherever in the plan directory it landed — `pr
 | "We tried Y; here is why Y is wrong" (anti-pattern, footgun, rejected alternative) | `references/gotchas.md` or SKILL.md § Common Pitfalls | Already on task paths; covered by `templates/skill/workflows/maintain-docs.md` Tier-0/1/2 stale-check; the "why rejected" framing is exactly what gotchas.md exists for |
 | Neither — purely "what happened, why we did it then" | Stays in the plan archive only; `distilled_to:` is omitted | Pure provenance with no future binding — archiving alone is correct |
 
-If a conclusion fits multiple buckets (e.g. both a rule and a pitfall), it goes in both places — these are different audiences, not duplicates.
+If one topic serves multiple task paths, classify each surviving meaning separately. One active destination owns the complete definition; another destination may keep only distinct audience-specific content or the smallest action hook plus an owner link. In particular, a business leaf owns the full normative rule while a Gotcha owns only the implementation-specific failure experience. Do not copy the complete conclusion into both places merely because both audiences need activation.
 
 ## Discoverability
 
