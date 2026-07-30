@@ -136,6 +136,8 @@ Use the lightest useful destination:
 - Stable constraint or convention → `rules/`
 - Pitfall, lifecycle gotcha, architecture note, source index → `references/`
 - Stable project-specific user-confirmed macro business types, flows, states, boundaries, invariants, and reasons → routed `references/business/<module>.md` at Plan implementation handoff; preserve `desired business truth`, Requirement Provenance, and any known gap from separately evidenced `current implementation fact`
+
+When one topic touches both destinations, the business leaf owns the complete cross-implementation normative rule. The Gotcha keeps only a minimal owner link plus the distinct implementation-specific symptom, root cause, wrong shortcut, and repair/verification guidance. Ordinary current implementation maps belong in technical references. Do not copy the complete business definition into the Gotcha or leave stable business truth owned only by a Gotcha.
 - Ordered task step or completion check → `workflows/`
 - Task routing changed → `routing.yaml`, then `scripts/sync-routing.sh`
 - Always-read set changed → `routing.yaml`, then `scripts/sync-routing.sh`

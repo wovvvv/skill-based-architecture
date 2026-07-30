@@ -48,6 +48,17 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-30 - Business leaf and Gotcha single-owner boundary
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `update-rules.md` makes the business leaf the complete owner of cross-implementation normative truth and the Gotcha the complete owner of costly, non-obvious implementation failure experience; ordinary implementation maps remain technical references.
+  - `docs/plans/README.md` no longer treats multiple audiences as permission to copy a complete conclusion into multiple active files.
+  - `profile-business-model.md.example` and `maintain-docs.md` detect business truth stranded in Gotchas, implementation detail leaked into leaves, and complete-rule duplication across the two destinations.
+  - Conformance protects the boundary and rejects restoration of the old "it goes in both places" wording.
+- Why it matters: business-sensitive Fix Bug and Plan tasks can load both a domain leaf and routed Gotchas. Repeating the same complete rule in both wastes context, creates two authorities, and lets implementation history silently redefine desired business truth. Keeping one owner plus a minimal action link preserves local actionability without semantic drift.
+- Downstream refresh guidance: preserve project-specific leaf and Gotcha file boundaries, but port the owner test into the local recording and maintenance workflows. Then reconcile real content pairs: lift stable business truth into the routed leaf, keep symptoms/current-code causes/wrong shortcuts/repair guidance in Gotchas, move ordinary code maps to references, and replace repeated normative bodies with minimal owner links.
+
 ## 2026-07-29 - Implementation facts before business questions
 
 - Upstream commit: pending in this working tree

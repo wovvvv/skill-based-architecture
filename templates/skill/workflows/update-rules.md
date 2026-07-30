@@ -14,6 +14,18 @@ Use this workflow when standalone business modeling delivers a leaf, a confirmed
 - Standalone modeling provenance → compact `Modeling Provenance` in the routed business leaf; do not create a PRD for the interview, except for an admitted confirmed implementation gap
 - Personal preference useful only to this user → the harness memory system, not project skill docs
 
+## Business Leaf and Gotcha Ownership
+
+A business leaf is the complete owner of cross-implementation normative truth: business objects, macro flows, states, boundaries, invariants, and failure semantics. A Gotcha is the complete owner of an observed or reproducible, costly, non-obvious implementation failure: symptom, current implementation root cause, tempting wrong shortcut, and repair/verification guidance. A Gotcha is not a general implementation reference or a second business-model owner.
+
+Use these tests before writing:
+
+- If the statement remains true after classes, APIs, storage, and frameworks are replaced, it belongs in the business leaf.
+- If it only maps the current implementation and contains no failure pattern, it belongs in a technical reference.
+- If it explains how the current implementation can repeatedly violate the intended behavior, it belongs in a Gotcha.
+
+One topic may activate both files, but the records must have different shapes. Keep the complete business rule in the leaf. Keep only a minimal business anchor plus an owner link in the Gotcha, then record the implementation-specific symptom, cause, wrong shortcut, and prevention. Never copy the complete definition into both destinations. If stable business truth exists only in a Gotcha, lift it into the routed leaf and shrink the Gotcha to the implementation lesson. If a leaf contains class names, fields, endpoints, storage keys, or repair recipes, move those details to a reference or Gotcha while preserving the leaf's normative meaning and provenance.
+
 ## Task Closure Boundary
 
 [`task-closure.md`](task-closure.md) is the only正文 source for the Trigger Policy, closure steps, Rationalizations, Red Flags, and AAR. Do not copy those sections here. This workflow owns recording threshold, fidelity, reconciliation, destination, activation, durability, and retirement.
@@ -167,6 +179,7 @@ When deleting/renaming a file, update routing and inbound links, run sync, and i
 - [ ] User-confirmed records preserve question/correction, answer, authority, scope, and applicable leaf/Plan provenance; ordinary standalone modeling created no PRD, confirmed gaps use one dossier, and proposed candidates were not promoted
 - [ ] Reconciliation selected no-write / extend / correct / retire / independent-add
 - [ ] Gotchas were merged by root cause and placed by topic, not appended chronologically
+- [ ] Business leaves own complete normative truth; Gotchas contain only distinct implementation failure experience plus a minimal owner link
 - [ ] Generic content passed cross-project generalization; business models passed cross-implementation stability
 - [ ] New/changed content has an action-changing activation path
 - [ ] Routing, generated entries, consumers, and plan `distilled_to:` were synchronized where triggered

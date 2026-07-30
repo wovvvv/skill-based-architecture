@@ -139,6 +139,9 @@ required_sections:
 
   - file: workflows/update-rules.md
     must_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "A Gotcha is not a general implementation reference or a second business-model owner"
+      - "Never copy the complete definition into both destinations"
       - "## Standalone Business-Model Input"
       - "Stable, clear, user-confirmed, cross-implementation business meaning is written directly into the unique routed leaf"
       - "Do not require a feature Plan"
@@ -165,6 +168,8 @@ required_sections:
 
   - file: workflows/profile-business-model.md.example
     must_contain:
+      - "Reconcile leaf / Gotcha ownership"
+      - "Lift stable business truth that exists only in a Gotcha into the leaf"
       - "## User-Confirmed Input"
       - "plan-feature.md#question-gate"
       - "Implementation-Fact Question Gate"
@@ -219,6 +224,8 @@ required_sections:
   - file: workflows/maintain-docs.md
     must_contain:
       - "## Semantic Ownership and Local Actionability"
+      - "Business Leaf and Gotcha Ownership"
+      - "business-truth owner inversion"
       - "smallest task-specific trigger, immediate action, and current-task acceptance responsibility"
       - "A complete repeated rule or workflow is exceptional"
       - "generation is justified when a target must be independently delivered or independently used"

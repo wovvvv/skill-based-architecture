@@ -36,15 +36,16 @@ When profiling a new product project:
 ## Full Modeling Steps
 
 1. **Set the module boundary** — name the module and the decision this model must support.
-2. **Search evidence first** — inspect code, config, tests, contracts, and current docs. Extract only stable types, macro flow, business states, boundaries, relationships, and invariants.
-3. **Remove volatile detail** — drop classes, methods, endpoints, fields, config keys, UI behavior, one bug narrative, and one requirement's temporary decisions.
-4. **Draft evidence states** — separate `current implementation fact`, inferred meaning, user-confirmed `desired business truth`, and unknowns.
-5. **Brainstorm with the user** — first complete each relevant implementation flow separately through the Implementation-Fact Question Gate. State interfaces, write targets, branches/states, protection rules, call order, and progression directly; cross-check them against existing user-confirmed answers and accept aligned points without another question. Ask only unresolved normative ambiguity that could change the current decision, anchored in the Agent's working conclusion. Never turn modeling into an exhaustive questionnaire or a blank abstract-definition exercise.
-6. **Persist by task type** — standalone modeling writes stable desired truth directly into the routed business model with compact Modeling Provenance when useful and no PRD. Existing feature/design work uses its Plan and Requirement Provenance. A confirmed implementation gap writes truth and gap into the leaf immediately and uses the single draft intake below. Never delay the truth until code lands or imply the gap is already implemented.
-7. **Write the minimum sufficient file** — start with `references/business/<module>.md`; use only sections the module needs.
-8. **Run semantic read-back** — preserve the load-bearing definition, condition, boundary/counterexample, and reason. A fresh Agent must be able to reconstruct the same key decision.
-9. **Confirm macro meaning** — show the user the final durable meaning when creating the model or changing types, flow direction, states, or invariants.
-10. **Activate the read path** — add the file to the relevant route/workflow. Never add it to Always Read.
+2. **Search evidence first** — inspect code, config, tests, contracts, current docs, and nearby Gotchas. Extract only stable types, macro flow, business states, boundaries, relationships, and invariants.
+3. **Reconcile leaf / Gotcha ownership** — apply [`update-rules.md` § Business Leaf and Gotcha Ownership](update-rules.md#business-leaf-and-gotcha-ownership). Lift stable business truth that exists only in a Gotcha into the leaf; keep symptom, implementation root cause, wrong shortcut, and repair guidance in the Gotcha with only a minimal owner link.
+4. **Remove volatile detail** — drop classes, methods, endpoints, fields, config keys, UI behavior, one bug narrative, and one requirement's temporary decisions.
+5. **Draft evidence states** — separate `current implementation fact`, inferred meaning, user-confirmed `desired business truth`, and unknowns.
+6. **Brainstorm with the user** — first complete each relevant implementation flow separately through the Implementation-Fact Question Gate. State interfaces, write targets, branches/states, protection rules, call order, and progression directly; cross-check them against existing user-confirmed answers and accept aligned points without another question. Ask only unresolved normative ambiguity that could change the current decision, anchored in the Agent's working conclusion. Never turn modeling into an exhaustive questionnaire or a blank abstract-definition exercise.
+7. **Persist by task type** — standalone modeling writes stable desired truth directly into the routed business model with compact Modeling Provenance when useful and no PRD. Existing feature/design work uses its Plan and Requirement Provenance. A confirmed implementation gap writes truth and gap into the leaf immediately and uses the single draft intake below. Never delay the truth until code lands or imply the gap is already implemented.
+8. **Write the minimum sufficient file** — start with `references/business/<module>.md`; use only sections the module needs.
+9. **Run semantic read-back** — preserve the load-bearing definition, condition, boundary/counterexample, and reason. A fresh Agent must be able to reconstruct the same key decision.
+10. **Confirm macro meaning** — show the user the final durable meaning when creating the model or changing types, flow direction, states, or invariants.
+11. **Activate the read path** — add the file to the relevant route/workflow. Never add it to Always Read.
 
 ## Confirmed Implementation Gap Collection and Handoff
 
@@ -98,6 +99,7 @@ Obvious technical failures do not require business modeling unless the correct b
 - [ ] Evidence and user-confirmed intent were not blurred together
 - [ ] The live model distinguishes desired business truth from current implementation fact and exposes any known gap
 - [ ] Implementation details and one-off requirements were excluded
+- [ ] Nearby Gotchas were reconciled: the leaf owns stable business truth and Gotchas retain only implementation failure experience plus minimal owner links
 - [ ] Clear user answers retain their load-bearing meaning, reason, boundary, authority, and applicable leaf/Plan provenance without redundant reconfirmation
 - [ ] Ordinary standalone modeling created no PRD; confirmed gaps reused or created only one dossier for the agreed scope
 - [ ] Every product/business question followed the Implementation-Fact Question Gate: relevant flows were closed separately and no interface, write target, branch protection, call order, or state progression was presented as a user choice
