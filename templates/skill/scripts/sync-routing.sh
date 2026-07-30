@@ -57,6 +57,7 @@ skill_root = Path(sys.argv[1]).resolve()
 mode = sys.argv[2]
 workspace_root = Path(sys.argv[3]).resolve() if sys.argv[3] else None
 manifest = skill_root / "routing.yaml"
+domain_manifest = skill_root / "domain-routing.yaml"
 summary_start = "<!-- ROUTING_SUMMARY_START -->"
 summary_end = "<!-- ROUTING_SUMMARY_END -->"
 bootstrap_start = "<!-- ROUTING_BOOTSTRAP_START -->"
@@ -116,8 +117,9 @@ def parse_inline_map(value: str) -> dict[str, str]:
     return result
 
 # Two-root support (skeleton-flesh-split.md §7): `skill:` paths resolve inside
-# this skill root; `code:` paths live in the code_root repo and are skipped by
-# existence checks here — the code_root's own tooling validates them.
+# this skill root; `code:` paths resolve from routing.yaml's code_root.root when
+# the caller supplies --workspace-root. Without it, cross-root existence and
+# business-domain materialization remain explicitly unverified.
 def normalize_path(item: str) -> str:
     if item.startswith("skill:"):
         return item[len("skill:"):]
@@ -126,7 +128,7 @@ def normalize_path(item: str) -> str:
 def is_code_path(item: str) -> bool:
     return item.startswith("code:")
 
-def parse_manifest():
+def parse_manifest_file(path: Path):
     always_read = []
     tasks = []
     overlays = []
@@ -134,14 +136,16 @@ def parse_manifest():
     current = None
     section = None
     top_section = None
-    for raw in manifest.read_text().splitlines():
+    for raw in path.read_text().splitlines():
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
         stripped = raw.strip()
-        if stripped == "always_read:":
+        if stripped.startswith("always_read:"):
             top_section = "always_read"
             current = None
             section = None
+            _, value = stripped.split(":", 1)
+            always_read.extend(parse_inline_list(value))
             continue
         if stripped == "tasks:":
             top_section = "tasks"
@@ -166,13 +170,14 @@ def parse_manifest():
             owner_roots[clean(key)] = clean(value)
             continue
         if raw.startswith("  - id:"):
-            current = {"id": clean(raw.split(":", 1)[1]), "labels": {}, "required_reads": [], "trigger_examples": []}
+            current = {"id": clean(raw.split(":", 1)[1]), "labels": {}, "required_reads": [], "trigger_examples": [], "_present": set()}
             (overlays if top_section == "domain_overlays" else tasks).append(current)
             section = None
             continue
         if current is None:
             continue
         if raw.startswith("    labels:"):
+            current["_present"].add("labels")
             section = "labels"
             _, value = stripped.split(":", 1)
             current["labels"].update(parse_inline_map(value))
@@ -180,6 +185,7 @@ def parse_manifest():
                 section = None
             continue
         if raw.startswith("    required_reads:"):
+            current["_present"].add("required_reads")
             section = "required_reads"
             _, value = stripped.split(":", 1)
             current["required_reads"].extend(parse_inline_list(value))
@@ -187,6 +193,7 @@ def parse_manifest():
                 section = None
             continue
         if raw.startswith("    trigger_examples:"):
+            current["_present"].add("trigger_examples")
             section = "trigger_examples"
             _, value = stripped.split(":", 1)
             current["trigger_examples"].extend(parse_inline_list(value))
@@ -203,19 +210,107 @@ def parse_manifest():
         if raw.startswith("    ") and ":" in stripped:
             key, value = stripped.split(":", 1)
             current[key.strip()] = clean(value)
+            current["_present"].add(key.strip())
             section = None
-    if not tasks:
-        raise SystemExit("routing.yaml has no tasks")
     return always_read, tasks, overlays, owner_roots
 
-always_read, tasks, overlays, owner_roots = parse_manifest()
+always_read, tasks, inline_overlays, inline_owner_roots = parse_manifest_file(manifest)
+if domain_manifest.exists():
+    domain_always, domain_tasks, overlays, owner_roots = parse_manifest_file(domain_manifest)
+else:
+    domain_always, domain_tasks, overlays, owner_roots = [], [], [], {}
+
+def parse_code_root_path():
+    in_code_root = False
+    for raw in manifest.read_text().splitlines():
+        if raw.strip() == "code_root:" and raw.startswith("  "):
+            in_code_root = True
+            continue
+        if in_code_root and raw.strip().startswith("root:"):
+            return clean(raw.strip().split(":", 1)[1])
+        if in_code_root and raw.startswith("  ") and not raw.startswith("    "):
+            break
+    return ""
+
+code_root_path = parse_code_root_path()
 
 def safe_relative_path(value: str) -> bool:
     path = Path(value)
     return bool(value.strip()) and not path.is_absolute() and ".." not in path.parts
 
+def business_owner_units(business_dir: Path):
+    if not business_dir.exists():
+        return [], [], []
+    content = sorted(
+        path for path in business_dir.rglob("*.md")
+        if path.name != "README.md"
+    )
+    owners = sorted(
+        path for path in business_dir.glob("*.md")
+        if path.name not in {"README.md", "index.md"}
+    )
+    missing_indexes = []
+    for child in sorted(path for path in business_dir.iterdir() if path.is_dir()):
+        if not any(path.name != "README.md" for path in child.rglob("*.md")):
+            continue
+        index = child / "index.md"
+        if index.exists():
+            owners.append(index)
+        else:
+            missing_indexes.append(child)
+    return content, owners, missing_indexes
+
 def validate_schema(always_read, tasks, overlays, owner_roots):
     errors = []
+    if not tasks:
+        errors.append("routing.yaml has no tasks")
+    if inline_overlays:
+        errors.append("routing.yaml must not contain domain_overlays; move them to domain-routing.yaml")
+    if inline_owner_roots:
+        errors.append("routing.yaml must not contain owner_roots; move them to domain-routing.yaml")
+    if domain_always:
+        errors.append("domain-routing.yaml must not contain always_read")
+    if domain_tasks:
+        errors.append("domain-routing.yaml must not contain tasks")
+    if domain_manifest.exists() and not overlays:
+        errors.append("domain-routing.yaml exists but has no domain_overlays; remove the empty manifest")
+    if code_root_path and not safe_relative_path(code_root_path):
+        errors.append(f"code_root.root must be a safe workspace-relative path: {code_root_path}")
+    local_business_dir = skill_root / "references" / "business"
+    local_business, local_business_owners, local_missing_indexes = business_owner_units(local_business_dir)
+    if local_business and not domain_manifest.exists():
+        errors.append("business domain files exist but domain-routing.yaml is missing")
+    registered_local_business = {
+        normalize_path(item).split("#", 1)[0]
+        for overlay in overlays
+        for item in overlay.get("required_reads", [])
+        if not item.startswith("owner:") and not is_code_path(item)
+    }
+    for path in local_missing_indexes:
+        errors.append(f"business domain directory must route through index.md: {path.relative_to(skill_root).as_posix()}")
+    for path in local_business_owners:
+        relative = path.relative_to(skill_root).as_posix()
+        if relative not in registered_local_business:
+            errors.append(f"business domain owner is not registered in domain-routing.yaml: {relative}")
+    if workspace_root is not None and code_root_path:
+        code_root_base = workspace_root / code_root_path
+        code_business, code_business_owners, code_missing_indexes = business_owner_units(
+            code_root_base / "references" / "business"
+        )
+        if code_business and not domain_manifest.exists():
+            errors.append("code-root business content exists but domain-routing.yaml is missing")
+        registered_code_business = {
+            item[len("code:"):].split("#", 1)[0]
+            for overlay in overlays
+            for item in overlay.get("required_reads", [])
+            if is_code_path(item)
+        }
+        for path in code_missing_indexes:
+            errors.append(f"code-root business domain directory must route through index.md: {path.relative_to(code_root_base).as_posix()}")
+        for path in code_business_owners:
+            relative = path.relative_to(code_root_base).as_posix()
+            if relative not in registered_code_business:
+                errors.append(f"code-root business domain owner is not registered in domain-routing.yaml: {relative}")
     ids = [task.get("id", "") for task in tasks]
     duplicates = sorted({task_id for task_id in ids if ids.count(task_id) > 1})
     for task_id in duplicates:
@@ -228,8 +323,23 @@ def validate_schema(always_read, tasks, overlays, owner_roots):
             errors.append("task missing id")
         if not task.get("labels"):
             errors.append(f"{task_id}: missing labels")
-        if not task.get("workflow"):
+        workflow = task.get("workflow", "")
+        if not workflow:
             errors.append(f"{task_id}: missing workflow")
+        else:
+            workflow_path = workflow.split("#", 1)[0]
+            if is_code_path(workflow_path):
+                workflow_path = workflow_path[len("code:"):]
+            else:
+                workflow_path = normalize_path(workflow_path)
+            if not safe_relative_path(workflow_path) or not workflow_path.endswith(".md"):
+                errors.append(f"{task_id}: workflow must be a safe skill/code-relative Markdown path")
+            elif not workflow_path.startswith("workflows/"):
+                errors.append(f"{task_id}: workflow must select a workflows/*.md procedure")
+        if "required_reads" in task.get("_present", set()):
+            errors.append(f"{task_id}: task routes select only a workflow; move required_reads into the workflow")
+        if "route" in task.get("_present", set()):
+            errors.append(f"{task_id}: task routes must not contain executable route instructions")
     overlay_ids = [overlay.get("id", "") for overlay in overlays]
     for overlay_id in sorted({item for item in overlay_ids if overlay_ids.count(item) > 1}):
         errors.append(f"duplicate domain overlay id: {overlay_id}")
@@ -241,6 +351,8 @@ def validate_schema(always_read, tasks, overlays, owner_roots):
             errors.append(f"{overlay_id}: missing labels")
         if not overlay.get("required_reads"):
             errors.append(f"{overlay_id}: missing required_reads")
+        elif not any("references/business/" in item for item in overlay.get("required_reads", [])):
+            errors.append(f"{overlay_id}: domain overlay must register at least one business owner")
         if not overlay.get("trigger_examples"):
             errors.append(f"{overlay_id}: missing trigger_examples")
         if overlay.get("workflow"):
@@ -278,19 +390,14 @@ def label_for(task):
         return f"{en or zh} (`{task_id}`)"
     return task_id
 
-def format_reads(reads):
-    if not reads:
-        return "none"
-    return ", ".join(f"`{item}`" if "/" in item and "<!--" not in item else item for item in reads)
-
 def format_always_skill(reads):
     if not reads:
-        return "<!-- FILL: add 2-3 always-read files in routing.yaml -->"
+        return "None by default; workflows load knowledge at evidence and phase boundaries."
     return "\n".join(f"{idx}. `{item}`" for idx, item in enumerate(reads, 1))
 
 def format_always_shell(reads):
     if not reads:
-        return "- <!-- FILL: add 2-3 always-read files in skills/{{NAME}}/routing.yaml -->"
+        return "- None by default; workflows load knowledge at evidence and phase boundaries."
     return "\n".join(f"- `skills/{name}/{item}`" for item in reads)
 
 def format_triggers(examples):
@@ -307,51 +414,30 @@ def format_workflow(value):
     return value
 
 task_summary = "\n".join(
-    f"- {label_for(task)} -> reads {format_reads(task.get('required_reads', []))}; "
-    f"workflow {format_workflow(task.get('workflow', ''))}"
-    f"{('; ' + task.get('route', '').strip()) if task.get('route', '').strip() else ''}"
+    f"- {label_for(task)} -> workflow {format_workflow(task.get('workflow', ''))}"
     f"{format_triggers(task.get('trigger_examples', []))}"
     for task in tasks
 )
-if overlays:
-    overlay_intro = (
-        "Domain overlays are active. Independently match zero or more `domain_overlays`; "
-        "they append `required_reads` but never replace the task workflow. Keep current-Session "
-        "provenance as `task_route_id`, `domain_overlay_ids`, and `merged_required_reads`; "
-        "this is not persistent task state.\n"
-    )
-    summary_block = overlay_intro + "\n" + task_summary
-else:
-    summary_block = task_summary
+summary_block = task_summary
 always_skill_block = format_always_skill(always_read)
 always_shell_block = format_always_shell(always_read)
 
-if overlays:
-    bootstrap_block = f"""Task routes and optional domain overlays live in `skills/{name}/routing.yaml`.
-
-For every new task:
-1. Re-match one task route by `labels`, `trigger_examples`, and task intent.
-2. Independently match zero or more `domain_overlays`; overlays only append `required_reads` and never replace the task workflow.
-3. Merge Always Read + task-route + overlay reads. Keep current-Session provenance as `task_route_id`, `domain_overlay_ids`, and `merged_required_reads`; do not persist a task database.
-4. Resolve `owner:<owner-id>:<path>` through declared `owner_roots` from the workspace root. Treat it as a bounded context read, not a new task or workflow switch.
-5. Follow the task route's `workflow`; if no task route matches, use `other`. If no overlay matches, add no domain read."""
-else:
-    bootstrap_block = f"""Task routes live in `skills/{name}/routing.yaml`.
+bootstrap_block = f"""Task routes live in `skills/{name}/routing.yaml`.
 
 For every new task:
 1. Read `skills/{name}/routing.yaml`.
-2. Match by `labels`, `trigger_examples`, and task intent.
-3. Read only that route's `required_reads` plus Always Read files.
-4. Follow that route's `workflow`.
-5. If no route matches, use the `other` route."""
+2. Match exactly one task route by `labels`, `trigger_examples`, and task intent; if none matches, use `other`.
+3. Follow only that route's `workflow`; the task route does not preload knowledge.
+4. Let the workflow inspect the smallest evidence that can decide the next action.
+5. Only when an explicit business-rule request, a source Plan already declares the applicable business-domain owner, or evidence proves an unresolved decision is business-bearing, read optional `skills/{name}/domain-routing.yaml`. Read a governing source Plan directly through its workflow; its existence alone does not activate a domain. Keywords identify candidates only. Append one domain owner's reads by default; never replace the task workflow.
+6. Load mutation, testing, managed-execution, and closure contracts only when their phase begins."""
 
 # Single source for the behavioral triggers duplicated across every thin shell.
 # Edit here once, re-run sync-routing.sh → all shells update together.
 behavior_block = f"""## Auto-Triggers
 
-- **New task in same session** → always re-match the route (Common Tasks / `routing.yaml`); re-read route files only after a route change or compaction. Then execute one clear action/check directly, otherwise follow `skills/{name}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read.
-- Before declaring any non-trivial task complete → run Task Closure Protocol (see `skills/{name}/workflows/task-closure.md`)
-- Skip closure only for: formatting-only, comment-only, dependency-version-only, or behavior-preserving refactors
+- **New task in same session** → always re-match the route (Common Tasks / `routing.yaml`). After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence. Then execute one clear action/check directly, otherwise follow `skills/{name}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read the current workflow.
+- Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter Task Closure Protocol (see `skills/{name}/workflows/task-closure.md`); `Ready for Delivery` is not completion
 - When user asks to "record/save/remember" something → project-level knowledge goes to `skills/{name}/` docs; personal preferences go to agent memory
 
 ## Red Flags — STOP
@@ -362,6 +448,7 @@ def validate_paths():
     errors = []
     owner_ref_pattern = re.compile(r"^owner:([A-Za-z0-9_-]+):(.+)$")
     owner_refs = []
+    code_refs = []
 
     def under(path: Path, root: Path) -> bool:
         try:
@@ -392,11 +479,32 @@ def validate_paths():
         elif not target.exists():
             errors.append(f"{source}: owner target missing: {item} -> {target}")
 
+    def validate_code_ref(item, source):
+        relative_text = item[len("code:"):].split("#", 1)[0]
+        if not safe_relative_path(relative_text):
+            errors.append(f"{source}: code reference must be a safe relative path: {item}")
+            return
+        if not code_root_path:
+            errors.append(f"{source}: code reference requires routing.yaml code_root.root: {item}")
+            return
+        code_refs.append((source, item))
+        if workspace_root is None:
+            return
+        code_root_base = (workspace_root / code_root_path).resolve()
+        target = (code_root_base / relative_text).resolve()
+        if not under(code_root_base, workspace_root) or not under(target, code_root_base):
+            errors.append(f"{source}: code reference escapes declared workspace boundary: {item}")
+        elif not target.exists():
+            errors.append(f"{source}: code target missing: {item} -> {target}")
+
     def validate_read(item, source):
         if item.startswith("owner:"):
             validate_owner_ref(item, source)
             return
-        if "*" in item or "FILL:" in item or is_code_path(item):
+        if is_code_path(item):
+            validate_code_ref(item, source)
+            return
+        if "*" in item or "FILL:" in item:
             return
         if "/" in item:
             target = skill_root / normalize_path(item).split("#", 1)[0]
@@ -425,9 +533,9 @@ def validate_paths():
     for overlay in overlays:
         for item in overlay.get("required_reads", []):
             validate_read(item, f"domain overlay {overlay.get('id')}")
-    return errors, owner_refs
+    return errors, owner_refs, code_refs
 
-path_errors, owner_refs = validate_paths()
+path_errors, owner_refs, code_refs = validate_paths()
 if path_errors:
     for err in path_errors:
         print(f"FAIL: {err}")
@@ -502,10 +610,16 @@ if failed:
     print("\nRun: bash skills/<name>/scripts/sync-routing.sh <name>")
     raise SystemExit(1)
 if mode == "check":
+    verification_open = False
     if owner_refs and workspace_root is None:
         print(f"UNVERIFIED: {len(owner_refs)} owner reference(s) passed syntax/owner checks, but target existence was not checked; rerun with --workspace-root <path>.")
         print("Routing manifest structural check passed; cross-owner target verification remains open.")
-    else:
+        verification_open = True
+    if code_root_path and workspace_root is None:
+        print(f"UNVERIFIED: code_root.root={code_root_path} is declared, but code-root targets and business-domain materialization were not checked; rerun with --workspace-root <path>.")
+        print("Routing manifest structural check passed; code-root target verification remains open.")
+        verification_open = True
+    if not verification_open:
         print("Routing manifest check passed.")
 elif not changed:
     print("Routing summary and bootstraps already up to date.")

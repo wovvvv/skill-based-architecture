@@ -2,12 +2,13 @@
 # route-health.sh — Static routing-QUALITY lint (Tier 1 of the routing dashboard).
 #
 # Complements sync-routing.sh, does NOT duplicate it:
-#   - sync-routing.sh --check already validates STRUCTURE: missing workflow/required
-#     files, duplicate ids, missing `other`, missing labels. Those are hard errors.
+#   - sync-routing.sh --check already validates STRUCTURE: missing workflows/domain
+#     owners, duplicate ids, missing `other`, and legacy eager fields. Those are hard errors.
 #   - route-health.sh flags QUALITY SMELLS sync-routing does not: routes that can't
 #     match well (no/weak triggers, ambiguous overlap, wrong-language triggers).
 #
-# Pure static read of routing.yaml. No usage data, no logging, no file written.
+# Pure static read of routing.yaml plus optional domain-routing.yaml. No usage
+# data, no logging, no file written.
 # Advisory: prints warnings and exits 0 (does not block). It is meant to run inside
 # the closure path-integrity gate (when routing changed) and in profile/maintain/
 # update-upstream sweeps — not every task, never on a timer.
@@ -31,6 +32,7 @@ import sys, re
 
 root = Path(sys.argv[1]).resolve()
 manifest = root / "routing.yaml"
+domain_manifest = root / "domain-routing.yaml"
 if not manifest.exists():
     raise SystemExit(f"no routing.yaml at {root}")
 
@@ -49,32 +51,38 @@ def parse_inline_list(v):
         return []
     return [clean(part.strip()) for part in inner.split(",") if part.strip()]
 
-# --- parse task routes and optional domain overlays independently ---
-tasks, overlays, cur, sec, top = [], [], None, None, None
-for raw in manifest.read_text().splitlines():
-    s = raw.strip()
-    if not s or s.startswith("#"):
-        continue
-    if s == "always_read:": top, cur, sec = "ar", None, None; continue
-    if s == "tasks:": top, cur, sec = "t", None, None; continue
-    if s == "domain_overlays:": top, cur, sec = "o", None, None; continue
-    if raw.startswith("  - id:"):
-        if top not in {"t", "o"}:
+def parse_routes(path, wanted):
+    routes, cur, sec, top = [], None, None, None
+    if not path.exists():
+        return routes
+    for raw in path.read_text().splitlines():
+        s = raw.strip()
+        if not s or s.startswith("#"):
             continue
-        cur = {"id": clean(raw.split(":", 1)[1]), "triggers": []}
-        (tasks if top == "t" else overlays).append(cur); sec = None; continue
-    if cur is None:
-        continue
-    if raw.startswith("    trigger_examples:"):
-        sec = "te"
-        _, value = s.split(":", 1)
-        cur["triggers"].extend(parse_inline_list(value))
-        if value.strip().startswith("["):
-            sec = None
-        continue
-    if raw.startswith("    required_reads:") or raw.startswith("    labels:"): sec = None; continue
-    if sec == "te" and raw.startswith("      - "): cur["triggers"].append(clean(s[2:])); continue
-    if raw.startswith("    ") and ":" in s: sec = None
+        if s.startswith("always_read:"): top, cur, sec = "ar", None, None; continue
+        if s == "tasks:": top, cur, sec = "t", None, None; continue
+        if s == "domain_overlays:": top, cur, sec = "o", None, None; continue
+        if raw.startswith("  - id:"):
+            if top != wanted:
+                continue
+            cur = {"id": clean(raw.split(":", 1)[1]), "triggers": []}
+            routes.append(cur); sec = None; continue
+        if cur is None:
+            continue
+        if raw.startswith("    trigger_examples:"):
+            sec = "te"
+            _, value = s.split(":", 1)
+            cur["triggers"].extend(parse_inline_list(value))
+            if value.strip().startswith("["):
+                sec = None
+            continue
+        if raw.startswith("    required_reads:") or raw.startswith("    labels:"): sec = None; continue
+        if sec == "te" and raw.startswith("      - "): cur["triggers"].append(clean(s[2:])); continue
+        if raw.startswith("    ") and ":" in s: sec = None
+    return routes
+
+tasks = parse_routes(manifest, "t")
+overlays = parse_routes(domain_manifest, "o")
 
 def real_triggers(t):
     return [x for x in t["triggers"] if x and "FILL" not in x and "<!--" not in x]

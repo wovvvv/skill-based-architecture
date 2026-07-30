@@ -9,7 +9,7 @@ Use this when changing reusable templates, scaffolds, shell files, hooks, protoc
 ## Read First
 
 1. Re-open `SKILL.md` → match this change to a Common Tasks route
-2. Read `rules/project-rules.md` and `rules/coding-standards.md`
+2. Read `rules/change-discipline.md`; read project/coding rules only when the planned template change reaches their scope
 3. Read the project template guide if present (for this meta-skill: `templates/README.md`)
 4. Read the anti-template/admission rules if present (for this meta-skill: `templates/ANTI-TEMPLATES.md`)
 5. Read task-relevant `references/*.md` for compatibility or host-specific constraints
@@ -30,7 +30,7 @@ For external-project absorbs, benchmark/eval lessons, default scaffold changes, 
 ## Steps
 
 1. **Classify the artifact** — shell, hook, protocol block, workflow, rule template, reference template, migration helper, or checklist.
-2. **Edit structure before content** — keep reusable structure; leave project-specific decisions as placeholder markers or instructions.
+2. **Edit structure before content** — after the read-first gate, keep reusable structure; leave project-specific decisions as placeholder markers or instructions.
 3. **Update paired files** — if a template has a shell/config/registration pair, update all paired files in the same change.
 4. **Update routing or indexes** — if the new template/workflow must be discoverable, update `SKILL.md`, reference indexes, or canonical routing sources.
 5. **Instantiate a temporary sample** — copy the template into a throwaway project or temp directory, fill required placeholders minimally, and run the relevant smoke checks.

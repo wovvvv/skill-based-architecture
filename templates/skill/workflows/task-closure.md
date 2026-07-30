@@ -1,14 +1,14 @@
 # Task Closure Protocol
 
-This is the completion-time gate for behavior, rule, routing, script, and structure changes. Recording mechanics live in [`update-rules.md`](update-rules.md); file-boundary and path-integrity mechanics live in [`maintain-docs.md`](maintain-docs.md).
+This is the completion-time gate between finished local execution and verified delivery for behavior, rule, routing, script, and structure changes. It owns readiness and completion states; recording mechanics live in [`update-rules.md`](update-rules.md), file-boundary and path-integrity mechanics live in [`maintain-docs.md`](maintain-docs.md), and task-specific delivery mechanics remain with the matched workflow and user authorization.
 
 ## Task Closure Protocol
 
 ### Entry Gate
 
-Closure starts only after execution is complete. For a Simple task, the direct check and goal evidence must exist. For a Managed or Design-derived task, first run the final Anchor Checkpoint; the Task Anchor's Goal and Done When must be satisfied, every admitted Native Plan step must have passed its check, material Boundaries must remain intact, and no stale Plan branch may remain.
+Closure starts only after local execution is complete. For a Simple task, the direct check and all non-delivery goal evidence must exist. For a Managed or Design-derived task, first run the final Anchor Checkpoint; every non-delivery Native Plan step must have passed its check, material Boundaries must remain intact, and no stale Plan branch may remain. Any outstanding Done When evidence must be explicitly delivery-dependent, with the expected artifact and proof named before Closure advances.
 
-If any condition is missing, return to [`task-execution.md`](task-execution.md); do not use Closure to finish execution work. A Plan status or worker claim is not evidence by itself.
+If implementation work or non-delivery evidence is missing, return to [`task-execution.md`](task-execution.md); do not use Closure to finish execution work. A Plan status or worker claim is not evidence by itself.
 
 ### Trigger Policy
 
@@ -33,13 +33,22 @@ If any condition is missing, return to [`task-execution.md`](task-execution.md);
    - runtime/service/browser evidence only for wiring, config, permissions, serialization, data state, or UI behavior;
    - packaged/release/deploy evidence only when that chain changed or the user requires it.
    Stop when the bound evidence proves the contract; escalate only when a check fails, the risk crosses another boundary, or a stated uncertainty remains. Test count is not evidence quality. A fresh command against a stale artifact is not fresh evidence.
-4. **Run the AAR below.** Any yes enters `update-rules.md`; all no stops recording.
+4. **Run the AAR below.** Any yes enters `update-rules.md`; all no stops recording. If recording changes any deliverable, return to the affected verification and integrity checks before declaring readiness.
 5. **Run conditional integrity work**:
    - routing/shell/generated-block or structure/path changes → follow `maintain-docs.md` Step 6 and the repository's sync/smoke commands;
    - rule/reference meaning changes → search workflows for repeated invariants and reconcile them in the same change;
    - durable knowledge migrated/deleted/superseded → prove destination, owner, normal activation path, fitted validation, and intentionally unretained content before removing the legacy source; use the existing Plan/migration record rather than creating a mandatory ledger;
    - high-risk route, non-idempotent workflow, executable script contract, or external handoff → add/adjust a behavior contract only when structural checks cannot prove it.
-6. **Report honestly** — name verified evidence and any unverified risk; do not self-certify beyond the checks run.
+6. **Declare readiness** — only after Steps 1–5 pass, name the already-authorized delivery action, expected artifact, and exact verification. `Ready for Delivery` is a checkpoint, not task completion.
+
+### Delivery and Completion Gate
+
+Closure never grants commit, push, MR, deploy, publish, or other side-effect authority. The matched workflow or harness performs only the delivery already authorized by the user, while Closure remains open.
+
+- Verify the requested artifact rather than inferring it from a local precursor: inspect the commit/ref, remote branch, MR/PR URL and state, deployed runtime, published file, or other promised result.
+- A failed, blocked, or unverified delivery leaves Closure open. Retry an external-only failure without rerunning unrelated local checks only when source content, relevant evidence, branch/config inputs, and the delivery premise are unchanged; otherwise return to fitted verification or Task Execution.
+- When no external delivery was requested, the verified result and final response are the delivery artifact.
+- Mark `Closure Complete` and report honestly only after every requested delivery artifact is verified; name any remaining risk without self-certifying beyond the checks run.
 
 ### Rationalizations to Reject
 
@@ -51,10 +60,13 @@ If any condition is missing, return to [`task-execution.md`](task-execution.md);
 | “I can mention the mainline drift in the final report.” | First disclosure at Closure is too late. Pause the affected path and consult the user when drift is discovered. |
 | “The file exists and smoke is green.” | Reachable structure can still be inert; state the next action it changes. |
 | “I should add a safeguard just in case.” | No concrete recurring failure means no new mechanism. |
+| “The branch was pushed, so the requested MR probably exists.” | A local or remote precursor is not delivery evidence; verify the actual requested artifact. |
+| “A login/network retry means I must rerun every local test.” | If inputs and verified content are unchanged, retry and verify only the blocked delivery boundary. |
 
 ### Red Flags
 
 - claiming “done/should pass” without reading a fresh exit code;
+- claiming completion from `Ready for Delivery` or from an unverified precursor such as a pushed branch;
 - recording by appending instead of reconciling the existing concept;
 - creating a file/index with no independently selected task path;
 - treating optional delegation or future infrastructure as a completion requirement.

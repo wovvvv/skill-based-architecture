@@ -10,6 +10,12 @@ Use this before mutation when wording leaves the requested outcome unclear. Vagu
 4. Ask one minimum question only when the remaining unknown is a normative product or business preference, an authority boundary, or a choice that produces materially different outcomes.
 5. Do not mutate until the requested outcome is concrete enough to verify.
 
+## Implementation-Fact Question Gate
+
+Before asking a product or business question, close the smallest decision-relevant implementation path: trigger/entry, caller chain, actual write target and target branch/state, ordering or progression, guards/protection/validation/failure behavior, and UI/API ownership. Omit irrelevant dimensions, but do not stop while a decision-bearing hop remains untraced.
+
+Establish current implementation facts from code, tests, configuration, contracts, traces, or runtime evidence; never ask the user to choose them. Trace distinct flows independently before relating them. Ask only the remaining normative ambiguity that could change the expected outcome, business invariant, authority boundary, or failure policy. If the user says the answer is in code, stop asking and finish the trace first.
+
 ## Boundaries
 
 - Read-only discovery is allowed when it directly reduces the request ambiguity; speculative implementation or architecture is not.

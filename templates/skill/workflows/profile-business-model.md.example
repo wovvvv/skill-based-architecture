@@ -18,7 +18,7 @@ Copy this file to `workflows/profile-business-model.md`, adapt the paths, and ad
 
 ## User-Confirmed Input
 
-When this workflow asks a missing product/business question, first execute [`agent-behavior.md` § Implementation-Fact Question Gate](../rules/agent-behavior.md#implementation-fact-question-gate), then use [`plan-feature.md` § Question Gate](plan-feature.md#question-gate). Close every decision-relevant trigger/entry, caller, write target or target branch/state, ordering/progression, guard/protection/failure, and UI/API ownership hop; trace distinct flows independently. Cross-check that evidence with existing user-confirmed answers. When they align and no decision-relevant normative ambiguity remains, accept the point and do not ask again. Never ask the user to choose an interface, branch, write target, protection rule, call order, or other current implementation fact. If the user says the answer is in code, stop the question, finish the trace, and state the implementation conclusion directly.
+When this workflow asks a missing product/business question, first execute [`ambiguous-request-gate.md` § Implementation-Fact Question Gate](../protocol-blocks/ambiguous-request-gate.md#implementation-fact-question-gate), then use [`plan-feature.md` § Question Gate](plan-feature.md#question-gate). Close every decision-relevant trigger/entry, caller, write target or target branch/state, ordering/progression, guard/protection/failure, and UI/API ownership hop; trace distinct flows independently. Cross-check that evidence with existing user-confirmed answers. When they align and no decision-relevant normative ambiguity remains, accept the point and do not ask again. Never ask the user to choose an interface, branch, write target, protection rule, call order, or other current implementation fact. If the user says the answer is in code, stop the question, finish the trace, and state the implementation conclusion directly.
 
 Ask only an unresolved normative ambiguity that could change the current decision, and ask the user to correct or complete the working conclusion rather than define an abstract concept from scratch. The user's clear direct answer, selection, rejection, or correction is the highest-authority input for that normative meaning. Standalone modeling writes stable, cross-implementation meaning directly into the routed leaf with conditions, reasons, boundaries/counterexamples, and compact Modeling Provenance when useful; it does not create a PRD or copy the transcript. If a feature/design Plan already exists, preserve the answer in its Decision Context. If the answer qualifies as a confirmed implementation gap, create or reuse the single draft gap dossier described below. Do not ask the user to reconfirm a clear answer.
 
@@ -45,7 +45,7 @@ When profiling a new product project:
 8. **Write the minimum sufficient file** — start with `references/business/<module>.md`; use only sections the module needs.
 9. **Run semantic read-back** — preserve the load-bearing definition, condition, boundary/counterexample, and reason. A fresh Agent must be able to reconstruct the same key decision.
 10. **Confirm macro meaning** — show the user the final durable meaning when creating the model or changing types, flow direction, states, or invariants.
-11. **Activate the read path** — add the file to the relevant route/workflow. Never add it to Always Read.
+11. **Activate atomically** — create or update `domain-routing.yaml` in the same change as the first/new `references/business/<domain>.md`, add its trigger and owner read, and run `scripts/sync-routing.sh --check --workspace-root <workspace-root>` for any two-root or cross-owner project (plain `scripts/sync-routing.sh --check` is sufficient only when every owner is skill-local), plus orphan/reachability checks. Never add the leaf to Always Read. Zero domains with no manifest and one-or-more domains with a non-empty manifest are the only valid states; do not leave an empty manifest or defer route registration.
 
 ## Confirmed Implementation Gap Collection and Handoff
 
@@ -109,5 +109,6 @@ Obvious technical failures do not require business modeling unless the correct b
 - [ ] Semantic read-back preserved conditions, boundaries, and reasons
 - [ ] New/changed macro meaning was confirmed by the user
 - [ ] The file has a specific routed load reason and is not Always Read
+- [ ] The business leaf and its `domain-routing.yaml` entry were created/updated atomically; the manifest is absent only when zero domains exist
 - [ ] Every split leaf has a real task that loads it independently
 - [ ] Any split directory is organized by business submodule, not document aspect; its index routes and does not duplicate business body

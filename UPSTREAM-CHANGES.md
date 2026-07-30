@@ -48,6 +48,20 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-30 - Evidence-driven workflow and delayed domain routing
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - Task routes now select only the first workflow. Task-level `required_reads`, executable `route` bodies, and inline `domain_overlays` are rejected; workflows start from the smallest decision-relevant evidence and acquire rules, references, testing, Managed execution, and Closure contracts at their lifecycle boundaries.
+  - `domain-routing.yaml` is an optional, separately timed second-stage manifest. Only two states are valid: no business owner and no manifest, or one-or-more business owners with a non-empty validated manifest. The first business-owner workflow materializes the owner plus route atomically, and routing, orphan, reachability, health, smoke, and conformance checks reject missing, empty, unsafe, unregistered, or workflow-replacing domain routes.
+  - Keywords produce domain candidates only. Explicit business-rule work or a known source-Plan owner evaluates the manifest immediately after workflow selection; ambiguous work waits for evidence of a business type/flow/state/boundary/invariant decision; clearly technical work never reads it. A domain owner appends knowledge and never replaces the selected workflow; cross-domain expansion requires new evidence.
+  - REMOVED the universal `rules/agent-behavior.md`, `references/agent-behavior-meta.md`, and `agent-behavior-gate.sh` aggregation path. Unique semantics moved to their lifecycle owners, including `protocol-blocks/ambiguous-request-gate.md`, `rules/change-discipline.md`, `workflows/task-execution.md`, delegation workflows, and Task Closure. Always Read now defaults to empty.
+  - Shell generators, migration/upgrade guidance, diagrams, and validation scenarios now express the evidence boundary without a hard token, byte, file-count, or elapsed-time correctness budget. The SBA Bible remains self-hosting product cognition and is never an ordinary downstream runtime dependency.
+  - Task Closure now spans the late delivery boundary without adding a delivery workflow or granting side-effect authority. It may declare `Ready for Delivery` after local verification, AAR, conditional distillation, and integrity checks, but remains open until the matched workflow verifies the requested commit, push, MR, deploy, publication, report, or other artifact. External-only retries reuse unchanged local evidence; changed source or premises return to fitted verification.
+  - The default scaffold no longer exposes `subagent-driven` as a task-size sibling route. The primary workflow is selected by intent first; Managed Task Execution loads the long-run workflow only as an evidence-backed cross-cutting modifier, matching the existing multi-skill routing rule and preventing task size from replacing fix/change/plan semantics.
+- Why it matters: selecting a workflow and probable business knowledge in one startup step made first use load a broad project-document bundle before source evidence. Shortening files did not fix that timing error and a fixed budget would trade correctness against an arbitrary threshold. The new contract preserves one canonical semantic owner while delaying every optional read until it can change the next action.
+- Downstream refresh guidance: perform a one-time source migration. Move each task `required_reads` item to the owning workflow's initial-evidence or later decision checkpoint; move inline overlays to a non-empty `domain-routing.yaml`; migrate project-specific content out of `agent-behavior.md` to its lifecycle owner; then delete the aggregation/meta/hook artifacts and registrations. Port the Closure readiness/completion boundary into the local `task-execution.md`, `task-closure.md`, protocol summary, and conformance anchors while preserving project-specific delivery commands and authorization. Domain-free projects omit the manifest. Domain-bearing projects must add the first owner and route together, run `sync-routing.sh --check`, smoke, orphan, reachability, route-health, and conformance, and prove generated shells/copies match their canonical source. Preserve project task routes, business truth, validation commands, and local permission boundaries; do not keep a dual compatibility runtime or copy the SBA Bible.
+
 ## 2026-07-30 - Business leaf and Gotcha single-owner boundary
 
 - Upstream commit: pending in this working tree
@@ -61,6 +75,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-07-29 - Implementation facts before business questions
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `rules/agent-behavior.md` adds the evidence-backed Implementation-Fact Question Gate: close decision-relevant entry/caller/write-target/branch-or-state/order/guard/failure/UI-API hops before asking, trace distinct flows independently, and never ask the user to choose current implementation facts.
@@ -148,6 +163,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-07-23 - Orthogonal domain context and knowledge-retirement integrity
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `sync-routing.sh` accepts optional `domain_overlays` that append domain reads without replacing the one task route's workflow. Overlay-enabled generated entries keep only current-Session `task_route_id`, `domain_overlay_ids`, and `merged_required_reads`; the default scaffold declares no overlay and exposes no extra routing concept.
@@ -184,6 +200,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-07-22 - Semantic completeness before minimality
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `templates/skill/rules/agent-behavior.md` replaces Simplicity First with **Semantic Completeness Before Minimality**: Product Development is the default; agents trace invariant, ownership/provenance, producer-to-consumer call chain, and all full/incremental/read/write paths before choosing repair depth. Minimality becomes a tie-breaker among semantically complete solutions.
@@ -195,6 +212,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-07-21 - Task Anchor and harness-native execution plans
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: pending in this working tree
 - Changed areas:
   - NEW `templates/skill/workflows/task-execution.md` — classifies Simple / Managed / Design tasks; Managed tasks establish Goal, Done When, optional material Boundaries, and a task-specific Plan using the harness's native Plan/Task surface. Anchor state is separate from presentation: natural-language alignment is the default, visible Native Plan steps are not duplicated in chat, and a complete structured brief is reserved for long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work. Before every main step, a compact Anchor Checkpoint re-centers Goal, remaining evidence, the step check, and relevant Boundaries; it repeats after correction, failed/surprising evidence, Subagent return, or interruption. The loop owns runtime progress, evidence-backed advancement, replanning, and new-message handling entirely inside the current Session, with no planning-file persistence.
@@ -206,6 +224,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-07-20 - Goal contracts and risk-sized checkpoints
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `templates/skill/rules/agent-behavior.md` — Goal-Driven Execution now starts from one observable goal, explicit non-goals, and acceptance evidence; scoped reversible work runs through its checks without per-step approval, while real decision, authority, shared, or irreversible boundaries still pause.
@@ -216,6 +235,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-07-17 - Simplify default scaffold and make integrity checks truthful
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: branch `codex/simplify-template-maintenance-20260717` (`96cd072` plus the conformance literal follow-up)
 - Changed areas:
   - REMOVED `footprint.sh`, `check-cross-references.sh`, and `check-growth-health.sh`: the first undercounted mandatory reads and failed on two-root prefixes; the second guessed semantic drift from mtime and duplicated link checks; the third emitted permanent review noise while always succeeding.
@@ -485,6 +505,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-06-23 - Downstream token/latency cut: dedupe required_reads + split agent-behavior.md
 
+- Status: superseded by 2026-07-30 - Evidence-driven workflow and delayed domain routing
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `templates/skill/routing.yaml` — removed always_read files (`project-rules` / `coding-standards` / `agent-behavior`, including the `rules/*.md` glob) from per-route `required_reads`; routes now list only route-specific files (only `update-rules` keeps `gotchas` + `behavior-failures`). Added a FILL note stating the rule.

@@ -55,7 +55,9 @@ Keep `routing.yaml` and the documentation tree consistent on these change types:
 
 | Change type | Files to update |
 |---|---|
-| New/renamed workflow or reference file | `routing.yaml`, then `scripts/sync-routing.sh` |
+| New/renamed workflow | `routing.yaml` only when task-to-workflow selection changes, then `scripts/sync-routing.sh` |
+| First/new business owner | owner file + `domain-routing.yaml` atomically, then sync/orphan/reachability checks |
+| Other new/renamed reference | owning workflow/link; do not put it in a task route knowledge bundle |
 | New rule that future agents would guess wrong without | The relevant `rules/*.md`, plus `SKILL.md` summary if the pitfall should surface earlier |
 | Behavior-change UI / interaction / overlay layering / styling-affecting-outcomes | `references/*.md` for the lesson, and `workflows/*.md` for the closure-gate update |
 | (project-specific triggers) | (corresponding files) |
@@ -76,13 +78,13 @@ The full user-facing model and examples live in [`docs/task-anchor-native-plan.m
 
 Canonical source: [`templates/skill/workflows/task-closure.md`](templates/skill/workflows/task-closure.md#task-closure-protocol).
 
-This guide intentionally does not restate the protocol. When the protocol changes, update `task-closure.md` first; other files should link, not parallel-define. The invariant is short: no non-trivial task is complete without main-work verification, a 30-second AAR scan, and any triggered path-integrity, route-path, cross-reference, behavior-validation, or external-fact checks.
+This guide intentionally does not restate the protocol. When the protocol changes, update `task-closure.md` first; other files should link, not parallel-define. The invariant is short: no non-trivial task is complete without main-work verification, a 30-second AAR scan, any triggered integrity checks, and verification of every requested delivery artifact; `Ready for Delivery` is not completion.
 
 For the protocol-level concepts (recording threshold, where to record, generalization rule, activation check, when not to record), see [`references/protocols.md`](references/protocols.md).
 
 Reusable reinforcement blocks live in [`templates/skill/protocol-blocks/`](templates/skill/protocol-blocks/) and are copied inside each downstream skill — workflows link them without user-visible setup (`reboot-check.md`, `ambiguous-request-gate.md`, `subagent-contract.md`). Task Closure Rationalizations and Red Flags live only in `workflows/task-closure.md`.
 
-Route intake uses the Always Read [`agent-behavior.md`](templates/skill/rules/agent-behavior.md) context/evidence rule: start from the matched route and expand only on concrete ambiguity or risk signals. Workflows keep only their task-specific decision steps.
+Route intake starts from the selected workflow and the evidence-driven context kernel in [`SKILL.md.template`](templates/skill/SKILL.md.template). Managed tasks use [`task-execution.md`](templates/skill/workflows/task-execution.md), while modifying workflows load [`change-discipline.md`](templates/skill/rules/change-discipline.md) only before their first mutation.
 
 ## Workflow Templates
 

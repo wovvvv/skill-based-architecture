@@ -22,9 +22,9 @@ Task routes live in `references/self-hosting-routing.yaml`.
 For every new task:
 1. Read `SKILL.md`.
 2. Read `references/self-hosting-routing.yaml`.
-3. Match by `labels`, `trigger_examples`, and task intent.
-4. Read only that route's `required_reads`, then follow its `workflow`.
-5. If no route matches, use the `other` route.
+3. Match exactly one route by `labels`, `trigger_examples`, and task intent; if none matches, use `other`.
+4. Follow only that route's `workflow`; the route does not preload project knowledge.
+5. Let the workflow inspect the smallest evidence that can decide the next action, then pull later knowledge only when that unresolved decision requires it.
 <!-- SELF_ROUTING_BLOCK_END -->
 
 ## Why this file exists

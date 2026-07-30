@@ -69,9 +69,9 @@ Task routes live in `references/self-hosting-routing.yaml`.
 For every new task:
 1. Read `SKILL.md`.
 2. Read `references/self-hosting-routing.yaml`.
-3. Match by `labels`, `trigger_examples`, and task intent.
-4. Read only that route's `required_reads`, then follow its `workflow`.
-5. If no route matches, use the `other` route."""
+3. Match exactly one route by `labels`, `trigger_examples`, and task intent; if none matches, use `other`.
+4. Follow only that route's `workflow`; the route does not preload project knowledge.
+5. Let the workflow inspect the smallest evidence that can decide the next action, then pull later knowledge only when that unresolved decision requires it."""
 
 
 def clean(value: str) -> str:
@@ -92,19 +92,16 @@ def parse_routing_manifest():
         if stripped == "tasks:":
             continue
         if raw.startswith("  - id:"):
-            current = {"id": clean(raw.split(":", 1)[1]), "required_reads": [], "trigger_examples": []}
+            current = {"id": clean(raw.split(":", 1)[1]), "trigger_examples": []}
             tasks.append(current)
             section = None
             continue
         if current is None:
             continue
-        if raw.startswith("    required_reads:"):
-            section = "required_reads"
-            continue
         if raw.startswith("    trigger_examples:"):
             section = "trigger_examples"
             continue
-        if section in {"required_reads", "trigger_examples"} and raw.startswith("      - "):
+        if section == "trigger_examples" and raw.startswith("      - "):
             current[section].append(clean(stripped[2:]))
             continue
         if raw.startswith("    ") and ":" in stripped:
@@ -120,7 +117,7 @@ def parse_routing_manifest():
         raise SystemExit("self-hosting-routing.yaml is missing fallback task id: other")
     errors = []
     for task in tasks:
-        refs = list(task.get("required_reads", []))
+        refs = []
         workflow = task.get("workflow", "")
         if workflow:
             refs.append(workflow)
@@ -128,7 +125,8 @@ def parse_routing_manifest():
             if "FILL:" in ref or ref.startswith("Check "):
                 continue
             path = ref.split("#", 1)[0]
-            if not path or not (".md" in path or ".sh" in path or "/" in path):
+            if path != "WORKFLOW.md" and not path.startswith(("workflows/", "templates/skill/workflows/")):
+                errors.append(f"{task.get('id')}: workflow must select a real procedure: {ref}")
                 continue
             if not (root / path).exists():
                 errors.append(f"{task.get('id')}: missing route target: {ref}")

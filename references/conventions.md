@@ -122,7 +122,7 @@ Common symptoms and their fixes:
 | Cursor can't see the skill | Missing `.cursor/skills/<name>/SKILL.md` registration entry | Create registration entry with matching description + inline routing |
 | Broken links after file changes | Renamed or deleted files without integrity check | Run maintain-docs Step 4 after any rename, merge, split, or deletion |
 | Common Tasks routing misses frequent tasks | `routing.yaml` doesn't reflect actual task distribution | List top 5–10 real tasks, confirm each has a `routing.yaml` entry, then run `scripts/sync-routing.sh` |
-| Agent reads too many files per task | Always Read list too large, or Common Tasks missing | Keep Always Read to 2–3 files; ensure every common task has specific file routing |
+| Agent reads too many files per task | Always Read contains conditional knowledge, or task routes precompute later reads | Default Always Read to empty; let Common Tasks select only a workflow, then load knowledge from evidence and lifecycle checkpoints |
 
 ## File Size Guidelines
 

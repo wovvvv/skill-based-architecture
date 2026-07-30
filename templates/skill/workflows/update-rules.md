@@ -4,6 +4,8 @@ Use this workflow when standalone business modeling delivers a leaf, a confirmed
 
 ## Classification Guide
 
+Classify the candidate before reading an evidence store or destination file. Read only the selected branch; never preload both `references/gotchas.md` and `references/behavior-failures.md`.
+
 - Long-lived must/must-not constraint → `rules/`
 - Ordered task procedure or completion check → `workflows/`
 - Architecture, routing, code map, dependency explanation → `references/`
@@ -142,8 +144,9 @@ Do not force business names out of a business model merely to make it cross-proj
 
 | Change | Required follow-up |
 |---|---|
-| New/renamed workflow or reference | update `routing.yaml`; run `scripts/sync-routing.sh` |
-| Route/Always Read/entry routing changed | regenerate SKILL.md and thin-shell blocks from `routing.yaml` |
+| New/renamed workflow or non-domain reference | update its owning workflow/link; update `routing.yaml` only when task-to-workflow selection changes; run `scripts/sync-routing.sh` |
+| First/new business domain owner | create/update `references/business/<domain>.md` and `domain-routing.yaml` atomically; run routing sync/check plus orphan and reachability checks |
+| Task route / Always Read / domain route changed | regenerate SKILL.md and thin-shell blocks from `routing.yaml`; validate optional `domain-routing.yaml` in the same command |
 | Rule/reference meaning changed | grep workflows for repeated invariants and update stale copies |
 | Standalone modeling confirms stable business meaning | reconcile it directly into the routed leaf; add compact Modeling Provenance when useful and no PRD unless the confirmed-gap exception passes |
 | Standalone modeling confirms an implementation gap | write truth and gap into the leaf; create/reuse one draft gap dossier, continue the agreed modeling scope, then hand the complete gap set to Plan Feature |

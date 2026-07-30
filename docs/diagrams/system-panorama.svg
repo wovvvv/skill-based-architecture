@@ -44,16 +44,16 @@ svg{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micro
 <text class="th" x="56" y="296" text-anchor="start" dominant-baseline="central">③ 路由核心 · 唯一真源</text>
 <g class="c-purple"><rect x="56" y="312" width="180" height="48" rx="8" stroke-width="0.5"/><text class="th" x="146" y="330" text-anchor="middle" dominant-baseline="central">SKILL.md</text><text class="ts" x="146" y="347" text-anchor="middle" dominant-baseline="central">router · dual budget</text></g>
 <g class="c-purple"><rect x="246" y="312" width="180" height="48" rx="8" stroke-width="1.2"/><text class="th" x="336" y="330" text-anchor="middle" dominant-baseline="central">routing.yaml</text><text class="ts" x="336" y="347" text-anchor="middle" dominant-baseline="central">唯一真源</text></g>
-<g class="c-gray"><rect x="436" y="312" width="188" height="48" rx="8" stroke-width="0.5"/><text class="th" x="530" y="330" text-anchor="middle" dominant-baseline="central">Always Read · Common Tasks</text><text class="ts" x="530" y="347" text-anchor="middle" dominant-baseline="central">由 routing 生成</text></g>
+<g class="c-gray"><rect x="436" y="312" width="188" height="48" rx="8" stroke-width="0.5"/><text class="th" x="530" y="330" text-anchor="middle" dominant-baseline="central">domain-routing.yaml</text><text class="ts" x="530" y="347" text-anchor="middle" dominant-baseline="central">可选 · 证据后读取</text></g>
 <line x1="340" y1="376" x2="340" y2="396" class="arr" marker-end="url(#arrow)"/>
-<text class="ts" x="352" y="386" text-anchor="start" dominant-baseline="central">route.required_reads（分层）</text>
+<text class="ts" x="352" y="386" text-anchor="start" dominant-baseline="central">workflow 先行 → 证据选择知识</text>
 
 <rect x="40" y="400" width="600" height="110" rx="12" fill="none" stroke="#B4B2A9" stroke-width="0.8" stroke-dasharray="4 3"/>
 <text class="th" x="56" y="420" text-anchor="start" dominant-baseline="central">④ 知识层 · 按 abstraction 两层</text>
 <g class="c-teal"><rect x="56" y="436" width="280" height="60" rx="8" stroke-width="0.5"/><text class="th" x="196" y="458" text-anchor="middle" dominant-baseline="central">skill_root · 骨架（稳定）</text><text class="ts" x="196" y="478" text-anchor="middle" dominant-baseline="central">architecture · rules · workflows</text></g>
 <g class="c-coral"><rect x="344" y="436" width="280" height="60" rx="8" stroke-width="0.5"/><text class="th" x="484" y="458" text-anchor="middle" dominant-baseline="central">code_root · 肉（随代码漂）</text><text class="ts" x="484" y="478" text-anchor="middle" dominant-baseline="central">conventions · gotchas · references</text></g>
 <line x1="340" y1="510" x2="340" y2="530" class="arr" marker-end="url(#arrow)"/>
-<text class="ts" x="352" y="520" text-anchor="start" dominant-baseline="central">route.workflow</text>
+<text class="ts" x="352" y="520" text-anchor="start" dominant-baseline="central">生命周期边界激活</text>
 
 <rect x="40" y="534" width="600" height="92" rx="12" fill="none" stroke="#B4B2A9" stroke-width="0.8" stroke-dasharray="4 3"/>
 <text class="th" x="56" y="554" text-anchor="start" dominant-baseline="central">⑤ Task Anchor / 执行 / 闭合</text>

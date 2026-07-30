@@ -4,6 +4,8 @@
 
 Use this for feature/design planning and for an admitted implementation-gap dossier after standalone business modeling finishes its agreed scope. It resolves what should be done; it is not the runtime Native Plan. If the request only discusses, profiles, supplements, or migrates a business leaf, route to `profile-business-model.md` when installed; modeling duration, file count, and interview depth do not create a PRD. Simple plans stay inline unless the user asks for a file.
 
+When the selected route is this SBA repository's self-hosting `product-direction`, read `docs/sba-bible.md` and `docs/plans/README.md` after entering this workflow. Ordinary downstream planning never loads the SBA Bible. For other durable Plans, read the local Plan archive contract only when the Complexity Gate requires a file.
+
 ## Complexity Gate
 
 First confirm the deliverable is a feature/design Plan or an admitted Modeling Gap Intake. Standalone business modeling does not enter this workflow merely because it is complex.
@@ -17,7 +19,7 @@ First confirm the deliverable is a feature/design Plan or an admitted Modeling G
 
 ## Question Gate
 
-- This section owns the evidence-before-questioning contract. **Gate A: Implementation facts closed?** execute [`agent-behavior.md` § Implementation-Fact Question Gate](../rules/agent-behavior.md#implementation-fact-question-gate), then trace the smallest concrete business flow relevant to the decision (`actor/trigger -> caller and actual write target/branch/state -> ordering, guards, and failure -> UI/API carrier/exit`). Close every decision-bearing hop, trace distinct flows independently, and form an evidence-backed working conclusion. **Gate B: Meta/lazy?** never ask the user to do Agent-available discovery. **Gate C: Normative and blocking?** ask only a remaining normative decision that could change the future rule, invariant, failure semantics, or acceptance.
+- This section owns the evidence-before-questioning contract. **Gate A: Implementation facts closed?** execute [`ambiguous-request-gate.md` § Implementation-Fact Question Gate](../protocol-blocks/ambiguous-request-gate.md#implementation-fact-question-gate), then trace the smallest concrete business flow relevant to the decision (`actor/trigger -> caller and actual write target/branch/state -> ordering, guards, and failure -> UI/API carrier/exit`). Close every decision-bearing hop, trace distinct flows independently, and form an evidence-backed working conclusion. **Gate B: Meta/lazy?** never ask the user to do Agent-available discovery. **Gate C: Normative and blocking?** ask only a remaining normative decision that could change the future rule, invariant, failure semantics, or acceptance.
 
 Do not ask before implementation fact closure, and do not combine two incomplete flows into a binary choice. Which API a page calls, whether it directly writes the target, which endpoint creates a merge/review request, which existing branch or task flow feeds a target, branch protection, current call order, and current state progression are `current implementation fact`; state them with evidence. Ask the user only whether the future path may bypass the current flow, whether failure must block, which business object is a prerequisite, or whether an existing process/invariant should change.
 
@@ -31,7 +33,7 @@ The confirmed answer remains normative. For business-bearing work, the routed bu
 
 ## Business-Semantics Gate
 
-For a business-bearing module, read its routed business global model before treating code as intended behavior. Compare in this order:
+Do not infer business-bearing scope from keywords alone. For an explicit business-rule request or a source Plan that already declares the applicable business-domain owner, evaluate `domain-routing.yaml` immediately after this workflow is selected. Read an existing source Plan directly; its existence alone does not activate a domain. For ambiguous product/feature work, inspect minimal implementation evidence first and evaluate the domain manifest only when the remaining decision depends on business semantics. After activation, read the selected business model before treating code as intended behavior. Compare in this order:
 
 1. business model — what the business says should be true;
 2. architecture / rules / contracts — how the system intends to realize it;

@@ -4,6 +4,12 @@
 # their own checks.
 
 required_sections:
+  - file: routing.yaml
+    must_contain:
+      - "id: receiving-review"
+      - "workflow: workflows/receiving-review.md"
+      - "reviewer 提了几个问题,处理一下"
+
   - file: protocol-blocks/ambiguous-request-gate.md
     must_contain:
       - "Vague wording is a signal, not an automatic blocker"
@@ -136,6 +142,12 @@ required_sections:
       - "for business-bearing decisions, also read the routed business rule"
       - "durable knowledge migrated/deleted/superseded"
       - "rather than creating a mandatory ledger"
+      - "Ready for Delivery"
+      - "is a checkpoint, not task completion"
+      - "Closure never grants commit, push, MR, deploy, publish"
+      - "leaves Closure open"
+      - "without rerunning unrelated local checks"
+      - "Closure Complete"
 
   - file: workflows/update-rules.md
     must_contain:
@@ -199,16 +211,22 @@ required_sections:
       - "immediate responsibility to pause the affected path"
       - "task-execution.md#user-decision-drift-gate"
       - "Do not ask code and the confirmed model to compete for authority"
+      - "--workspace-root <workspace-root>"
+      - "plain `scripts/sync-routing.sh --check` is sufficient only when every owner is skill-local"
 
   - file: scripts/sync-routing.sh
     must_contain:
       - "domain_overlays"
       - "domain overlay must inherit the task workflow"
       - "owner_roots"
-      - "owner:<owner-id>:<path>"
+      - "owner_ref_pattern"
       - "--workspace-root"
-      - "task_route_id"
+      - "task route does not preload knowledge"
+      - "workflow must select a workflows/*.md procedure"
+      - "Keywords identify candidates only"
       - "cross-owner target verification remains open"
+      - "code-root target verification remains open"
+      - "code target missing"
     must_not_contain:
       - "allowed_apps"
 
@@ -267,33 +285,37 @@ required_sections:
       - "directly `spawn_agent`"
       - "as candidate business knowledge"
 
-  - file: rules/agent-behavior.md
+  - file: protocol-blocks/ambiguous-request-gate.md
     must_contain:
-      - "### Implementation-Fact Question Gate"
+      - "## Implementation-Fact Question Gate"
       - "close the smallest decision-relevant implementation path"
       - "never ask the user to choose them"
       - "Trace distinct flows independently"
       - "remaining normative ambiguity"
-      - "## 2. Semantic Completeness Before Minimality"
-      - "Default to **Product Development**"
-      - "state ownership/provenance"
-      - "Dependency count is risk evidence, not a veto"
-      - "Enter **Operational Stabilization** only when"
-      - "## 4. Minimal Context, Sufficient Evidence"
-      - "explicit boundaries/non-goals"
-      - "One clear action with one direct check proceeds without planning ceremony"
+
+  - file: rules/change-discipline.md
+    must_contain:
+      - "## Semantic Boundary"
+      - "Default to Product Development"
+      - "project-rules.md"
+      - "coding-standards.md"
+      - "ownership/provenance"
+      - "Dependency count is risk evidence"
+      - "Use Operational Stabilization only"
+      - "## Mutation Boundary"
+
+  - file: workflows/task-execution.md
+    must_contain:
+      - "## Evidence and Knowledge Gate"
+      - "smallest source/runtime slice"
+      - "diagnostic evidence, never correctness gates"
+      - "material Boundaries such as scope, non-goals"
       - "harness's native Plan"
       - "present only useful alignment"
-      - "without duplicating visible steps in chat"
-      - "Before every main Plan step"
-      - "do not use test count as a proxy for evidence quality"
-      - "Run scoped, reversible work end-to-end"
-      - "diagnostic signals, not objectives"
-      - "## 6. Delegate Only for Net Benefit"
-      - "Inline is the default"
-    must_not_contain:
-      - "must directly call `spawn_agent`"
-      - "continuous self-judgment + auto-dispatch"
+      - "do not repeat its steps in chat"
+      - "Before each main Plan step"
+      - "cross-cutting modifier, never a first-workflow route"
+      - "task size or duration alone does not activate it"
 
   - file: workflows/subagent-auxiliary.md
     must_contain:

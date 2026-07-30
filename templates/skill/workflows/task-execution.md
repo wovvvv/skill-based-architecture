@@ -10,6 +10,15 @@ Use this after matching the task route when the task is not one clear action wit
 | Managed | dependent steps, meaningful boundaries, repeated verification, or material drift risk | establish a Task Anchor, use a concise Native Plan, and present only useful alignment |
 | Design | unresolved product/architecture choice, materially different interpretations, or irreversible decision | use `plan-feature.md`; after approval, convert its result into a Managed task |
 
+## Evidence and Knowledge Gate
+
+- Start with the selected workflow and the smallest source/runtime slice that can resolve the current decision. Expand one target at a time only when ownership is unclear, evidence conflicts, a contract/generated/shared boundary is crossed, a routed file names a needed leaf, or the current premise fails.
+- Do not read `domain-routing.yaml` at task startup. Read it immediately after workflow selection only for an explicit business-rule request or a source Plan that already declares the applicable business-domain owner; for ambiguous work, read it only after minimal evidence exposes an unresolved business type/flow/state/boundary/invariant. Read every governing source Plan directly through its workflow; a Plan's existence alone is not domain evidence. Keywords identify candidates, not activation. Clearly technical work skips the manifest.
+- A domain route appends knowledge and never replaces the selected workflow. Load one owner by default; add another only with explicit cross-domain evidence.
+- Treat `subagent-driven.md` as a cross-cutting modifier, never a first-workflow route. Read it only after the primary workflow and Task Anchor expose at least three plausible independent workstreams with useful execution overlap; task size or duration alone does not activate it.
+- Before the first mutation, read `rules/change-discipline.md` and only the project/coding rules whose scope the planned change reaches. Load an adopted testing contract when constructing evidence, and load `task-closure.md` only after local execution is complete and either all goal evidence exists or only explicit delivery-dependent evidence remains.
+- Treat read volume and elapsed time as diagnostic evidence, never correctness gates. Validate at the cheapest level that can falsify the material risk and stop when the declared evidence contract passes.
+
 ## Task Anchor
 
 Before mutation on a Managed task, establish current-Session state with one observable Goal, Done When evidence, and only material Boundaries such as scope, non-goals, preservation requirements, permission, or approval limits. Derive a concise Native Plan from the matched Domain Workflow. Before verification begins, bind the material risk, fitted evidence, and stop/escalation condition in the current Session; this is a decision aid, not another persistent artifact.
@@ -98,4 +107,4 @@ For each later user message in the same session:
 
 ## Exit To Closure
 
-Enter `task-closure.md` only when every admitted Plan step is verified, Done When evidence is present, Boundaries were respected, no stale Plan branch remains, and every triggered User Decision Drift Gate has an explicit resolution reflected in the Plan and, for business-bearing decisions, its active rule. Closure verifies/reports the result; it does not finish execution work.
+Enter `task-closure.md` only when every non-delivery Plan step is verified, local acceptance evidence is present, Boundaries were respected, no stale Plan branch remains, and every triggered User Decision Drift Gate has an explicit resolution reflected in the Plan and, for business-bearing decisions, its active rule. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure decides `Ready for Delivery`, remains open across authorized delivery, verifies the requested artifact, and makes the final completion decision; it does not finish implementation work or grant delivery authority.

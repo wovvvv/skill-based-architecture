@@ -14,9 +14,6 @@ tasks:
     labels:
       en: Migrate a downstream project's rules to skill-based architecture
       zh: 迁移下游项目规则到 skill-based architecture
-    required_reads:
-      - SKILL.md
-      - WORKFLOW.md
     workflow: WORKFLOW.md#quick-start
     trigger_examples:
       - 把规则迁移到 skills 目录
@@ -27,10 +24,6 @@ tasks:
     labels:
       en: Edit or extend templates
       zh: 修改或扩展模板
-    required_reads:
-      - SKILL.md
-      - templates/README.md
-      - templates/ANTI-TEMPLATES.md
     workflow: templates/skill/workflows/edit-templates.md
     trigger_examples:
       - 修改 templates
@@ -41,11 +34,7 @@ tasks:
     labels:
       en: Add or revise a skill principle, rule, or reference doc
       zh: 新增或修改 skill 原则 / 规则 / reference 文档
-    required_reads:
-      - SKILL.md
-      - REFERENCE.md
     workflow: templates/skill/workflows/update-rules.md
-    note: Load references/layout.md only when document structure or paths change; description / activation / routing changes belong to improve-activation-routing
     trigger_examples:
       - 加一条核心原则
       - 修改 skill 设计原则或规则
@@ -58,10 +47,8 @@ tasks:
     labels:
       en: Add an example
       zh: 新增示例
-    required_reads:
-      - EXAMPLES.md
-      - examples/behavior-failures.md
-    workflow: EXAMPLES.md
+    workflow: templates/skill/workflows/change-managed.md
+    note: Read EXAMPLES.md after workflow selection, then edit only the task-relevant example surface
     trigger_examples:
       - 加一个 before after 示例
       - 补一个行为失败例子
@@ -71,9 +58,6 @@ tasks:
     labels:
       en: Fix a bug in scripts or templates
       zh: 修复脚本或模板 bug
-    required_reads:
-      - SKILL.md
-      - templates/skill/scripts/smoke-test.sh
     workflow: templates/skill/workflows/fix-bug.md
     trigger_examples:
       - 脚本跑失败了
@@ -84,40 +68,19 @@ tasks:
     labels:
       en: Improve skill activation and routing
       zh: 优化 skill 触发 / 路由命中率
-    required_reads:
-      - SKILL.md
-      - references/layout.md
-    workflow: references/layout.md#description-as-trigger-condition
-    note: Load references/multi-skill-routing.md only when evidence shows multiple skills, primary-skill selection, cross-skill trigger overlap, shared resources, or ambiguous skill ownership
+    workflow: templates/skill/workflows/edit-templates.md
+    note: Read references/layout.md#description-as-trigger-condition after workflow selection; load references/multi-skill-routing.md only when evidence shows multiple skills, primary-skill selection, cross-skill trigger overlap, shared resources, or ambiguous skill ownership
     trigger_examples:
       - description 命中率太低
       - 优化 routing.yaml
       - 用户说接口报错但没有命中 fix-bug
       - improve trigger_examples coverage
 
-  - id: long-run
-    labels:
-      en: Multi-subtask / long autonomous run (cross-cutting modifier, not a standalone task)
-      zh: 多子任务 / 长时间自主任务(横切修饰符,不是独立任务)
-    required_reads:
-      - SKILL.md
-    workflow: templates/skill/workflows/subagent-driven.md
-    note: Apply ON TOP of the matched primary route; do not pick this instead of task intent. Use it for planned multi-subtask/long work and follow its Mode 2 selector. Ordinary workflows load subagent-auxiliary.md directly for occasional mechanical delegation
-    trigger_examples:
-      - 多个独立子任务并行
-      - 这个任务比较大
-      - run several subtasks
-
   - id: product-direction
     labels:
       en: Decide SBA product direction or absorb a major capability
       zh: 判断 SBA 产品方向或重大能力吸收
-    required_reads:
-      - SKILL.md
-      - docs/sba-bible.md
-      - docs/plans/README.md
     workflow: templates/skill/workflows/plan-feature.md
-    note: Self-hosting only. Read the Bible for product direction, external-project absorbs, and major mechanisms; ordinary coding and downstream tasks do not load it. The Bible defines direction, while code/tests define current truth
     trigger_examples:
       - SBA 应该往什么方向发展
       - 讨论 SBA 的发展方向
@@ -131,11 +94,7 @@ tasks:
     labels:
       en: Draft or maintain a plan
       zh: 编写或维护计划
-    required_reads:
-      - SKILL.md
-      - docs/plans/README.md
     workflow: templates/skill/workflows/plan-feature.md
-    note: If the request later enters persistent-knowledge recording, re-match to distill-plan-conclusions instead of preloading its workflow
     trigger_examples:
       - 我们规划一下
       - 制定一个 plan
@@ -147,9 +106,6 @@ tasks:
     labels:
       en: Distill plan conclusions into persistent skill knowledge
       zh: 把计划结论沉淀为长期 skill 知识
-    required_reads:
-      - SKILL.md
-      - docs/plans/README.md
     workflow: templates/skill/workflows/update-rules.md
     trigger_examples:
       - 这次改动总结成规则
@@ -160,9 +116,6 @@ tasks:
     labels:
       en: Act on code review feedback
       zh: 处理代码评审意见
-    required_reads:
-      - SKILL.md
-      - templates/skill/workflows/receiving-review.md
     workflow: templates/skill/workflows/receiving-review.md
     trigger_examples:
       - 处理评审意见
@@ -173,8 +126,6 @@ tasks:
     labels:
       en: Other
       zh: 其他任务
-    required_reads:
-      - SKILL.md
     workflow: WORKFLOW.md
     trigger_examples:
       - 其他没有明确路由的任务

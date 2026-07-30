@@ -38,7 +38,7 @@ svg{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micro
 <g class="c-amber"><rect x="150" y="106" width="300" height="44" rx="8" stroke-width="0.5"/><text class="th" x="300" y="128" text-anchor="middle" dominant-baseline="central">同一会话的后续任务？</text></g>
 <line x1="450" y1="128" x2="470" y2="128" class="leader"/>
 <text class="ts" x="452" y="118" text-anchor="start" dominant-baseline="central">是</text>
-<g class="c-gray"><rect x="470" y="100" width="170" height="56" rx="8" stroke-width="0.5"/><text class="th" x="555" y="116" text-anchor="middle" dominant-baseline="central">会话纪律</text><text class="ts" x="555" y="133" text-anchor="middle" dominant-baseline="central">重匹配 route</text><text class="ts" x="555" y="148" text-anchor="middle" dominant-baseline="central">仅变化/压缩才重读</text></g>
+<g class="c-gray"><rect x="470" y="100" width="170" height="56" rx="8" stroke-width="0.5"/><text class="th" x="555" y="116" text-anchor="middle" dominant-baseline="central">会话纪律</text><text class="ts" x="555" y="133" text-anchor="middle" dominant-baseline="central">重匹配 route</text><text class="ts" x="555" y="148" text-anchor="middle" dominant-baseline="central">只恢复当前 workflow/证据</text></g>
 <line x1="300" y1="153" x2="300" y2="165" class="arr" marker-end="url(#arrow)"/>
 
 <g class="c-gray"><rect x="150" y="168" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="188" text-anchor="middle" dominant-baseline="central">读入口薄壳 → 指向 SKILL.md</text><text class="ts" x="300" y="206" text-anchor="middle" dominant-baseline="central">薄壳只做引导 · 带 routing bootstrap</text></g>
@@ -47,10 +47,10 @@ svg{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micro
 <g class="c-amber"><rect x="150" y="238" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="258" text-anchor="middle" dominant-baseline="central">扫 SKILL.md → 命中哪个 skill？</text><text class="ts" x="300" y="276" text-anchor="middle" dominant-baseline="central">→ 前端 / 后端 / 双Skill / other</text></g>
 <line x1="300" y1="293" x2="300" y2="305" class="arr" marker-end="url(#arrow)"/>
 
-<g class="c-amber"><rect x="150" y="308" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="328" text-anchor="middle" dominant-baseline="central">读 Always Read + routing.yaml</text><text class="ts" x="300" y="346" text-anchor="middle" dominant-baseline="central">匹配 route（无匹配 → other 兜底）</text></g>
+<g class="c-amber"><rect x="150" y="308" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="328" text-anchor="middle" dominant-baseline="central">routing.yaml 选择第一 workflow</text><text class="ts" x="300" y="346" text-anchor="middle" dominant-baseline="central">Always Read 默认空 · other 兜底</text></g>
 <line x1="300" y1="363" x2="300" y2="375" class="arr" marker-end="url(#arrow)"/>
 
-<g class="c-gray"><rect x="150" y="378" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="398" text-anchor="middle" dominant-baseline="central">只读 required_reads（按需）</text><text class="ts" x="300" y="416" text-anchor="middle" dominant-baseline="central">token 收口 → 按 骨架/肉 分层取用</text></g>
+<g class="c-gray"><rect x="150" y="378" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="398" text-anchor="middle" dominant-baseline="central">workflow 获取最小决策证据</text><text class="ts" x="300" y="416" text-anchor="middle" dominant-baseline="central">需要业务语义才读 domain-routing</text></g>
 <line x1="300" y1="433" x2="300" y2="445" class="arr" marker-end="url(#arrow)"/>
 
 <g class="c-purple"><rect x="150" y="448" width="300" height="52" rx="8" stroke-width="0.5"/><text class="th" x="300" y="468" text-anchor="middle" dominant-baseline="central">Task Anchor + Native Plan</text><text class="ts" x="300" y="486" text-anchor="middle" dominant-baseline="central">Simple 直接 · Managed 建立并按需展示</text></g>

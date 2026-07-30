@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="680" height="800" viewBox="0 0 680 800" role="img">
 <title>Routing 核心思维</title>
-<desc>routing 的核心：description 粗活化 → routing.yaml 唯一真源（生成薄壳/Common Tasks/Always Read）→ 匹配 route → route 六要素 → required_reads 分层（骨架/肉）→ workflow → 可达性与自维护脊柱回灌真源。</desc>
+<desc>routing 的核心：description 粗活化 → routing.yaml 选择第一工作流 → workflow 获取最小证据 → 证据决定是否读取 domain-routing.yaml → 生命周期知识按边界加载 → 可达性与自维护脊柱回灌真源。</desc>
 <style>
 svg{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,sans-serif}
 .t{font-size:14px;fill:#1c1c1a}
@@ -41,25 +41,25 @@ svg{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micro
 <g class="c-purple"><rect x="100" y="224" width="300" height="68" rx="8" stroke-width="0.5"/><text class="th" x="250" y="244" text-anchor="middle" dominant-baseline="central">③ 匹配 route（粗 → 细）</text><text class="ts" x="250" y="264" text-anchor="middle" dominant-baseline="central">labels · trigger_examples · intent</text><text class="ts" x="250" y="282" text-anchor="middle" dominant-baseline="central">other 强制兜底（任何任务都有落点）</text></g>
 <line x1="250" y1="292" x2="250" y2="304" class="arr" marker-end="url(#arrow)"/>
 
-<g class="c-purple"><rect x="60" y="308" width="380" height="84" rx="8" stroke-width="0.5"/><text class="th" x="250" y="330" text-anchor="middle" dominant-baseline="central">④ 一条 route = 意图 → 落点 绑定</text><text class="ts" x="250" y="356" text-anchor="middle" dominant-baseline="central">id · labels(中/英) · trigger_examples(自然语言)</text><text class="ts" x="250" y="378" text-anchor="middle" dominant-baseline="central">route(一句话策略) · required_reads · workflow</text></g>
+<g class="c-purple"><rect x="60" y="308" width="380" height="84" rx="8" stroke-width="0.5"/><text class="th" x="250" y="330" text-anchor="middle" dominant-baseline="central">④ 一条 route = 意图 → 第一工作流</text><text class="ts" x="250" y="356" text-anchor="middle" dominant-baseline="central">id · labels(中/英) · trigger_examples(自然语言)</text><text class="ts" x="250" y="378" text-anchor="middle" dominant-baseline="central">workflow（真实 procedure）· 无知识预载</text></g>
 <line x1="250" y1="392" x2="250" y2="418" class="arr" marker-end="url(#arrow)"/>
 
-<g class="c-purple"><rect x="60" y="422" width="380" height="32" rx="8" stroke-width="0.5"/><text class="th" x="250" y="438" text-anchor="middle" dominant-baseline="central">⑤ required_reads · 外科式 + 分层 · token 收口</text></g>
+<g class="c-purple"><rect x="60" y="422" width="380" height="32" rx="8" stroke-width="0.5"/><text class="th" x="250" y="438" text-anchor="middle" dominant-baseline="central">⑤ workflow 先行 · 获取最小决策证据</text></g>
 <line x1="250" y1="454" x2="250" y2="460" class="arr" fill="none"/>
 <path d="M152 460 L347 460" class="arr" fill="none"/>
 <line x1="152" y1="460" x2="152" y2="464" class="arr" marker-end="url(#arrow)"/>
 <line x1="347" y1="460" x2="347" y2="464" class="arr" marker-end="url(#arrow)"/>
-<g class="c-teal"><rect x="60" y="466" width="185" height="76" rx="8" stroke-width="0.5"/><text class="th" x="152" y="486" text-anchor="middle" dominant-baseline="central">skill: 骨架（稳定）</text><text class="ts" x="152" y="508" text-anchor="middle" dominant-baseline="central">architecture</text><text class="ts" x="152" y="526" text-anchor="middle" dominant-baseline="central">rules · workflows</text></g>
-<g class="c-coral"><rect x="255" y="466" width="185" height="76" rx="8" stroke-width="0.5"/><text class="th" x="347" y="486" text-anchor="middle" dominant-baseline="central">code: 肉（随代码漂）</text><text class="ts" x="347" y="508" text-anchor="middle" dominant-baseline="central">conventions · gotchas</text><text class="ts" x="347" y="526" text-anchor="middle" dominant-baseline="central">references</text></g>
+<g class="c-teal"><rect x="60" y="466" width="185" height="76" rx="8" stroke-width="0.5"/><text class="th" x="152" y="486" text-anchor="middle" dominant-baseline="central">技术决策</text><text class="ts" x="152" y="508" text-anchor="middle" dominant-baseline="central">domain: not needed</text><text class="ts" x="152" y="526" text-anchor="middle" dominant-baseline="central">继续原 workflow</text></g>
+<g class="c-coral"><rect x="255" y="466" width="185" height="76" rx="8" stroke-width="0.5"/><text class="th" x="347" y="486" text-anchor="middle" dominant-baseline="central">业务语义决策</text><text class="ts" x="347" y="508" text-anchor="middle" dominant-baseline="central">读 domain-routing.yaml</text><text class="ts" x="347" y="526" text-anchor="middle" dominant-baseline="central">默认绑定一个 owner</text></g>
 <path d="M152 542 L152 552 L250 552" class="arr" fill="none"/>
 <path d="M347 542 L347 552 L250 552" class="arr" fill="none"/>
 <line x1="250" y1="552" x2="250" y2="568" class="arr" marker-end="url(#arrow)"/>
 
-<g class="c-purple"><rect x="100" y="570" width="300" height="56" rx="8" stroke-width="0.5"/><text class="th" x="250" y="590" text-anchor="middle" dominant-baseline="central">⑥ workflow · 可复用 / 可跳转</text><text class="ts" x="250" y="610" text-anchor="middle" dominant-baseline="central">多 route 共用 · 可跳别的 skill</text></g>
+<g class="c-purple"><rect x="100" y="570" width="300" height="56" rx="8" stroke-width="0.5"/><text class="th" x="250" y="590" text-anchor="middle" dominant-baseline="central">⑥ 生命周期边界加载</text><text class="ts" x="250" y="610" text-anchor="middle" dominant-baseline="central">mutation · testing · Managed · Closure</text></g>
 <line x1="250" y1="626" x2="250" y2="650" class="arr" marker-end="url(#arrow)"/>
 
 <rect x="60" y="654" width="520" height="112" rx="12" fill="none" stroke="#185FA5" stroke-width="0.8" stroke-dasharray="4 3"/>
-<text class="th" x="76" y="676" text-anchor="start" dominant-baseline="central">⑦ routing = 激活 / 可达性脊柱（激活 not 存储）</text>
+<text class="th" x="76" y="676" text-anchor="start" dominant-baseline="central">⑦ task + domain 激活 / 可达性脊柱（激活 not 存储）</text>
 <g class="c-blue"><rect x="76" y="694" width="176" height="52" rx="8" stroke-width="0.5"/><text class="th" x="164" y="712" text-anchor="middle" dominant-baseline="central">route-reachability</text><text class="ts" x="164" y="730" text-anchor="middle" dominant-baseline="central">活跃文件可从 route 到达</text></g>
 <g class="c-blue"><rect x="262" y="694" width="120" height="52" rx="8" stroke-width="0.5"/><text class="th" x="322" y="712" text-anchor="middle" dominant-baseline="central">audit-orphans</text><text class="ts" x="322" y="730" text-anchor="middle" dominant-baseline="central">无孤儿文件</text></g>
 <g class="c-blue"><rect x="392" y="694" width="176" height="52" rx="8" stroke-width="0.5"/><text class="th" x="480" y="712" text-anchor="middle" dominant-baseline="central">sync-routing</text><text class="ts" x="480" y="730" text-anchor="middle" dominant-baseline="central">回灌真源的投影</text></g>

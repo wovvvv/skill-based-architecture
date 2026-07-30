@@ -16,7 +16,7 @@ This example scenario: the user asks to "plan a new feature". Your project has f
 Read in order:
 1. `rules/project-rules.md` (project scope / non-goals)
 2. `rules/coding-standards.md`
-3. `rules/agent-behavior.md` (behavior defaults)
+3. `rules/change-discipline.md` immediately before the first mutation
 4. **Verify the invoked skill is present** — `ls skills/superpowers/SKILL.md` must exist. If not:
    - Stop and report: "This workflow depends on skills/superpowers/. Install it first: `git clone https://github.com/obra/superpowers skills/superpowers`."
    - Do not proceed with a substitute.

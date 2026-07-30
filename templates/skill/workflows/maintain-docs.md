@@ -114,7 +114,7 @@ A gotchas file that's too long to scan quickly defeats its purpose — the whole
 
 ## Step 2: Independent Load-Reason Audit
 
-Run this before split/merge decisions and after route changes. For every candidate file or `required_reads` entry, record a compact matrix:
+Run this before split/merge decisions and after route changes. For every candidate knowledge read or activation edge, record a compact matrix:
 
 | File | Real task/route | Why needed at task start | Loaded independently? | Conditional alternative |
 |---|---|---|---|---|
@@ -123,7 +123,7 @@ Judge from real call paths, not headings or desired symmetry:
 
 1. **Independent selection** — name a real request that loads this file without every sibling.
 2. **Action change** — state what reading it changes next; background that changes nothing is not a load reason.
-3. **Timing** — if content is needed only at closure, Large-plan analysis, multi-skill routing, or another branch, remove it from the route's initial `required_reads` and load it at that branch.
+3. **Timing** — if content is needed only at mutation, testing, Closure, Large-plan analysis, domain reasoning, or another branch, load it at that first action-changing boundary rather than at task routing.
 4. **Co-load test** — if all real callers load and modify two files together, prefer one file. Separate ownership or mechanical generation can preserve storage boundaries, but runtime routing still should not force unrelated co-loading.
 5. **Index test** — create an index only when multiple independent files exist and task signals let the index select the next read. A passive file list is not an index with activation value.
 

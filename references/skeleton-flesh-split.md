@@ -18,9 +18,9 @@ The split is not binary. Going section by section, each lands in one of:
 | **Code maps** — module tree, package/dir layout, source index, the call graph with real symbols | `references/` | 肉 | "modules: web → biz/shared → core → common/dal" |
 | Volatile house style — naming, route shapes, paths, commands, formats | `conventions/` | 肉 | "`POST /{entity}/create`", "param names `page`/`limit`" |
 | Code-coupled landmines — symptom→cause→fix on specific symbols | `gotchas/` (split by independently routed module only) | 肉 | "change a Controller, rebuild the `start` fat-jar or you run stale bytecode" |
-| **Cross-cutting agent behavior / methodology** — delegation discipline, change-discipline, transparency-on-block, AAR triggers | **stays in `rules/`** | 骨架 | subagent-delegation Iron Law |
+| **Cross-cutting methodology** — mutation discipline, task execution, delegation, AAR triggers | `rules/` or `workflows/` by action timing | 骨架 | `rules/change-discipline.md` before mutation; subagent workflows only when delegation is considered |
 
-**Two buckets get missed.** (1) The **code map** looks like architecture but is flesh — `modules-and-packages.md`, a directory layout, a call graph with class names *describe the current code* and drift on every refactor; they go in `references/`, not `architecture/`. Mixing them in makes `architecture/` diverge (re-describing the code) instead of converging on the few invariant principles. (2) **Methodology** is neither architecture nor convention nor gotcha — `rules/` survives as its home (why the template ships `rules/agent-behavior.md`). `architecture/` should end up small and sparse: abstraction is compact.
+**Two buckets get missed.** (1) The **code map** looks like architecture but is flesh — `modules-and-packages.md`, a directory layout, a call graph with class names *describe the current code* and drift on every refactor; they go in `references/`, not `architecture/`. Mixing them in makes `architecture/` diverge (re-describing the code) instead of converging on the few invariant principles. (2) **Methodology** is neither architecture nor convention nor gotcha — place a constraint in `rules/` only when a phase boundary selects it, and a procedure in `workflows/`; do not rebuild a universal behavior bundle. `architecture/` should end up small and sparse: abstraction is compact.
 
 ## 2. Author the new files: verbatim, no duplication, cross-link
 
@@ -51,7 +51,7 @@ A file can pass `audit-orphans` (e.g. listed in the `SKILL.md` manifest) yet **n
 
 Choose the lightest route that actually selects the leaf:
 
-- **Route a known leaf directly.** If the task signal already identifies transactional work, put `architecture/transactions-locks.md` in that route's `required_reads`; do not make the Agent read an index merely to rediscover an answer routing already knew.
+- **Activate a known leaf directly from the workflow.** If current evidence identifies transactional work, the owning workflow reads `architecture/transactions-locks.md`; do not make the Agent read an index merely to rediscover an answer the evidence already proved.
 - **Add a selecting `index.md` only after multi-file pressure.** Use one when several independently useful leaves exist but the route can identify only the tier/module, not the exact leaf. Its **"read when"** column must map task signals to the next file (`transactions-locks.md → multi-step write / lock / async`). A passive directory list is not activation.
 - **Reading an index is not reading the content.** After a routed index, pull the matching leaves or explicitly state that none matched; silently treating index-read as content-read is the failure mode this pattern can create.
 - List selected leaves as **inline-code skill-root-relative paths** (e.g. `architecture/transactions-locks.md`) so the same string is both a navigable path and an `audit-orphans` inbound. A relative link to only `transactions-locks.md` lacks the tier prefix and does not satisfy that check.
@@ -62,8 +62,8 @@ Do not create an index for one file. If every task that reaches an index selects
 
 A move that leaves routing untouched produces incoherent routes.
 
-- **Repoint `always_read`** off the split files onto the small cross-cutting set (agent-behavior + change-discipline, optionally the structural spine) — not the old mixed governance files.
-- **Re-derive each route's `required_reads`** as the smallest known leaves, or a selecting index only when the route cannot know the leaf (§4). The classic failure remains: `fix-bug` read the pitfalls file but not the architecture rule it needed to act — half an answer.
+- **Empty `always_read` unless every workflow truly needs the file before selection.** Mutation discipline, indexes, and code facts do not qualify merely because they are broadly useful.
+- **Re-derive each workflow's activation points** around the smallest evidenced leaves, or a selecting index only when evidence identifies the tier but not the leaf (§4). The classic failure remains: `fix-bug` found a symptom but never activated the architecture rule needed to interpret it — half an answer.
 
 ## 6. Validate
 
@@ -85,7 +85,7 @@ No new concept — the skeleton/flesh cut you already make *inside* a Full skill
 
 **Which root? — the checkout-coupling test.** *Could this content legitimately differ between two simultaneously active checkouts (branches / release lines) of the code repo?* Yes → `code_root` (it must travel with the checkout it describes). No — identical for every checkout → `skill_root`. This test decides **repo placement only**; tier membership still follows §1's abstraction test. The two axes answer different questions and may disagree on the same item — that is legal, not a contradiction: the `start` fat-jar gotcha from §1 is *flesh by tier* (it names symbols; a refactor invalidates it) yet *skill_root by coupling* (the toolchain landmine holds on every checkout). So `gotchas/` and `references/` are **not** wholesale code_root: framework/toolchain-mechanism landmines that hold for every checkout live in the skill_root's own `gotchas/`, while symbol-and-state-coupled landmines stay in `code_root` — a mixed file goes where its majority lives, with a note flagging the minority entries for re-check when the implementation moves. Do **not** use the coupling test as a tier test — "same on every branch" does not make a code map architecture (§1's warning about slow-drifting maps applies unchanged).
 
-**Routing joins the two roots with a source prefix.** `routing.yaml` lives in `skill_root`, declares a `path_resolution` block, and prefixes every `required_reads` / `workflow` with `skill:` or `code:`, so one route composes both — architecture principle (`skill:`) + current code facts (`code:`) for the same task:
+**Routing and workflows join the two roots with a source prefix.** `routing.yaml` lives in `skill_root`, declares a `path_resolution` block, and selects one prefixed workflow. That workflow can later activate `skill:` architecture or `code:` facts after evidence reaches their scope; business owners use the separately timed `domain-routing.yaml`.
 
 ```yaml
 path_resolution:
@@ -98,11 +98,6 @@ path_resolution:
 tasks:
   - id: style-ui
     labels: { en: Adjust UI / interaction, zh: 调整前端样式 }
-    required_reads:
-      - skill:architecture/index.md     # skeleton, from 元仓
-      - code:conventions/index.md       # flesh, from the code repo
-      - code:gotchas/index.md
-      - code:references/source-index.md
     workflow: skill:workflows/change-managed.md
     trigger_examples: [调整样式, UI 优化, antd 样式]
 ```

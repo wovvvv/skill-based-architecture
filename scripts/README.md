@@ -10,13 +10,13 @@ Each retained check covers a different blocking drift dimension. Scripts under `
 
 | Dimension | Question it answers | Check |
 |---|---|---|
-| Routing source-of-truth (downstream) | Did SKILL.md / shells drift from `routing.yaml`? Optional `domain_overlays` append context without replacing task workflows; cross-owner refs require workspace-root validation | `sync-routing.sh --check [--workspace-root <path>]` |
+| Routing source-of-truth (downstream) | Did SKILL.md / shells drift from first-workflow `routing.yaml`? Is optional `domain-routing.yaml` non-empty, owner-complete, and delayed; do cross-owner refs pass workspace-root validation? | `sync-routing.sh --check [--workspace-root <path>]` |
 | Shell + activation source-of-truth (self-hosting) | Did this repo's root shells drift from generated content, or `skill.yaml` description drift from `SKILL.md`? | `check-self-shells.sh` |
 | Template hook runtime contract | Does `templates/hooks/session-start` emit the right per-harness JSON shape and inject at most one router? | `check-template-hooks.sh` *(upstream-only)* |
 | Routing trigger coverage | Do `trigger_examples` actually route to the intended workflow? | `check-self-scenarios.sh` (upstream-only) |
 | First-migration user journey | Does Quick Start preview without writes, preserve existing project entries byte-for-byte, relocate their instructions into routed skill rules, and still produce a scaffold that passes structural checks? | `scaffold-downstream.sh` + the empty/existing-project journeys in `check-all.sh` *(upstream-only)* |
 | Structural budgets + content | SKILL.md dual budget (desc ≤ 25 + body ≤ 90), FILL/placeholder residue, broken links, SessionStart-hook presence, description keyword-stuffing, and content conformance (§9, when `conformance.yaml` exists) | `smoke-test.sh` |
-| Orphan content-tier + workflow files | Recursively scan `rules/`/`references/`/`architecture/`/`gotchas/`/`conventions/`/`workflows/` for zero inbound links. Workflows match by basename (sibling same-dir links + routing `workflow:`/`required_reads` both count) | `audit-orphans.sh` |
+| Orphan content-tier + workflow files | Recursively scan `rules/`/`references/`/`architecture/`/`gotchas/`/`conventions/`/`workflows/` for zero inbound links. Workflows match by basename; both task workflows and delayed domain owners count as routing roots | `audit-orphans.sh` |
 | Unactivated task files | Active-tier files, `workflows/`, and nested `references/business/` leaves on no task route/overlay — link-reachable but never read (stored-not-activated) | `route-reachability.sh` |
 | **Content conformance (downstream)** | Did downstream omit a mandatory phrase or reintroduce a forbidden anti-pattern? | `check-version-conformance.sh <skill> --conformance <upstream-clone>/templates/skill/conformance.yaml` — supports `must_contain` + `must_not_contain`, and is also run by `smoke-test.sh` §9 against the skill's own manifest |
 | **Content presence (upstream-canon)** | Does THIS repo still teach what its templates promise? | `check-version-conformance.sh . --conformance references/self-hosting-conformance.yaml` |

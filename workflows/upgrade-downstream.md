@@ -40,7 +40,7 @@ Upstream maintainers should run `bash scripts/check-upstream-changes.sh` before 
 - Don't ask the user to manually diff upstream and downstream; the workflow exists so the agent does that work.
 - Don't use whole-file replacement unless the target is missing or the agent verifies the local file is an unmodified old upstream template.
 - Don't copy `UPSTREAM-CHANGES.md` into downstream projects; it is read only from the cloned upstream repo.
-- Don't propagate experimental upstream additions (principles that accumulated in an over-cap `agent-behavior.md` during testing, etc.) — only the canonical clean state belongs downstream.
+- Don't propagate experimental upstream additions or recreate deleted universal behavior bundles during migration — only the canonical clean state belongs downstream.
 - Don't use absolute paths in subagent prompts when probing — they bypass `isolation: worktree` and leak writes back to main (see [`examples/behavior-failures.md`](../examples/behavior-failures.md)).
 
 ## Ongoing Maintenance

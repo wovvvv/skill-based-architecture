@@ -177,10 +177,9 @@ path_resolution:
   code_root: {owns: [gotchas/**]}
 always_read:
   - skill:rules/base.md
+  - code:gotchas/shared.md
 tasks:
   - id: fixture
-    required_reads:
-      - code:gotchas/shared.md
     workflow: skill:workflows/run.md
 YAML
 
@@ -316,17 +315,8 @@ description: sample overlay fixture
 <!-- ROUTING_SUMMARY_END -->
 MARKDOWN
   cat > "$skill/routing.yaml" <<'YAML'
-owner_roots:
-  billing: services/billing
 always_read:
   - rules/base.md
-domain_overlays:
-  - id: billing
-    labels: { en: Billing, zh: 计费 }
-    required_reads:
-      - references/business/billing-consumer.md
-      - owner:billing:skills/billing/references/business/billing.md
-    trigger_examples: [账单, billing policy]
 tasks:
   - id: run
     labels: { en: Run, zh: 执行 }
@@ -338,9 +328,35 @@ tasks:
     trigger_examples: [其他任务]
 YAML
 
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "domain validation accepted a business owner without domain-routing.yaml" >&2
+    return 1
+  fi
+
+  printf 'domain_overlays: []\n' > "$skill/domain-routing.yaml"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "domain validation accepted an empty domain-routing.yaml" >&2
+    return 1
+  fi
+
+  cat > "$skill/domain-routing.yaml" <<'YAML'
+owner_roots:
+  billing: services/billing
+domain_overlays:
+  - id: billing
+    labels: { en: Billing, zh: 计费 }
+    required_reads:
+      - references/business/billing-consumer.md
+      - owner:billing:skills/billing/references/business/billing.md
+    trigger_examples: [账单, billing policy]
+YAML
+
   (cd "$root" && bash "$script" "$skill" --workspace-root "$root") >/dev/null
-  grep -q 'Domain overlays are active' "$skill/SKILL.md"
-  grep -q 'task_route_id.*domain_overlay_ids.*merged_required_reads' "$skill/SKILL.md"
+  grep -q 'Run / 执行 (`run`) -> workflow `workflows/run.md`' "$skill/SKILL.md"
+  if grep -q 'billing-consumer\|domain_overlay_ids\|merged_required_reads' "$skill/SKILL.md"; then
+    echo "generated task summary eagerly exposed domain-routing content" >&2
+    return 1
+  fi
   (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null
   output="$(cd "$root" && bash "$script" "$skill" --check)"
   [[ "$output" == *"cross-owner target verification remains open"* ]] || {
@@ -353,6 +369,58 @@ YAML
     return 1
   }
 
+  cp "$skill/domain-routing.yaml" "$tmp/domain-routing.base"
+  perl -0pi -e 's#      - references/business/billing-consumer.md\n      - owner:billing:skills/billing/references/business/billing.md#      - task-relevant requirement billing:docs/requirements/billing.md#' "$skill/domain-routing.yaml"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "domain validation accepted a Plan requirement without a business owner" >&2
+    return 1
+  fi
+  cp "$tmp/domain-routing.base" "$skill/domain-routing.yaml"
+
+  printf '# Unregistered domain\n' > "$skill/references/business/unregistered.md"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "domain validation accepted an unregistered business leaf" >&2
+    return 1
+  fi
+  rm "$skill/references/business/unregistered.md"
+
+  cp "$skill/routing.yaml" "$tmp/routing.base"
+  perl -0pi -e 's/(    labels: \{ en: Run[^\n]*\n)/$1    required_reads: []\n/' "$skill/routing.yaml"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "task route validation accepted required_reads" >&2
+    return 1
+  fi
+  cp "$tmp/routing.base" "$skill/routing.yaml"
+
+  perl -0pi -e 's/(    labels: \{ en: Run[^\n]*\n)/$1    route: inspect everything\n/' "$skill/routing.yaml"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "task route validation accepted executable route instructions" >&2
+    return 1
+  fi
+  cp "$tmp/routing.base" "$skill/routing.yaml"
+
+  printf '# Navigation only\n' > "$skill/references/navigation.md"
+  perl -0pi -e 's#workflow: workflows/run.md#workflow: references/navigation.md#' "$skill/routing.yaml"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "task route validation accepted a navigation-only workflow target" >&2
+    return 1
+  fi
+  cp "$tmp/routing.base" "$skill/routing.yaml"
+  rm "$skill/references/navigation.md"
+
+  cat >> "$skill/routing.yaml" <<'YAML'
+domain_overlays:
+  - id: legacy
+    labels: { en: Legacy, zh: 旧领域 }
+    required_reads: [references/business/billing-consumer.md]
+    trigger_examples: [legacy]
+YAML
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "task routing accepted legacy inline domain overlays" >&2
+    return 1
+  fi
+  cp "$tmp/routing.base" "$skill/routing.yaml"
+
   rm "$root/services/billing/skills/billing/references/business/billing.md"
   if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
     echo "owner target validation accepted a missing cross-owner file" >&2
@@ -360,34 +428,116 @@ YAML
   fi
   printf '# Billing owner\n' > "$root/services/billing/skills/billing/references/business/billing.md"
 
-  perl -0pi -e 's#billing: services/billing#billing: ../billing#' "$skill/routing.yaml"
+  perl -0pi -e 's#billing: services/billing#billing: ../billing#' "$skill/domain-routing.yaml"
   if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
     echo "owner root validation accepted parent traversal" >&2
     return 1
   fi
-  perl -0pi -e 's#billing: ../billing#billing: services/billing#' "$skill/routing.yaml"
+  perl -0pi -e 's#billing: ../billing#billing: services/billing#' "$skill/domain-routing.yaml"
 
-  perl -0pi -e 's#owner:billing:#owner:undeclared:#' "$skill/routing.yaml"
+  perl -0pi -e 's#owner:billing:#owner:undeclared:#' "$skill/domain-routing.yaml"
   if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
     echo "owner reference validation accepted an undeclared owner" >&2
     return 1
   fi
-  perl -0pi -e 's#owner:undeclared:#owner:billing:#' "$skill/routing.yaml"
+  perl -0pi -e 's#owner:undeclared:#owner:billing:#' "$skill/domain-routing.yaml"
 
-  perl -0pi -e 's/(    labels: \{ en: Billing[^\n]*\n)/$1    workflow: workflows\/run.md\n/' "$skill/routing.yaml"
+  perl -0pi -e 's/(    labels: \{ en: Billing[^\n]*\n)/$1    workflow: workflows\/run.md\n/' "$skill/domain-routing.yaml"
   if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
     echo "domain overlay validation accepted a workflow override" >&2
     return 1
   fi
 )
 
+check_code_root_domain_contract() (
+  set -euo pipefail
+  local tmp root skill code_root script
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  root="$tmp/workspace"
+  skill="$root/skills/sample"
+  code_root="$root/code/skills/sample"
+  script="$ROOT/templates/skill/scripts/sync-routing.sh"
+  mkdir -p "$skill/workflows" "$code_root/references/business/orders"
+  printf '# Run\n' > "$skill/workflows/run.md"
+  printf '# Business catalog\n' > "$code_root/references/business/index.md"
+  printf '# Orders selector\n\nSee [refunds](refunds.md).\n' > "$code_root/references/business/orders/index.md"
+  printf '# Refund rules\n' > "$code_root/references/business/orders/refunds.md"
+  cat > "$skill/SKILL.md" <<'MARKDOWN'
+---
+name: sample
+description: sample code-root domain fixture
+---
+# Sample
+<!-- ALWAYS_READ_START -->
+<!-- ALWAYS_READ_END -->
+<!-- ROUTING_SUMMARY_START -->
+<!-- ROUTING_SUMMARY_END -->
+MARKDOWN
+  cat > "$skill/routing.yaml" <<'YAML'
+path_resolution:
+  skill_root:
+    owns: [SKILL.md, routing.yaml, domain-routing.yaml, workflows/**]
+  code_root:
+    root: code/skills/sample
+    owns: [references/**]
+always_read: []
+tasks:
+  - id: run
+    labels: { en: Run, zh: 执行 }
+    workflow: workflows/run.md
+    trigger_examples: [run]
+  - id: other
+    labels: { en: Other, zh: 其他 }
+    workflow: workflows/run.md
+    trigger_examples: [other]
+YAML
+
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "code-root domain validation accepted business content without domain-routing.yaml" >&2
+    return 1
+  fi
+
+  cat > "$skill/domain-routing.yaml" <<'YAML'
+domain_overlays:
+  - id: orders
+    labels: { en: Orders, zh: 订单 }
+    required_reads: [code:references/business/orders/index.md]
+    trigger_examples: [refund, 退款]
+YAML
+  (cd "$root" && bash "$script" "$skill" --workspace-root "$root") >/dev/null
+  (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null
+  output="$(cd "$root" && bash "$script" "$skill" --check)"
+  [[ "$output" == *"code-root target verification remains open"* ]] || {
+    echo "code-root check without workspace root did not report open target verification" >&2
+    return 1
+  }
+
+  cp "$skill/domain-routing.yaml" "$tmp/code-domain-routing.base"
+  perl -0pi -e 's#required_reads: \[code:references/business/orders/index.md\]#required_reads: [code:references/business/orders/index.md, code:references/business/missing.md]#' "$skill/domain-routing.yaml"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "code-root target validation accepted a missing code owner" >&2
+    return 1
+  fi
+  cp "$tmp/code-domain-routing.base" "$skill/domain-routing.yaml"
+
+  mv "$code_root/references/business/orders/index.md" "$tmp/orders-index.md"
+  if (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null 2>&1; then
+    echo "code-root domain validation accepted nested leaves without a selecting index" >&2
+    return 1
+  fi
+  mv "$tmp/orders-index.md" "$code_root/references/business/orders/index.md"
+  (cd "$root" && bash "$script" "$skill" --check --workspace-root "$root") >/dev/null
+)
+
 check_recursive_knowledge_integrity() (
   set -euo pipefail
-  local tmp root routing
+  local tmp root routing domain_routing
   tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' EXIT
   root="$tmp/skill"
   routing="$root/routing.yaml"
+  domain_routing="$root/domain-routing.yaml"
   mkdir -p "$root/rules" "$root/workflows" "$root/references/business/deep"
   printf '# Base\n' > "$root/rules/base.md"
   printf '# Run\n' > "$root/workflows/run.md"
@@ -398,9 +548,17 @@ always_read:
   - rules/base.md
 tasks:
   - id: run
+    workflow: workflows/run.md
+  - id: other
+    workflow: workflows/run.md
+YAML
+  cat > "$domain_routing" <<'YAML'
+domain_overlays:
+  - id: known
+    labels: { en: Known, zh: 已知 }
     required_reads:
       - references/business/known.md
-    workflow: workflows/run.md
+    trigger_examples: [known]
 YAML
 
   if (cd "$root" && bash "$ROOT/templates/skill/scripts/audit-orphans.sh") >/dev/null 2>&1; then
@@ -435,6 +593,7 @@ run "single-root + two-root integrity contracts" check_two_root_integrity
 run "conformance option-like phrase contract" check_conformance_option_like_phrases
 run "vendor owner + path guards" check_vendor_sync_guards
 run "task route + domain overlay and cross-owner guards" check_overlay_owner_contract
+run "code-root domain materialization + nested-owner guards" check_code_root_domain_contract
 run "recursive business-reference integrity" check_recursive_knowledge_integrity
 run "self-hosting shells + activation check" bash scripts/check-self-shells.sh
 run "self-hosting scenario checks" bash scripts/check-self-scenarios.sh

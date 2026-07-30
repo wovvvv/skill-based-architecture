@@ -16,7 +16,7 @@
 | 全局 | [skill-flow-complete](skill-flow-complete.png) | 端到端流程（提问 → 闭合，八阶段） |
 | 路由专题 | [routing-core](routing-core.png) | routing 核心思维（唯一真源 + 自维护回环） |
 | 路由专题 | [routes-to-workflows](routes-to-workflows.png) | 两个 Skill 的真实 route → workflow 映射 |
-| 路由专题 | [file-call-graph-fixbug](file-call-graph-fixbug.png) | 一条 route 的文件调用关系（骨架/肉 + index 扇出） |
+| 路由专题 | [file-call-graph-fixbug](file-call-graph-fixbug.png) | fix-bug 的 workflow 取证、领域闸门与生命周期加载 |
 | 维度 | [progressive-rigor](progressive-rigor.png) | 三档生长（只在压力下升档，缩水则降档） |
 | 维度 | [upstream-downstream-sync](upstream-downstream-sync.png) | 元仓 ↔ 下游 app 的 vendor / 搬运 / 落后检测 |
 
@@ -42,7 +42,7 @@
 
 1. **① 入口引导** —— 会话纪律：同一会话后续任务只重匹配 route，仅在 route 变化/上下文压缩时重读；读薄壳 → 指向 SKILL.md + bootstrap。
 2. **② 路由匹配** —— 扫 SKILL.md 命中 skill（前端/后端/双端/other）。
-3. **③ 分层阅读** —— 读 Always Read + routing.yaml，匹配 route（无匹配→other），**只读 required_reads**（token 收口），按骨架/肉取用。
+3. **③ 证据驱动披露** —— routing.yaml 只选第一 workflow；workflow 读取最小决策证据，只有业务语义真正影响当前决策时才读 `domain-routing.yaml`，技术任务不读。
 4. **④⑤ 锚定 + 执行 + 跨端** —— Simple 直接执行；Managed 建立 Task Anchor 并按任务风险决定自然语言对齐或完整简报，Native Plan 把 Workflow 实例化为当前步骤且不在对话中重复；每个主步骤前用 Anchor Checkpoint 重读 Goal / 剩余证据 / 步骤检查 / 相关边界；单 Skill 走领域 Workflow，跨端仍走**契约优先**。
 5. **⑥ Closure Entry Gate + 桶分级** —— Goal / Done When / Plan 步骤未验证则返回执行；入口通过后，`Trigger Policy` 放行纯读任务，改动按**文件路径**落入 A/B/C 桶：
    - **A**（SKILL.md/薄壳/routing.yaml/scripts/*.tpl）→ 完整闭合：AAR + smoke-test + 路径完整性；
@@ -60,12 +60,12 @@ routing 是这套架构**最核心的思维**，不是流程里的一个节点�
 
 - **两级激活**：`description` 粗活化（醒不醒）→ `routing.yaml` 细分派（去哪）。二者刻意分工。
 - **唯一真源**：薄壳/Common Tasks/Always Read 都由 `sync-routing.sh` 从 routing.yaml 生成，改路由只改一处、其余回灌。
-- **一条 route = 意图→落点绑定**：`id + labels(中/英) + trigger_examples(自然语言) + route(策略) + required_reads + workflow`；`other` 强制兜底。
-- **required_reads 外科式 + 分层**：`skill:` = 骨架（元仓），`code:` = 肉（代码层）。只读这条 route 要的。
+- **一条 task route = 意图→第一工作流**：`id + labels(中/英) + trigger_examples(自然语言) + workflow`；不携带知识包或执行策略，`other` 也必须落到真实 workflow。
+- **领域延迟绑定**：显式业务请求/已知 Plan owner 可在 workflow 选择后立即评估；模糊任务先取证；关键词只给候选，默认一个 owner，跨领域需要新证据。
 - **route → workflow 可复用/可跳转**：多 route 共用一个 workflow（rpc-contract → implement-feature），或跳到别的 skill（do-bo → do-bo skill）。
 - **激活/可达性脊柱**：route-reachability 保证每个活跃文件可从某条 route 到达，audit-orphans 杜绝孤儿——让知识不腐化。
 
-`routes-to-workflows` 展开两侧真实路由表；`file-call-graph-fixbug` 以一条 route 为例展开它读的文件与 index 扇出关系。
+`routes-to-workflows` 展开两侧真实路由表；`file-call-graph-fixbug` 展开一条 fix-bug route 如何先进入 workflow，再由证据决定技术路径或领域 owner。
 
 ---
 

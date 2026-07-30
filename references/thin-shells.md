@@ -25,12 +25,14 @@ Task routes live in `skills/<name>/routing.yaml`.
 
 For every new task:
 1. Read `skills/<name>/routing.yaml`.
-2. Match by `labels`, `trigger_examples`, and task intent.
-3. Read only that route's `required_reads` plus Always Read files.
-4. Follow that route's `workflow`.
+2. Match exactly one task route; if none matches, use `other`.
+3. Follow only that route's `workflow`; the task route does not preload knowledge.
+4. Let the workflow inspect the smallest evidence that can decide the next action.
+5. Evaluate optional `domain-routing.yaml` only for an explicit business-rule request, known owner, or evidence-backed unresolved business decision; keywords identify candidates only.
+6. Load mutation, testing, managed-execution, and closure contracts only when their phase begins.
 ```
 
-When a project has proven domain-specific context that must combine with several task workflows, `sync-routing.sh` conditionally expands this generated block from `domain_overlays`. The default scaffold exposes no overlay concept. In an overlay-enabled project, the generated instructions match one task route plus zero or more overlays, preserve current-Session route/read provenance, and keep the task workflow authoritative. See [`business-global-model.md`](business-global-model.md#orthogonal-task-and-domain-routing).
+The generated bootstrap always explains the optional delayed domain stage, but it never copies domain candidates into the shell. Domain-free projects omit `domain-routing.yaml`; the first admitted business owner materializes it atomically. See [`business-global-model.md`](business-global-model.md#orthogonal-task-and-domain-routing).
 
 **Why a bootstrap?** In long conversations, Cursor summarizes earlier context. Instructions like "go read `skills/<name>/SKILL.md`" get truncated. The bootstrap keeps the lookup rule in every shell while the route data stays in one YAML manifest.
 
@@ -45,11 +47,9 @@ Conflicts between loaded project instructions → formal docs in `skills/<name>/
 
 <always-applicable>
 
-**Always Read (every task, in addition to route-specific reads)**
+**Always Read (every task, before workflow selection)**
 
-- `skills/<name>/rules/project-rules.md`
-- `skills/<name>/rules/coding-standards.md`
-- `skills/<name>/rules/agent-behavior.md` — universal behavior defaults
+- Empty by default. Add a file only when every real task needs it before the first workflow is selected.
 
 **Request-clarity judgment**: vague wording is a signal, not an automatic blocker. Use bounded read-only project evidence to derive scope and ask only when a normative preference, authority boundary, or materially different outcome remains unresolved. Do not mutate before the outcome is verifiable. See `skills/<name>/protocol-blocks/ambiguous-request-gate.md` if present.
 
@@ -63,16 +63,18 @@ Task routes live in `skills/<name>/routing.yaml`.
 
 For every new task:
 1. Read `skills/<name>/routing.yaml`.
-2. Match by `labels`, `trigger_examples`, and task intent.
-3. Read only that route's `required_reads` plus Always Read files.
-4. Follow that route's `workflow`.
+2. Match exactly one task route; if none matches, use `other`.
+3. Follow only that route's `workflow`; the task route does not preload knowledge.
+4. Let the workflow inspect the smallest evidence that can decide the next action.
+5. Evaluate optional `domain-routing.yaml` only after an explicit or evidence-backed business-semantic need.
+6. Load later contracts at mutation, testing, Managed execution, and Closure boundaries.
 
 </task-routing>
 
 ## Auto-Triggers
 
-- **New task in same session** → always re-match routing; re-read `skills/<name>/SKILL.md` and the route's files only if the route changed or context was compacted. "I already read it" is not valid when context may have compressed.
-- Before declaring any non-trivial task complete → run Task Closure Protocol (see `workflows/task-closure.md`)
+- **New task in same session** → always re-match routing. After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence.
+- Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter Task Closure Protocol (see `workflows/task-closure.md`); `Ready for Delivery` is not completion
 - Skip only for: formatting-only, comment-only, dependency-version-only, or behavior-preserving refactors
 - When user asks to "record/save/remember" something → project-level knowledge goes to `skills/<name>/` docs; personal preferences go to agent memory
 ```
@@ -203,4 +205,4 @@ For sessions longer than ~2 hours of active editing:
 1. **Checkpoint every ~30 minutes** — ask the agent for a one-sentence summary of completed work. This gives you a clean `/clear` boundary when needed.
 2. **Watch for routing blur** — if the agent cites file paths not in `routing.yaml`, proposes fixes that contradict known gotchas, or stops quoting `✓ Check:` sentences when closing tasks: context has compressed. Nudge with a re-read phrase; if two or more of these trigger, `/clear` is non-negotiable.
 3. **After `/compact`** — the SessionStart hook re-injects the router (if installed), but inline edit state is lost. Remind the agent of current file state in one short message before the next edit.
-4. **Before shipping a commit** — run the Task Closure Protocol. It catches drift accumulated across the session.
+4. **Before any requested commit/push/MR/deploy delivery** — enter the Task Closure Protocol. It declares local readiness, stays open across the authorized handoff, and closes only after the requested artifact is verified.

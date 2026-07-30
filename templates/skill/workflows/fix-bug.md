@@ -4,7 +4,7 @@ Use this route to determine whether observed behavior is an implementation defec
 
 ## Mandatory Pre-Step
 
-Re-match the task route. No patch before expected behavior and the actual root cause are established.
+Re-match the task route. Do not preload domain knowledge and do not patch before expected behavior and the actual root cause are established. An explicit business-rule request or a source Plan that already declares the applicable business-domain owner may activate `domain-routing.yaml` immediately after workflow selection; otherwise inspect the smallest reproduction/source slice first. Read a source Plan directly when one governs the fix; its existence alone does not activate a domain. Keywords alone identify candidates. Activate one domain only when expected behavior remains unresolved because of a business type, flow, state, boundary, or invariant.
 
 **Design-or-defect gate:** when behavior depends on business semantics, compare the routed business model, architecture/contracts, and code/tests/runtime. Classify:
 
@@ -12,7 +12,7 @@ Re-match the task route. No patch before expected behavior and the actual root c
 - `DESIGN_CHANGE` — the requested result changes a business type, flow direction, state machine, or core invariant, or moves a stable business boundary;
 - `INSUFFICIENT_BUSINESS_CONTEXT` — evidence cannot establish intended behavior.
 
-A Design Change leaves this workflow for an approved Plan. For insufficient context, search evidence first and cross-check it against any existing user-confirmed answer. Before using [`plan-feature.md` § Question Gate](plan-feature.md#question-gate), execute [`agent-behavior.md` § Implementation-Fact Question Gate](../rules/agent-behavior.md#implementation-fact-question-gate): close every decision-relevant trigger/entry, caller, write target or target branch/state, ordering/progression, guard/protection/validation/failure, and UI/API ownership hop; trace distinct flows independently. If evidence and confirmed answers align, continue without another question. Otherwise form an evidence-backed working conclusion and ask only a remaining normative ambiguity that could change repair classification or expected behavior. Never ask the user to choose a current implementation fact, request exhaustive detail, or define an abstract concept from scratch. If the user says the answer is in code, stop asking and finish the trace first. A completely absent model is created only if the user chooses “now”. Obvious technical failures need no business model.
+A Design Change leaves this workflow for an approved Plan. For insufficient context, search evidence first and cross-check it against any existing user-confirmed answer. Before using [`plan-feature.md` § Question Gate](plan-feature.md#question-gate), execute [`ambiguous-request-gate.md` § Implementation-Fact Question Gate](../protocol-blocks/ambiguous-request-gate.md#implementation-fact-question-gate): close every decision-relevant trigger/entry, caller, write target or target branch/state, ordering/progression, guard/protection/validation/failure, and UI/API ownership hop; trace distinct flows independently. If evidence and confirmed answers align, continue without another question. Otherwise form an evidence-backed working conclusion and ask only a remaining normative ambiguity that could change repair classification or expected behavior. Never ask the user to choose a current implementation fact, request exhaustive detail, or define an abstract concept from scratch. If the user says the answer is in code, stop asking and finish the trace first. A completely absent model is created only if the user chooses “now”. Obvious technical failures need no business model.
 
 If a source Plan exists, replay its relevant user-confirmed Decision Context before defining expected behavior or changing code; when the behavior is business-bearing, also read the routed business rule. Purely technical Design-derived work replays the source Plan without requiring a business model. Code/tests/runtime are `current implementation fact`, not authority to rewrite `desired business truth`. If the proposed or in-progress fix would drift from the confirmed mainline, invoke [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate) immediately; pause the affected path and consult the user instead of smuggling the change through Bug Fix or reporting it only at Closure.
 
@@ -20,7 +20,7 @@ During Fix Bug, the only source eligible for a `references/business/<module>.md`
 
 ## Steps
 
-1. Restate the observed behavior, affected scope, and expected result.
+1. Restate the observed behavior, affected scope, and expected result. Before the first mutation, read [`change-discipline.md`](../rules/change-discipline.md).
 2. Classify with the Design-or-defect gate.
 3. Reproduce the defect with a failing automated check for the reported reason; if automation is impossible, give repeatable manual steps and why.
 4. Trace the real root cause. Identify the violated invariant, state ownership/provenance, producer-to-consumer call chain, and every affected full/incremental/read/write path. If several independent hypotheses survive and delegation has positive Net Benefit, use `subagent-auxiliary.md`; synthesis stays with the main agent.

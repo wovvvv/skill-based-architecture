@@ -60,7 +60,7 @@ Each non-obvious claim must carry one evidence label. Only `Confirmed from code/
 - [ ] User language captured as real phrases, not translated guesses
 - [ ] Description draft is coarse activation — not a workflow keyword list, and not a step-summary the agent would run instead of opening the workflow
 - [ ] Common Tasks draft covers recurring work without exceeding 8-10 rows
-- [ ] Always Read proposal is 2-3 files
+- [ ] Always Read defaults to empty; every proposed entry is proven necessary before workflow selection for every real task
 - [ ] Structure tier defaults to the lightest tier with evidence-backed upgrade pressure
 - [ ] Execution mode names concrete APIs, CLIs, side effects, scripts, local config, or output contracts when present
 - [ ] Domain topology explains trigger-language and rule-set pressure before recommending a split

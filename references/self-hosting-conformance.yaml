@@ -115,6 +115,8 @@ required_sections:
       - "vague wording is a signal, not an automatic blocker"
       - "bounded read-only project evidence"
       - "Do not mutate before the outcome is verifiable"
+      - "Before any requested commit/push/MR/deploy delivery"
+      - "Ready for Delivery` is not completion"
 
   - file: workflows/full-migration.md
     must_contain:
@@ -147,8 +149,13 @@ required_sections:
   - file: references/business-global-model.md
     must_contain:
       - "## Orthogonal task and domain routing"
+      - "routing.yaml` selects exactly one first workflow"
+      - "domain-routing.yaml"
       - "domain_overlays"
       - "task_route_id"
+      - "Keywords identify candidates only"
+      - "Clearly technical work never reads it"
+      - "Bind one domain owner by default"
       - "## Cross-owner reads"
       - "owner_roots"
       - "owner:<owner-id>:<path>"
@@ -166,12 +173,34 @@ required_sections:
       - "User Decision Drift Gate"
       - "task-execution.md#user-decision-drift-gate"
 
-  - file: templates/skill/rules/agent-behavior.md
+  - file: templates/skill/protocol-blocks/ambiguous-request-gate.md
     must_contain:
-      - "### Implementation-Fact Question Gate"
+      - "## Implementation-Fact Question Gate"
       - "close the smallest decision-relevant implementation path"
       - "Trace distinct flows independently"
       - "remaining normative ambiguity"
+
+  - file: templates/skill/rules/change-discipline.md
+    must_contain:
+      - "## Semantic Boundary"
+      - "Default to Product Development"
+      - "project-rules.md"
+      - "coding-standards.md"
+      - "ownership/provenance"
+      - "Dependency count is risk evidence"
+      - "## Mutation Boundary"
+
+  - file: templates/skill/workflows/task-execution.md
+    must_contain:
+      - "## Evidence and Knowledge Gate"
+      - "smallest source/runtime slice"
+      - "diagnostic evidence, never correctness gates"
+      - "one clear action with one direct check"
+      - "only explicit delivery-dependent evidence remains"
+      - "Ready for Delivery"
+      - "verifies the requested artifact"
+      - "cross-cutting modifier, never a first-workflow route"
+      - "task size or duration alone does not activate it"
 
   - file: templates/skill/workflows/plan-feature.md
     must_contain:
@@ -188,6 +217,7 @@ required_sections:
       - "Implementation-Fact Question Gate"
       - "## Confirmed Implementation Gap Collection and Handoff"
       - "Continue the user's agreed modeling scope"
+      - "--workspace-root <workspace-root>"
 
   - file: templates/skill/workflows/fix-bug.md
     must_contain:
