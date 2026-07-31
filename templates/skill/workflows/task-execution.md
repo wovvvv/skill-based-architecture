@@ -50,7 +50,7 @@ Use the harness's native Plan/Task surface to hold step state. If none exists, k
 
 - Workflow is the reusable procedure for a task class; Native Plan is its task-specific instance.
 - The user-visible Plan may group internal Workflow steps, but cannot omit or reorder a mandatory gate in a way that changes its meaning.
-- Workflow owns domain checks; Task Anchor owns this task's Goal, Done When, and material Boundaries.
+- The matched Workflow owns domain checks and defines what evidence can resolve or falsify its material risks; Task Anchor owns this task's Goal, Done When, and material Boundaries.
 - Runtime step status belongs to the Native Plan, never to the reusable Workflow document.
 
 ## Recitation Loop
@@ -60,7 +60,7 @@ Before each main Plan step, bring a compact Anchor Checkpoint into current atten
 ```text
 Goal: <the unchanged observable outcome>
 Done When: <the remaining goal-level evidence>
-Current Step: <its output and check>
+Current Step: <the unresolved question, expected evidence, and advance/return condition>
 Boundaries: <only those relevant now>
 ```
 
@@ -73,9 +73,9 @@ If the Goal or Done When can no longer be stated accurately from the current Ses
 ## Execution Loop
 
 1. Keep exactly one main step active; pending steps remain explicit.
-2. Run the Anchor Checkpoint, then name the current step's output and check before acting.
-3. Mark the step complete only after its check passes. Code written, effort spent, or a worker's claim is not completion evidence.
-4. Before advancing, confirm the next step directly serves the Goal and still respects Boundaries.
+2. Run the Anchor Checkpoint, then name the current step's unresolved question, the evidence that could resolve or falsify it, and the advance/return condition before acting.
+3. Mark the step complete only when the resulting evidence satisfies that condition and either changes the next decision, is consumed by the next step, or satisfies remaining Done When evidence. Running a command, generating a file, receiving a successful exit code, writing code, spending effort, or a worker's claim is not completion evidence by itself.
+4. If evidence satisfies the condition, advance only after confirming the next step serves the Goal and respects Boundaries. If it contradicts the premise, return to the owning earlier step; if it is inconclusive, keep the step open and change the check or escalate under the declared condition.
 5. If evidence changes the premise, scope, ordering, or Done When, update the Anchor and remaining Plan before more mutation. Tell the user when the Goal itself must change.
 6. Never silently overwrite a load-bearing conclusion. Re-check the source Plan's user-confirmed mainline, chosen approach, acceptance, Boundaries, and Task Anchor; obtain the business owner's confirmation before adopting a normative business judgment.
 

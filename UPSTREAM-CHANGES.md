@@ -48,6 +48,32 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-07-31 - Pressure-triggered planning artifacts
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `plan-feature.md` first classifies the requested deliverable. Explaining a planning method, reviewing an existing Plan, or brainstorming direction stays bounded read-only advisory work; only an explicit concrete Plan request activates full Design-Slice closure and artifact decisions.
+  - `plan-feature.md` now treats complexity as analysis depth only. Planning starts inline, closes one evidence-bearing Design Slice at a time, stops evidence expansion when the current question is resolved/falsified or the next semantic owner is known, preserves compact user authority, and creates a durable Plan only when an explicit request or independent persistence, consumer, review, validation, lifecycle, conflict-reconciliation, or handoff pressure appears.
+  - Interactive Complex/Large planning now pauses after the first Slice that exposes a user-owned normative choice or high-impact assumption. It discusses that one topic before unrelated evidence expansion; only an explicit artifact-only/end-to-end request authorizes uninterrupted completion.
+  - The brainstorm owner is now named `Progressive Brainstorm Handoff` to match its actual timing; downstream consumers should update the heading/anchor together rather than waiting for a completed document.
+  - Active Plans with multiple Open Questions resume from the highest-impact unresolved decision and load only evidence fitted to that question; other questions and evidence paths stay unopened until their turn.
+  - `plan-large.md` no longer maps perspectives to sibling files. It keeps architecture/domain/data/integration/risk/rollout/decomposition analysis integrated until a sibling can independently change the synthesis, task boundary, risk treatment, or proof.
+  - `docs/plans/README.md` and `_TEMPLATE.md` replace complexity-driven one-file/directory selection plus the fixed canonical section skeleton with a current-contract model: no artifact by default, one file while one carrier is enough, and a `prd.md` directory only when an independently useful sibling already exists.
+  - The SBA Bible, conformance manifests, and self-scenarios protect pressure-triggered materialization, Design Slice completeness, authority separation, real alternatives, stale-question removal, and the rejection of placeholder decomposition/file taxonomies.
+- Why it matters: the prior workflow could create `prd.md` before the problem was understood, encourage a transcript to masquerade as a design contract, and turn Large analysis lenses into many small files. Structural completeness then obscured missing owners, semantic consumers, failure boundaries, and observable proof.
+- Downstream refresh guidance: port `plan-feature.md`, `plan-large.md`, and the Plan archive/template contract together. Remove any route or complexity rule that creates Plan files automatically; preserve local business/domain owners and validation commands. Do not pre-create `prd.md`, `design.md`, risk/database/contract files, or a Plan directory. Let current evidence activate design dimensions, and create only the smallest artifact with a demonstrated independent job.
+
+## 2026-07-31 - Evidence-bearing stage completion
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - The SBA Bible now states that a main step advances only on evidence that changes the next decision or can be consumed by the next stage; commands, generated files, and successful exit codes are not stage completion by themselves.
+  - `task-execution.md` binds each main step to an unresolved question, evidence that can resolve or falsify it, and an advance/return condition. Contradictory evidence returns to the owning earlier step; inconclusive evidence keeps the step open instead of consuming a retry quota or advancing the Plan.
+  - The matched domain Workflow defines valid evidence for its material risks. Task Closure rejects a successful command as completion when it does not validate target behavior or feed the next step.
+  - Self-hosting Bible conformance, downstream conformance, and scenario contracts protect the stage-evidence boundary without adding an evidence ledger, persistent state, fixed evidence type, or domain-specific command to the default scaffold.
+- Why it matters: a green build, generated artifact, or successful tool call can prove its own narrow contract while leaving the requested runtime, UI, migration, routing, or delivery behavior unverified. Treating action completion as outcome completion creates false progress and lets local green checks replace decision-relevant evidence.
+- Downstream refresh guidance: port the Task Execution evidence question and advance/return logic together with the Closure exit-code rationalization and conformance anchors. Preserve each project's actual validation commands and domain evidence. Do not create a per-step evidence file or force every task through the same proof type; require only evidence that resolves the current question, changes the next action, or is consumed by the next stage.
+
 ## 2026-07-30 - Evidence-driven workflow and delayed domain routing
 
 - Upstream commit: pending in this working tree

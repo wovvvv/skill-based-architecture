@@ -59,13 +59,14 @@ Closure never grants commit, push, MR, deploy, publish, or other side-effect aut
 | “I will reconcile links/rules later.” | The decision context will be gone; do it in the same change. |
 | “I can mention the mainline drift in the final report.” | First disclosure at Closure is too late. Pause the affected path and consult the user when drift is discovered. |
 | “The file exists and smoke is green.” | Reachable structure can still be inert; state the next action it changes. |
+| “The command exited 0, so the stage is complete.” | A successful exit code proves only the command's own contract. If it does not resolve the step's question, validate target behavior, or produce evidence consumed by the next step, return to Task Execution. |
 | “I should add a safeguard just in case.” | No concrete recurring failure means no new mechanism. |
 | “The branch was pushed, so the requested MR probably exists.” | A local or remote precursor is not delivery evidence; verify the actual requested artifact. |
 | “A login/network retry means I must rerun every local test.” | If inputs and verified content are unchanged, retry and verify only the blocked delivery boundary. |
 
 ### Red Flags
 
-- claiming “done/should pass” without reading a fresh exit code;
+- claiming “done/should pass” without reading a fresh exit code, or treating that exit code as sufficient completion evidence by itself;
 - claiming completion from `Ready for Delivery` or from an unverified precursor such as a pushed branch;
 - recording by appending instead of reconciling the existing concept;
 - creating a file/index with no independently selected task path;
