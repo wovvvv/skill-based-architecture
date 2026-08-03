@@ -22,18 +22,6 @@
           }
         ]
       }
-    ],
-    "PreToolUse": [
-      {
-        "_comment": "Optional gate on rules/agent-behavior.md edits. Remove this matcher block to disable.",
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/agent-behavior-gate.sh"
-          }
-        ]
-      }
     ]
   }
 }

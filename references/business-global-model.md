@@ -167,42 +167,48 @@ Do not silently compress a brainstorm into a lossy sentence. The business model 
 
 ## Routing recipe
 
-Do not add business files to `always_read`. Prefer a direct route read while one module has one file:
+Do not add business files to `always_read` or task routes. The first admitted business owner and its `domain-routing.yaml` registration are one atomic change:
 
 ```yaml
-required_reads:
-  - references/business/merge-task.md
+domain_overlays:
+  - id: merge-task
+    labels: { en: Merge task domain, zh: 合并任务领域 }
+    required_reads: [references/business/merge-task.md]
+    trigger_examples: [版本合并, merge task]
 ```
 
-After a module genuinely splits, route directly to the smallest known leaf. Use a module `index.md` only when it actively selects the leaf from task signals; a passive file list is not activation.
+The file is optional only while the project has zero domain owners. Valid states are: no business owner and no manifest, or one-or-more owners and a non-empty validated manifest. After a domain genuinely splits, register the smallest independently selected leaf. Use a module `index.md` only when it actively selects a leaf from evidence; a passive file list is not activation.
 
 For explicit modeling requests, copy and adapt `workflows/profile-business-model.md.example`, rename it to a real workflow, and add a project-specific route. Do not add that route to non-business projects.
 
 ## Orthogonal task and domain routing
 
-When the same domain knowledge must accompany different task workflows, do not duplicate one complete route per task/domain pair. Keep one task route to select the workflow and add `domain_overlays` only after real domain leaves exist. An overlay may append `required_reads`; it must not declare or replace a workflow.
+When the same domain knowledge may accompany different task workflows, do not duplicate one complete route per task/domain pair. `routing.yaml` selects exactly one first workflow. Only after workflow selection does evidence decide whether to read optional `domain-routing.yaml`; a domain entry appends knowledge and must not declare or replace a workflow.
 
 ```yaml
-domain_overlays:
-  - id: billing
-    labels: { en: Billing domain, zh: 计费领域 }
-    required_reads: [references/business/billing.md]
-    trigger_examples: [账单, 计费规则, invoice policy]
-
+# routing.yaml
 tasks:
   - id: fix-bug
     labels: { en: Fix bug, zh: 修复 bug }
     workflow: workflows/fix-bug.md
     trigger_examples: [接口报错, fix this bug]
+
+# domain-routing.yaml
+domain_overlays:
+  - id: billing
+    labels: { en: Billing domain, zh: 计费领域 }
+    required_reads: [references/business/billing.md]
+    trigger_examples: [账单, 计费规则, invoice policy]
 ```
 
-For each task, match exactly one task route and zero or more domain overlays, then merge Always Read + task reads + overlay reads. Keep only current-Session provenance: `task_route_id`, `domain_overlay_ids`, and `merged_required_reads`. This is a review aid, not persistent task state. Do not pre-create overlays, domain files, or an index for domains that do not yet exist.
+Explicit business-rule requests and source Plans that already declare the applicable business-domain owner may evaluate the domain manifest immediately after workflow selection. A source Plan is read directly by its workflow and does not activate a domain merely because it exists. Ambiguous work first inspects the smallest implementation/runtime evidence and evaluates the manifest only when an unresolved decision depends on a business type, flow, state, boundary, or invariant. Clearly technical work never reads it. Keywords identify candidates only. Bind one domain owner by default and expand only with explicit cross-domain evidence. Keep only current-Session provenance such as `task_route_id`, selected `domain_owner_id`, and why the current decision required it; do not persist a task database.
 
 ## Cross-owner reads
 
 When a domain has one owner but another app must consume it, keep the business model at the owner and declare an owner root instead of copying the model. Cross-owner references use `owner:<owner-id>:<path>`:
 
 ```yaml
+# domain-routing.yaml
 owner_roots:
   billing-service: services/billing
 

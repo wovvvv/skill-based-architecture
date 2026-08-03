@@ -29,6 +29,7 @@ while [[ $# -gt 0 ]]; do
     *) usage; exit 2 ;;
   esac
 done
+DOMAIN_ROUTING="$(dirname "$ROUTING")/domain-routing.yaml"
 
 if [[ -z "$NAMESPACE" ]]; then
   if [[ -f "$ROUTING" ]] && grep -q '^path_resolution:' "$ROUTING"; then
@@ -81,10 +82,17 @@ for file in "${LOCAL_SOURCES[@]:-}"; do
 done
 
 routing_mentions() {
-  local rel="$1" token
-  [[ -f "$ROUTING" ]] || return 1
+  local rel="$1" token source
   if [[ "$NAMESPACE" == "single" ]]; then token="$rel"; else token="$NAMESPACE:$rel"; fi
-  grep -vE '^[[:space:]]*#' "$ROUTING" | grep -qF "$token"
+  for source in "$ROUTING" "$DOMAIN_ROUTING"; do
+    [[ -f "$source" ]] || continue
+    awk -v token="$token" '
+      /^[[:space:]]*#/ { next }
+      index($0, token) { found=1 }
+      END { exit(found ? 0 : 1) }
+    ' "$source" && return 0
+  done
+  return 1
 }
 
 has_inbound() {

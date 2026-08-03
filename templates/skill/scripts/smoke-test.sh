@@ -15,7 +15,7 @@
 #                                   Cursor registration entry, thin shells exist;
 #                                   SessionStart re-injection hook wired (1d, WARN)
 #   2. Line Count Budgets         — SKILL.md dual budget (description ≤ 25 + body ≤ 90), routing task core ≤ 140,
-#                                   optional domain overlays reported separately, shells ≤ 60 lines,
+#                                   optional domain manifest reported separately, shells ≤ 60 lines,
 #                                   gotchas/pitfall ≤ $GOTCHAS_MAX_LINES (default 400),
 #                                   no duplicate ## headings in gotchas/pitfall files,
 #                                   Common Tasks ≤ $COMMON_TASKS_MAX_ROWS rows
@@ -159,6 +159,7 @@ else
 fi
 SKILL_MD="$SKILL_DIR/SKILL.md"
 ROUTING_YAML="$SKILL_DIR/routing.yaml"
+DOMAIN_ROUTING_YAML="$SKILL_DIR/domain-routing.yaml"
 CURSOR_ENTRY=".cursor/skills/$NAME/SKILL.md"
 
 # Two-root layout (skeleton-flesh-split.md §7): when routing.yaml declares
@@ -377,29 +378,15 @@ check_lines() {
 check_routing_budget() {
   local file="$1"
   [[ -f "$file" ]] || return
+  check_lines "$file" 140 "routing.yaml task routes"
   if grep -q '^domain_overlays:' "$file"; then
-    local core_lines overlay_lines
-    core_lines=$(awk '
-      /^domain_overlays:/ { in_overlays=1; next }
-      /^tasks:/ { in_overlays=0 }
-      !in_overlays { count++ }
-      END { print count+0 }
-    ' "$file")
-    overlay_lines=$(awk '
-      /^domain_overlays:/ { in_overlays=1; next }
-      /^tasks:/ { in_overlays=0 }
-      in_overlays { count++ }
-      END { print count+0 }
-    ' "$file")
-    if [[ "$core_lines" -le 140 ]]; then
-      pass "routing.yaml task core: $core_lines lines (≤ 140)"
-    else
-      fail "routing.yaml task core: $core_lines lines (exceeds 140 limit)"
-    fi
-    pass "routing.yaml optional domain overlays: $overlay_lines lines (reported separately; semantic admission is route-reviewed)"
-  else
-    check_lines "$file" 140 "routing.yaml"
+    fail "routing.yaml contains legacy domain_overlays (move them to domain-routing.yaml)"
   fi
+}
+
+check_domain_routing_budget() {
+  [[ -f "$DOMAIN_ROUTING_YAML" ]] || return 0
+  check_lines "$DOMAIN_ROUTING_YAML" 160 "domain-routing.yaml"
 }
 
 # SKILL.md uses dual budgets — description is the activation gate (frontmatter)
@@ -441,6 +428,7 @@ check_skill_md_budget() {
 
 check_skill_md_budget "$SKILL_MD"
 check_routing_budget "$ROUTING_YAML"
+check_domain_routing_budget
 for shell in AGENTS.md CLAUDE.md CODEX.md GEMINI.md; do
   check_lines "$shell" 60 "$shell (thin shell)"
 done

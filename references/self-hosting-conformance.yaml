@@ -91,6 +91,21 @@ required_sections:
       - "完整定义、状态转换和多步骤流程原则上只维护一次"
       - "完整重复比跳转、加载或生成更便宜"
       - "不得机械地“一律抽取”"
+      - "主步骤必须产生能够改变下一步判断或被下一阶段消费的证据"
+      - "执行过命令、生成了文件或获得成功退出码，本身不构成阶段完成"
+      - "Plan 的逻辑覆盖与物理材料化必须分离"
+      - "先区分用户要形成/更新具体 Plan"
+      - "后者只取足以支持判断的代表性证据，不执行完整规划"
+      - "复杂度只决定分析深度，不决定是否创建文件"
+      - "证据一旦能够解决或推翻该问题，或定位下一个语义 owner，就停止扩读"
+      - "不能自动变成整仓读取义务"
+      - "已有 Plan 存在多个 Open Questions 时，先选择影响最大的一个"
+      - "其余问题和证据路径在轮到之前保持未打开"
+      - "必须先讨论这一件事，再打开无关 Slice"
+      - "只有用户明确要求一次性完整产物时才连续展开"
+      - "只有用户明确需要持久产物"
+      - "模块间冲突等真实承载压力"
+      - "首个文件与每个后续 sibling 都必须独立证明"
       - "## 方向决策检查"
       - "它不进入下游模板"
 
@@ -115,6 +130,8 @@ required_sections:
       - "vague wording is a signal, not an automatic blocker"
       - "bounded read-only project evidence"
       - "Do not mutate before the outcome is verifiable"
+      - "Before any requested commit/push/MR/deploy delivery"
+      - "Ready for Delivery` is not completion"
 
   - file: workflows/full-migration.md
     must_contain:
@@ -147,8 +164,13 @@ required_sections:
   - file: references/business-global-model.md
     must_contain:
       - "## Orthogonal task and domain routing"
+      - "routing.yaml` selects exactly one first workflow"
+      - "domain-routing.yaml"
       - "domain_overlays"
       - "task_route_id"
+      - "Keywords identify candidates only"
+      - "Clearly technical work never reads it"
+      - "Bind one domain owner by default"
       - "## Cross-owner reads"
       - "owner_roots"
       - "owner:<owner-id>:<path>"
@@ -166,20 +188,63 @@ required_sections:
       - "User Decision Drift Gate"
       - "task-execution.md#user-decision-drift-gate"
 
-  - file: templates/skill/rules/agent-behavior.md
+  - file: templates/skill/protocol-blocks/ambiguous-request-gate.md
     must_contain:
-      - "### Implementation-Fact Question Gate"
+      - "## Implementation-Fact Question Gate"
       - "close the smallest decision-relevant implementation path"
       - "Trace distinct flows independently"
       - "remaining normative ambiguity"
 
+  - file: templates/skill/rules/change-discipline.md
+    must_contain:
+      - "## Semantic Boundary"
+      - "Default to Product Development"
+      - "project-rules.md"
+      - "coding-standards.md"
+      - "ownership/provenance"
+      - "Dependency count is risk evidence"
+      - "## Mutation Boundary"
+
+  - file: templates/skill/workflows/task-execution.md
+    must_contain:
+      - "## Evidence and Knowledge Gate"
+      - "smallest source/runtime slice"
+      - "diagnostic evidence, never correctness gates"
+      - "one clear action with one direct check"
+      - "only explicit delivery-dependent evidence remains"
+      - "Ready for Delivery"
+      - "verifies the requested artifact"
+      - "cross-cutting modifier, never a first-workflow route"
+      - "task size or duration alone does not activate it"
+
   - file: templates/skill/workflows/plan-feature.md
     must_contain:
+      - "## Deliverable Gate"
+      - "Method/review/brainstorm requests are read-only advisory work"
+      - "inspect only representative evidence needed to support the evaluation"
       - "## Modeling Gap Intake Handoff"
-      - "### Plan-Complete Brainstorm Handoff"
+      - "## Design Slice"
+      - "## Artifact Pressure Gate"
+      - "select the highest-impact unresolved decision first"
+      - "Complexity changes analysis depth, never file creation"
+      - "Do not inventory every possible consumer before the first decision"
+      - "Never pre-create a Plan, directory, `design.md`, or a taxonomy of empty files from complexity alone"
+      - "## Progressive Brainstorm Handoff"
+      - "This handoff is progressive, not only a final ceremony"
+      - "before opening an unrelated Slice"
       - "automatically enter a detailed user-facing brainstorm"
       - "exactly one topic"
       - "three-line summary"
+
+  - file: templates/skill/workflows/plan-large.md
+    must_contain:
+      - "Large changes analysis depth, not artifact count"
+      - "a perspective is not a file"
+      - "A suspected risk or consumer list is a candidate queue"
+      - "Keep tightly coupled angles together"
+      - "Never create one file per lens"
+      - "conversation when no artifact is justified"
+      - "Do not dispatch broad “scan the subsystem” work before that boundary"
 
   - file: templates/skill/workflows/profile-business-model.md.example
     must_contain:
@@ -188,6 +253,7 @@ required_sections:
       - "Implementation-Fact Question Gate"
       - "## Confirmed Implementation Gap Collection and Handoff"
       - "Continue the user's agreed modeling scope"
+      - "--workspace-root <workspace-root>"
 
   - file: templates/skill/workflows/fix-bug.md
     must_contain:
@@ -205,13 +271,29 @@ required_sections:
 
   - file: docs/plans/README.md
     must_contain:
-      - "active decision records"
-      - "authority for its user-confirmed brainstorm and implementation mainline"
-      - "initialize `distilled_to:` with actual targets"
+      - "current requirement/design and implementation-review contracts"
+      - "Complexity changes analysis depth, not materialization timing"
+      - "Create the smallest current carrier"
+      - "Use one dated file for a focused one-file record"
+      - "Use a directory when the durable object is a named dossier"
+      - "A correct dossier may contain only `prd.md`"
+      - "Headings are not the completeness unit"
+      - "initialize truthful `distilled_to:`"
       - "Purely technical Plans create no business leaf"
-      - "One active destination owns the complete definition"
+      - "One destination owns the complete definition"
     must_not_contain:
       - "it goes in both places"
+      - "canonical Plan Skeleton"
+      - "Complex plan — directory"
+
+  - file: docs/plans/_TEMPLATE.md
+    must_contain:
+      - "Use this template only after `plan-feature.md` § Artifact Pressure Gate admits a durable Plan"
+      - "Do not pre-create sibling files"
+      - "Current Decisions"
+      - "Authority: user-confirmed"
+      - "observable behavior and the evidence that will prove it"
+      - "Keep only unresolved decisions"
 
   - file: templates/skill/workflows/maintain-docs.md
     must_contain:
@@ -229,6 +311,66 @@ required_sections:
       - "implementation drift"
       - "Consumers keep only their immediate action and acceptance hook"
 
+  - file: docs/sba-bible.md
+    must_contain:
+      - "产品语义 → 可执行变更契约 → 当前代码 owner"
+      - "语义翻译与实现绑定由同一运行时 Change Contract 贯通"
+      - "文件、类、搜索词、当前 owner 等 Agent 能从仓库获得的技术事实不得转交用户"
+      - "PRD、Figma、关键词、任务大小或固定流程"
+      - "直接复用并走快路径"
+
+  - file: templates/skill/protocol-blocks/source-localization.md
+    must_contain:
+      - "complete technical narrowing contract"
+      - "one Session-only runtime map"
+      - "## Adaptive Evidence Funnel"
+      - "Stages 1-2 expose no source bodies"
+      - "Stage 4 is the first selected-source read"
+      - "cannot rewrite desired meaning"
+      - "ordinary localization creates no repository artifact"
+
+  - file: templates/skill/protocol-blocks/change-contract.md
+    must_contain:
+      - "complete translation and implementation-binding state"
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "`semantic-ready` means the intent can constrain localization and reject a false owner"
+      - "Agent-discoverable files, symbols, callers"
+      - "Treat ordinary Current/Target difference as the change to bind"
+      - "`implementation-ready` requires still-valid Semantic Intent"
+      - "A final file list, line-level design, exhaustive call graph"
+      - "ordinary tasks create no contract file, ledger, Wiki, manifest, index, database, or generated state"
+
+  - file: templates/skill/workflows/plan-feature.md
+    must_contain:
+      - "change-contract.md"
+      - "source-localization.md"
+      - "Any activated Change Contract is consumed"
+
+  - file: templates/skill/workflows/fix-bug.md
+    must_contain:
+      - "Reuse a clear observed/expected contract as the fast path"
+      - "source-localization.md"
+
+  - file: templates/skill/workflows/change-managed.md
+    must_contain:
+      - "clear source Plans and explicit requests take its fast path"
+      - "bind the returned owner/Current -> Target/affected path before mutation"
+
+  - file: templates/skill/protocol-blocks/ambiguous-request-gate.md
+    must_contain:
+      - "identify whether the blocker is normative"
+      - "instead of asking the user"
+
+  - file: templates/skill/workflows/task-execution.md
+    must_contain:
+      - "Clear tasks keep the direct fast path"
+      - "source-localization.md"
+
+  - file: templates/skill/workflows/task-closure.md
+    must_contain:
+      - "final expanded [`Change Contract`](../protocol-blocks/change-contract.md)"
+      - "does not define Semantic Intent or source-localization stages"
+
 # Files required to exist (presence-only check). Drift here means a
 # self-hosting structural piece was deleted without updating routing.
 required_files:
@@ -243,5 +385,7 @@ required_files:
   - path: templates/skill/conformance.yaml
   - path: templates/skill/scripts/check-version-conformance.sh
   - path: templates/skill/workflows/task-execution.md
+  - path: templates/skill/protocol-blocks/source-localization.md
+  - path: templates/skill/protocol-blocks/change-contract.md
   - path: docs/task-anchor-native-plan.md
   - path: docs/sba-bible.md

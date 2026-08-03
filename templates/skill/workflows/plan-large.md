@@ -1,56 +1,59 @@
 # Large Plan Extension
 
-Read this file only after `plan-feature.md` classifies the task as **Large**: multi-subsystem, irreversible/expensive, high uncertainty, or many unknowns that must be resolved before implementation. A Complex plan that does not meet those signals must not load this extension.
+Read this file only after `plan-feature.md` classifies the task as **Large** because evidence shows multi-subsystem scope, irreversible/expensive change, high uncertainty, or many decision-bearing unknowns. Large changes analysis depth, not artifact count.
 
 ## Multi-Perspective Analysis
 
-Analyze the problem from the independent lenses it actually warrants. Each selected lens gets a naturally named sibling file; do not create unused files to satisfy a taxonomy.
+Select perspectives incrementally after the current Design Slice exposes a decision that needs them. Analyze them in the conversation, harness-native Plan, or the current integrated artifact; a perspective is not a file. A suspected risk or consumer list is a candidate queue, not permission to open every perspective at once.
 
-| Possible lens | What it decides |
+| Possible perspective | What it decides |
 |---|---|
-| `architecture.md` | boundaries, components, data flow, ownership |
-| `risks.md` | failure modes, blast radius, fail-open/closed, persisted state |
-| `alternatives.md` | genuinely different solution shapes and why one wins |
-| `contracts.md` | schema/API/wire/business-model impact and migration artifact |
-| `integration.md` | downstream consumers and cross-repo/service effects |
-| `rollout.md` | sequencing, compatibility, rollback, verification |
-| `decomposition.md` | build order and independent dispatch cut-points |
+| Architecture | boundaries, owners, components, data/state flow |
+| Domain | entities, lifecycle, state machine, invariants, desired truth impact |
+| Data and contracts | schema/API/event/cardinality/uniqueness, compatibility and migration |
+| Integration and impact | semantic callers/readers/writers, copies/merges/deletes, cross-repo/service effects |
+| Risk and quality | consistency, concurrency, performance, availability, permission, recovery |
+| Rollout and proof | sequencing, staged activation, rollback, observability, acceptance |
+| Decomposition | build order, shared interfaces, independent dispatch cut-points |
 
-For business-bearing work, at least one selected lens must explicitly compare business-model intent, architecture/contracts, and current code/tests/runtime. Do not turn current implementation into intended business truth by omission.
+For business-bearing work, compare business-model intent, architecture/contracts, and current code/tests/runtime without turning current implementation into desired truth.
 
 ## Angle Contract
 
-Every angle file:
+Each selected angle closes one or more Design Slices and states:
 
-1. opens with `> Conclusion: <one line>`;
-2. answers one independent decision question;
-3. names evidence and remaining uncertainty;
-4. avoids restating another angle's full conclusion;
-5. changes a decision, risk treatment, task boundary, or validation step in `prd.md`.
+1. its decision question and current evidence;
+2. Current -> Target ownership/flow/model change;
+3. chosen decision plus semantic impact;
+4. activated risk treatment and proof;
+5. remaining uncertainty or blocker.
 
-If an angle would be read only with every sibling and does not change the synthesis independently, merge it into the nearest angle or `prd.md`.
+Keep tightly coupled angles together. Extract a naturally named sibling only after the Artifact Pressure Gate proves an independent consumer, reviewer, validator, lifecycle, or loading reason and the sibling can change the synthesis alone. If an angle would be read only with every sibling, keep it integrated. Never create one file per lens, and never create empty `architecture.md`, `risks.md`, `contracts.md`, or rollout/checklist files from the Large label.
+
+## Risk Scenarios
+
+Expand only risks activated by evidence, but do not compress them to labels. Every material scenario states invariant, failure mode, mechanism, mechanism boundary/cost, recovery, fitted proof, and residual risk.
+
+- **Eventual consistency:** truth owner, propagation path, convergence window, intermediate visibility, duplicate/out-of-order/loss handling, retry/dead-letter/reconciliation, and non-convergence detection.
+- **Concurrency:** writers, aggregate key, transaction/lock/version order, idempotency/retry/timeout/deadlock behavior, and final database constraint.
+- **Performance:** hot path, cardinality/fan-out/query count, index/cache/batch/pagination choice, consistency cost, target observation, and degradation behavior.
+- **Migration/compatibility:** old/new readers and writers, backfill/cutover order, reversibility, partial-failure state, rollback, and proof against production-shaped data.
 
 ## Synthesis
 
-Keep `prd.md` as the short decision index. Add `## Synthesis` that links every angle, states the chosen path, and identifies conflicts resolved across lenses. An angle absent from Synthesis is not part of the plan; a Synthesis claim with no supporting angle is ungrounded.
+Maintain one current synthesis in the active carrier: conversation when no artifact is justified, otherwise `prd.md` or the existing one-file Plan. It states the chosen path, Current -> Target change, conflicts resolved across perspectives, material risks/proof, and genuine blockers. Link only independently justified siblings; a sibling absent from Synthesis is not part of the Plan, and a Synthesis claim without evidence is ungrounded.
 
-Before approval or freeze:
-
-- diff overlapping claims across angles and Synthesis;
-- verify every `see <file>` link still supports the sentence citing it;
-- make blockers visible in Open Questions;
-- ensure accepted target business semantics remain in the Plan until implementation lands;
-- convert `decomposition.md` cut-points into Files / Consumes / Produces / Acceptance contracts.
+Before approval or freeze, diff overlapping claims, verify each link supports its sentence, remove resolved Open Questions, and convert stable decomposition into `Files / Consumes / Produces / Acceptance`. Contradictory evidence reopens the owning Design Slice instead of preserving document completeness.
 
 ## Parallel Analysis
 
-Independent lenses are suitable for Mode 2 analysis subagents. Give each worker only its lens question and evidence region; do not leak the intended answer. The main agent owns cross-lens decisions and Synthesis. If the lenses are dependent or the main agent needs their raw evidence for user discussion, analyze inline.
+Independent perspectives may use Mode 2 analysis subagents only after the main thread states the current decision, bounded evidence region, expected result, and stop condition, and overlap plus Net Benefit are real. Do not dispatch broad “scan the subsystem” work before that boundary. Give each worker one decision question without leaking the intended answer; the main agent owns cross-perspective reconciliation and user discussion. Dependent perspectives stay inline.
 
 ## Large-Plan Checklist
 
-- [ ] Selected lenses are justified by risk/uncertainty, not by template completeness
-- [ ] Each angle has an independent loading reason and one-line conclusion
-- [ ] `prd.md` Synthesis links every angle and resolves contradictions
-- [ ] Business-model impact is explicit where macro semantics may change
-- [ ] Failure behavior, migrations/contracts, rollout/rollback, and task cut-points are decided when relevant
-- [ ] Multi-file semantic drift check passed before plan approval and freeze
+- [ ] Perspectives were selected by decision/risk pressure, not taxonomy completeness
+- [ ] Current -> Target, semantic fan-out, authority, and proof agree across the synthesis
+- [ ] Activated consistency/concurrency/performance/migration risks have scenario-level treatment
+- [ ] Every extracted artifact has an independent job and no conclusion is duplicated
+- [ ] Business-model impact and desired-truth/current-fact separation are explicit where relevant
+- [ ] Multi-file semantic drift and implementation interfaces were checked before handoff

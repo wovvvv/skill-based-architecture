@@ -10,13 +10,14 @@ This directory holds **ready-to-copy files** for downstream projects. WORKFLOW.m
 templates/
 ├── skill/                    → becomes skills/{{NAME}}/
 │   ├── SKILL.md.template     (renamed to SKILL.md during Quick Start)
-│   ├── routing.yaml            (single source for Always Read + Common Tasks + shell bootstraps)
+│   ├── routing.yaml            (first-workflow routes + shell bootstraps)
+│   ├── domain-routing.yaml     (optional; materialized with the first real business domain)
 │   ├── sync-manifest.yaml      (vendor-class file list consumed by scripts/sync-vendor.sh)
-│   ├── rules/{project-rules,coding-standards,agent-behavior}.md
+│   ├── rules/{project-rules,coding-standards,change-discipline}.md
 │   ├── workflows/{task-execution,plan,fix,change,review,refactor,rule/template maintenance,subagent modes,task-closure}.md
 │   ├── workflows/invoke-skill.md.example  (copy-paste template for Pattern A composition; rename and adapt)
 │   ├── workflows/profile-business-model.md.example  (opt-in product/business model workflow; rename only after real pressure)
-│   ├── references/{agent-behavior-meta,behavior-failures,gotchas,subagent-verification}.md
+│   ├── references/{behavior-failures,gotchas,subagent-verification}.md
 │   ├── protocol-blocks/       → internal Task Closure / routing reinforcement blocks
 │   └── scripts/              → automated verification (lives inside the skill)
 │       ├── smoke-test.sh                (fully automated structural + routing checks)
@@ -31,11 +32,10 @@ templates/
 │   ├── AGENTS.md / CLAUDE.md / CODEX.md / GEMINI.md
 │   ├── .cursor/rules/workflow.mdc
 │   └── .cursor/skills/{{NAME}}/SKILL.md.template
-├── hooks/                    → optional SessionStart injection + mechanism-level gates
+├── hooks/                    → optional SessionStart and long-workflow context injection
 │   ├── session-start              (bash, per-harness JSON branching — re-inject one router)
 │   ├── workflow-state             (bash, UserPromptSubmit — inject one active workflow hint)
-│   ├── agent-behavior-gate.sh     (bash, PreToolUse — enforce Admission Threshold deterministically)
-│   ├── hooks.json                 (Claude Code settings fragment — SessionStart + UserPromptSubmit + PreToolUse)
+│   ├── hooks.json                 (Claude Code settings fragment — SessionStart + UserPromptSubmit)
 │   ├── hooks-cursor.json          (Cursor config — same as above, per-harness wiring)
 │   ├── README.md                  (rollout / tuning / false-positive mitigations, per-hook)
 │   └── SECURITY.md                (trust boundary: what may vs must not be written to hook-read files)
@@ -60,10 +60,10 @@ Line counts trigger review, not automatic splitting. The SKILL dual budget and s
 | Path | Budget | Enforcement |
 |---|---|---|
 | `shells/*` | ≤ 60 lines | Thin shells must stay thin; > 60 = content leaking in. Must include generated Always Read + `routing.yaml` bootstrap + evidence-first request-clarity judgment (see `protocol-blocks/ambiguous-request-gate.md`) |
-| `skill/routing.yaml` | ≤ 120 lines | Single source of truth for generated Always Read, Common Tasks, trigger examples, required reads, workflows, and thin-shell bootstraps; project-specific after fill |
+| `skill/routing.yaml` | ≤ 120 lines | Single source of truth for generated Always Read, first-workflow routes, trigger examples, and thin-shell bootstraps; project-specific after fill |
 | `skill/rules/project-rules.md`, `skill/rules/coding-standards.md` | ≤ 20 lines, ≥ 60% must be `<!-- FILL: -->` | Rule stubs are scaffolding, not content |
-| `skill/rules/agent-behavior.md` | ≤ 100 lines, fully pre-filled | Universal defaults; additions require evidence or equal-weight replacement per `ANTI-TEMPLATES.md` |
-| `hooks/session-start`, `hooks/workflow-state`, `hooks/agent-behavior-gate.sh` | ≤ 150 lines each | Optional hook scripts. Keep per-harness branching in-script; see `hooks/README.md` |
+| `skill/rules/change-discipline.md` | ≤ 40 lines | Canonical pre-mutation semantic and mutation boundary; loaded by modifying workflows, never Always Read |
+| `hooks/session-start`, `hooks/workflow-state` | ≤ 150 lines each | Optional hook scripts. Keep per-harness branching in-script; see `hooks/README.md` |
 | `hooks/README.md` | ≤ 150 lines | Per-hook rollout guidance; allowed larger because it documents optional installs + tuning |
 | `skill/workflows/task-execution.md`, `profile-project.md`, `plan-feature.md`, `plan-large.md`, `update-upstream.md`, `fix-bug.md`, `change-managed.md`, `edit-templates.md`, `subagent-auxiliary.md`, `subagent-driven.md`, `subagent-orchestration.md` | ≤ 100 lines | Cross-cutting execution plus task-specific/conditionally selected workflows stay lean |
 | `skill/workflows/profile-business-model.md.example` | ≤ 100 lines | Optional business-model workflow; stays inactive until a downstream renames it and adds a real route |
@@ -71,12 +71,12 @@ Line counts trigger review, not automatic splitting. The SKILL dual budget and s
 | `skill/protocol-blocks/*` | ≤ 40 lines each | One idea per block |
 | `skill/SKILL.md.template` | dual budget: description ≤ 25 lines + body ≤ 90 lines | Same hard cap as downstream SKILL.md (smoke-test enforces both separately). description carries quoted trigger phrases; body navigates rules/workflows/references. Keep each shorter when possible. |
 | `skill/scripts/smoke-test.sh` | ≤ 980 lines | Structural test harness; optional overlay line accounting is isolated from the task core; the next substantial concern should replace/simplify existing checks |
-| `skill/scripts/sync-routing.sh` | ≤ 520 lines | Dependency-free generator/checker; optional overlay parsing and generic cross-owner path validation stay internal so default projects gain no extra files or setup |
+| `skill/scripts/sync-routing.sh` | ≤ 520 lines | Dependency-free generator/checker; optional domain-manifest parsing and generic cross-owner path validation stay internal so domain-free projects gain no extra files or setup |
 | `skill/scripts/sync-vendor.sh` | ≤ 160 lines | Mechanical vendor sync; base check via upstream git history — no new state files |
 | `skill/sync-manifest.yaml` | ≤ 40 lines | Vendor-class file list only; project-owned/generated/runtime-data paths never belong here |
 | `skill/scripts/audit-orphans.sh`, `route-reachability.sh` | ≤ 120 lines each | Recursive zero-inbound and task-activation checks, including nested `references/business/`; heuristic, run before deleting flagged files |
 | `skill/references/gotchas.md` | ≤ 25 lines (seed) | MUST stay near-empty — content grows post-deployment |
-| `skill/references/behavior-failures.md` | ≤ 25 lines (seed) | MUST stay near-empty — agent-behavior violations logged via AAR |
+| `skill/references/behavior-failures.md` | ≤ 25 lines (seed) | MUST stay near-empty — cross-cutting Agent contract failures logged via AAR |
 
 Anything over budget needs either splitting or rejection. See `ANTI-TEMPLATES.md`.
 

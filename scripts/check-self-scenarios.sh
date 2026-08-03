@@ -2,7 +2,7 @@
 # Minimal self-hosting scenario checks for high-risk routes.
 #
 # These are transcript-shaped route proofs, not a general scenario harness:
-# user phrase -> routing manifest row -> required reads + workflow.
+# user phrase -> routing manifest row -> first workflow -> evidence-gated knowledge.
 
 set -euo pipefail
 
@@ -27,18 +27,9 @@ task_block() {
   ' "$manifest"
 }
 
-required_reads_block() {
-  local manifest="$1" id="$2"
-  task_block "$manifest" "$id" | awk '
-    /^[[:space:]]*required_reads:/ { in_reads=1; next }
-    in_reads && /^    [a-z_]+:/ { exit }
-    in_reads { print }
-  '
-}
-
 assert_contains() {
   local block="$1" needle="$2" label="$3"
-  if printf '%s\n' "$block" | grep -qF "$needle"; then
+  if grep -qF -- "$needle" <<<"$block"; then
     pass "$label contains $needle"
   else
     fail "$label missing $needle"
@@ -47,7 +38,7 @@ assert_contains() {
 
 assert_not_contains() {
   local block="$1" needle="$2" label="$3"
-  if printf '%s\n' "$block" | grep -qF "$needle"; then
+  if grep -qF -- "$needle" <<<"$block"; then
     fail "$label unexpectedly contains $needle"
   else
     pass "$label excludes $needle"
@@ -56,7 +47,6 @@ assert_not_contains() {
 
 check_scenario() {
   local name="$1" manifest="$2" prompt="$3" route="$4" workflow="$5"
-  shift 5
   local block
   block="$(task_block "$manifest" "$route")"
 
@@ -69,11 +59,8 @@ check_scenario() {
 
   assert_contains "$block" "$prompt" "$name trigger_examples"
   assert_contains "$block" "workflow: $workflow" "$name workflow"
-
-  local read_path
-  for read_path in "$@"; do
-    assert_contains "$block" "$read_path" "$name required_reads"
-  done
+  assert_not_contains "$block" "required_reads:" "$name task route eager reads"
+  assert_not_contains "$block" "route:" "$name executable route instructions"
 }
 
 echo "Self-hosting Scenario Checks"
@@ -84,40 +71,45 @@ check_scenario \
   "references/self-hosting-routing.yaml" \
   "修改 templates" \
   "edit-templates" \
-  "templates/skill/workflows/edit-templates.md" \
-  "SKILL.md" \
-  "templates/README.md" \
-  "templates/ANTI-TEMPLATES.md"
+  "templates/skill/workflows/edit-templates.md"
 
 check_scenario \
   "improve activation routing" \
   "references/self-hosting-routing.yaml" \
   "优化 routing.yaml" \
   "improve-activation-routing" \
-  "references/layout.md#description-as-trigger-condition" \
-  "SKILL.md" \
-  "references/layout.md"
+  "templates/skill/workflows/edit-templates.md"
 
 assert_contains \
   "$(task_block references/self-hosting-routing.yaml improve-activation-routing)" \
-  "Load references/multi-skill-routing.md only when evidence shows multiple skills" \
+  "load references/multi-skill-routing.md only when evidence shows multiple skills" \
   "improve activation routing conditional multi-skill read"
 assert_not_contains \
-  "$(required_reads_block references/self-hosting-routing.yaml improve-activation-routing)" \
-  "references/multi-skill-routing.md" \
+  "$(task_block references/self-hosting-routing.yaml improve-activation-routing)" \
+  "required_reads:" \
   "improve activation routing initial reads"
+
+check_scenario \
+  "add example" \
+  "references/self-hosting-routing.yaml" \
+  "补一个行为失败例子" \
+  "add-example" \
+  "templates/skill/workflows/change-managed.md"
+
+assert_contains \
+  "$(task_block references/self-hosting-routing.yaml add-example)" \
+  "Read EXAMPLES.md after workflow selection" \
+  "add example delayed reference read"
 
 check_scenario \
   "draft plan without distillation preload" \
   "references/self-hosting-routing.yaml" \
   "制定一个 plan" \
   "plan-feature" \
-  "templates/skill/workflows/plan-feature.md" \
-  "SKILL.md" \
-  "docs/plans/README.md"
+  "templates/skill/workflows/plan-feature.md"
 
 assert_not_contains \
-  "$(required_reads_block references/self-hosting-routing.yaml plan-feature)" \
+  "$(task_block references/self-hosting-routing.yaml plan-feature)" \
   "templates/skill/workflows/update-rules.md" \
   "draft plan initial reads"
 
@@ -126,28 +118,24 @@ check_scenario \
   "references/self-hosting-routing.yaml" \
   "SBA 应该往什么方向发展" \
   "product-direction" \
-  "templates/skill/workflows/plan-feature.md" \
-  "SKILL.md" \
-  "docs/sba-bible.md" \
-  "docs/plans/README.md"
+  "templates/skill/workflows/plan-feature.md"
 
 product_direction="$(task_block references/self-hosting-routing.yaml product-direction)"
 assert_contains "$product_direction" "吸收一个外部项目" "SBA product direction external-project trigger"
 assert_contains "$product_direction" "增加一个重大机制" "SBA product direction major-mechanism trigger"
-assert_contains "$product_direction" "ordinary coding and downstream tasks do not load it" "SBA product direction scope boundary"
+assert_not_contains "$product_direction" "docs/sba-bible.md" "SBA product direction route does not preload Bible"
+assert_contains "$(<templates/skill/workflows/plan-feature.md)" 'self-hosting `product-direction`' "SBA product direction workflow checkpoint"
+assert_contains "$(<templates/skill/workflows/plan-feature.md)" "Ordinary downstream planning never loads the SBA Bible" "SBA product direction scope boundary"
 
 check_scenario \
   "distill plan conclusions" \
   "references/self-hosting-routing.yaml" \
   "把 plan 的结论沉淀下来" \
   "distill-plan-conclusions" \
-  "templates/skill/workflows/update-rules.md" \
-  "SKILL.md" \
-  "docs/plans/README.md"
+  "templates/skill/workflows/update-rules.md"
 
-# update-upstream relies on always_read for rules (project-rules etc.); its
-# required_reads is intentionally route-specific-only, so this proves the
-# high-risk part: the trigger phrase reaches the update-upstream workflow.
+# This proves the high-risk part: the trigger phrase reaches the first workflow
+# without preloading project or mutation rules.
 check_scenario \
   "downstream upstream refresh" \
   "templates/skill/routing.yaml" \
@@ -163,15 +151,15 @@ check_scenario \
   "workflows/update-rules.md"
 
 assert_contains \
-  "$(task_block templates/skill/routing.yaml update-rules)" \
-  "never preload both evidence stores" \
+  "$(<templates/skill/workflows/update-rules.md)" \
+  'never preload both `references/gotchas.md` and `references/behavior-failures.md`' \
   "update-rules conditional evidence selection"
 assert_not_contains \
-  "$(required_reads_block templates/skill/routing.yaml update-rules)" \
+  "$(task_block templates/skill/routing.yaml update-rules)" \
   "references/gotchas.md" \
   "update-rules initial gotcha read"
 assert_not_contains \
-  "$(required_reads_block templates/skill/routing.yaml update-rules)" \
+  "$(task_block templates/skill/routing.yaml update-rules)" \
   "references/behavior-failures.md" \
   "update-rules initial behavior-failure read"
 
@@ -185,6 +173,26 @@ assert_contains "$clarity_gate" "normative product or business preference" "requ
 assert_contains "$clarity_gate" "Do not mutate until the requested outcome is concrete enough to verify" "request clarity mutation stop"
 assert_not_contains "$clarity_gate" "Let me scan the project first, then ask" "request clarity old lexical stop"
 
+change_contract="$(<templates/skill/protocol-blocks/change-contract.md)"
+source_localization="$(<templates/skill/protocol-blocks/source-localization.md)"
+assert_not_contains "$(<templates/skill/routing.yaml)$(<references/self-hosting-routing.yaml)" "id: change-contract" "Change Contract is not a first-workflow route"
+assert_not_contains "$(<templates/skill/routing.yaml)$(<references/self-hosting-routing.yaml)" "id: source-localization" "source localization is not a first-workflow route"
+assert_not_contains "$(<templates/skill/routing.yaml)" "protocol-blocks/change-contract.md" "Change Contract is not an eager routing read"
+assert_not_contains "$(<templates/skill/routing.yaml)" "protocol-blocks/source-localization.md" "source localization is not an eager routing read"
+assert_contains "$change_contract" "clear request, confirmed Plan, observed/expected contract, or already proven owner" "Change Contract readiness fast path"
+assert_contains "$change_contract" "Every material requirement-bearing input receives an evidenced disposition" "Change Contract input coverage"
+assert_contains "$change_contract" "Agent-discoverable files, symbols, callers" "Change Contract keeps technical discovery with the Agent"
+assert_contains "$change_contract" "Treat ordinary Current/Target difference as the change to bind" "Change Contract binds normal Current/Target difference"
+assert_contains "$change_contract" "A final file list, line-level design, exhaustive call graph" "Change Contract avoids broad pre-mutation inventory"
+assert_contains "$change_contract" "Evidence inside the bound contract updates it" "Change Contract evidence-driven expansion"
+assert_contains "$change_contract" "ordinary tasks create no contract file" "Change Contract Session-only default"
+assert_contains "$source_localization" "skip directly to a selected-source check when the target is already proven concrete" "source localization known-target fast path"
+assert_contains "$source_localization" "Stages 1-2 expose no source bodies" "source localization progressive source exposure"
+assert_contains "$source_localization" "Empty/noisy/truncated results refine or return" "source localization failed-search return"
+assert_contains "$source_localization" "a path, lexical match, file read, or successful command is not owner proof" "source localization owner-proof boundary"
+assert_contains "$source_localization" "Source evidence may falsify Semantic Intent but cannot rewrite desired meaning" "source localization authority boundary"
+assert_contains "$source_localization" "ordinary localization creates no repository artifact" "source localization no-map default"
+
 for shell in \
   templates/shells/AGENTS.md \
   templates/shells/CLAUDE.md \
@@ -194,10 +202,22 @@ for shell in \
   shell_content="$(<"$shell")"
   assert_contains "$shell_content" "Request-clarity judgment" "$shell clarity activation"
   assert_contains "$shell_content" "vague wording is a signal, not an automatic blocker" "$shell evidence-first summary"
+  assert_contains "$shell_content" "Before any requested commit/push/MR/deploy/publish delivery" "$shell pre-delivery Closure activation"
+  assert_contains "$shell_content" "Ready for Delivery" "$shell readiness is not completion"
   assert_not_contains "$shell_content" "stop and ask for scope" "$shell old lexical stop"
 done
 
 task_execution="$(<templates/skill/workflows/task-execution.md)"
+template_routing="$(<templates/skill/routing.yaml)"
+self_routing="$(<references/self-hosting-routing.yaml)"
+templates_shells="$(<templates/shells/AGENTS.md)$(<templates/shells/CLAUDE.md)$(<templates/shells/CODEX.md)$(<templates/shells/GEMINI.md)"
+assert_not_contains "$template_routing" "id: subagent-driven" "template routing excludes task-size sibling route"
+assert_not_contains "$self_routing" "id: long-run" "self-hosting routing excludes task-size sibling route"
+assert_not_contains "$(task_block templates/skill/routing.yaml plan-feature)" "long-running change" "plan route excludes duration-based matching"
+assert_not_contains "$(task_block templates/skill/routing.yaml plan-feature)" "长任务" "plan route excludes Chinese duration-based matching"
+assert_not_contains "$templates_shells" "explicit business request" "generated shells exclude broad business-request activation"
+assert_contains "$templates_shells" "explicit business-rule request" "generated shells keep business-rule activation boundary"
+assert_not_contains "$templates_shells" "Skip closure only" "generated shells defer skip policy to Closure owner"
 assert_contains "$task_execution" "Simple tasks skip this protocol" "task execution Simple no-ceremony boundary"
 assert_contains "$task_execution" "After any needed alignment, proceed without waiting unless" "task execution auto-start default"
 assert_contains "$task_execution" "harness's native Plan/Task surface" "task execution native plan preference"
@@ -212,8 +232,15 @@ assert_contains "$task_execution" "Steps must be numbered" "task execution full 
 assert_contains "$task_execution" "do not collapse the brief into prose" "task execution full brief remains scannable"
 assert_contains "$task_execution" "## Recitation Loop" "task execution recitation section"
 assert_contains "$task_execution" "Before each main Plan step" "task execution per-step Anchor checkpoint"
+assert_contains "$task_execution" "cross-cutting modifier, never a first-workflow route" "task execution modifier-only long-run activation"
+assert_contains "$task_execution" "task size or duration alone does not activate it" "task execution rejects size-only routing"
 assert_contains "$task_execution" "source Plan path" "task execution design-source handoff"
 assert_contains "$task_execution" "only business-bearing decisions require a routed business rule" "task execution technical-plan business-leaf boundary"
+assert_contains "$task_execution" "defines what evidence can resolve or falsify its material risks" "task execution domain-specific evidence owner"
+assert_contains "$task_execution" "the evidence that could resolve or falsify it" "task execution step evidence question"
+assert_contains "$task_execution" "receiving a successful exit code" "task execution rejects command success as stage completion"
+assert_contains "$task_execution" "If it contradicts the premise" "task execution evidence return path"
+assert_contains "$task_execution" "if it is inconclusive" "task execution inconclusive evidence stays open"
 assert_contains "$task_execution" "## User Decision Drift Gate" "task execution immediate user-drift gate"
 assert_contains "$task_execution" "canonical owner of the gate's trigger" "task execution canonical drift owner"
 assert_contains "$task_execution" "Pause the affected implementation path immediately" "task execution drift pauses affected path"
@@ -228,19 +255,23 @@ assert_contains "$task_execution" "cannot omit or reorder a mandatory gate" "tas
 assert_not_contains "$task_execution" "task_plan.md" "task execution no fixed task-plan file"
 assert_not_contains "$task_execution" "cross-tool state sync" "task execution no cross-tool state system"
 assert_not_contains "$task_execution" "Plan: <concise task-specific steps" "task execution no fixed chat block"
+assert_contains "$task_execution" "Clear tasks keep the direct fast path" "task execution Change Contract fast path"
+assert_contains "$task_execution" "source-localization.md" "task execution technical-owner hook"
 
-agent_behavior="$(<templates/skill/rules/agent-behavior.md)"
-assert_contains "$agent_behavior" "## 2. Semantic Completeness Before Minimality" "always-read semantic completeness precedence"
-assert_contains "$agent_behavior" "Default to **Product Development**" "always-read development default"
-assert_contains "$agent_behavior" "state ownership/provenance" "always-read ownership trace"
-assert_contains "$agent_behavior" "full/incremental/read/write path" "always-read all-path trace"
-assert_contains "$agent_behavior" "Dependency count is risk evidence, not a veto" "always-read dependency-count boundary"
-assert_contains "$agent_behavior" "Enter **Operational Stabilization** only when" "always-read operational exception"
-assert_contains "$agent_behavior" "One clear action with one direct check proceeds without planning ceremony" "always-read Simple direct path"
-assert_contains "$agent_behavior" "task-execution.md" "always-read Task Execution activation"
-assert_contains "$agent_behavior" "present only useful alignment" "always-read proportional Anchor presentation"
-assert_contains "$agent_behavior" "without duplicating visible steps in chat" "always-read native Plan deduplication"
-assert_contains "$agent_behavior" "Before every main Plan step" "always-read Anchor checkpoint activation"
+change_discipline="$(<templates/skill/rules/change-discipline.md)"
+assert_contains "$change_discipline" "## Semantic Boundary" "mutation-time semantic owner"
+assert_contains "$change_discipline" "Default to Product Development" "mutation-time development default"
+assert_contains "$change_discipline" "ownership/provenance" "mutation-time ownership trace"
+assert_contains "$change_discipline" "full/incremental/read/write paths" "mutation-time all-path trace"
+assert_contains "$change_discipline" "Dependency count is risk evidence" "mutation-time dependency-count boundary"
+assert_contains "$change_discipline" "Use Operational Stabilization only" "mutation-time operational exception"
+assert_contains "$change_discipline" "project-rules.md" "mutation-time project-rule activation"
+assert_contains "$change_discipline" "coding-standards.md" "mutation-time coding-rule activation"
+
+assert_contains "$task_execution" "one clear action with one direct check" "task execution Simple direct path"
+assert_contains "$task_execution" "present only useful alignment" "task execution proportional Anchor presentation"
+assert_contains "$task_execution" "do not repeat its steps in chat" "task execution native Plan deduplication"
+assert_contains "$task_execution" "Before each main Plan step" "task execution Anchor checkpoint activation"
 
 task_closure="$(<templates/skill/workflows/task-closure.md)"
 assert_contains "$task_closure" "### Entry Gate" "closure execution entry gate"
@@ -251,8 +282,22 @@ assert_contains "$task_closure" "Closure owns final reconciliation" "closure rec
 assert_contains "$task_closure" "first time a material drift is surfaced" "closure rejects first drift disclosure"
 assert_contains "$task_closure" "for business-bearing decisions, also read the routed business rule" "closure optional business-leaf boundary"
 assert_contains "$task_closure" "task-execution.md#user-decision-drift-gate" "closure drift-owner link"
+assert_contains "$task_closure" "Ready for Delivery" "closure distinguishes readiness from completion"
+assert_contains "$task_closure" "Closure never grants commit, push, MR, deploy, publish" "closure preserves delivery authority boundary"
+assert_contains "$task_closure" "leaves Closure open" "closure stays open on delivery failure"
+assert_contains "$task_closure" "without rerunning unrelated local checks" "closure scopes unchanged external retries"
+assert_contains "$task_closure" "Closure Complete" "closure verifies delivery before completion"
+assert_contains "$task_closure" "The command exited 0, so the stage is complete" "closure build-success false-completion scenario"
+assert_contains "$task_closure" "proves only the command's own contract" "closure exit-code evidence boundary"
+assert_contains "$task_closure" "treating that exit code as sufficient completion evidence by itself" "closure red-flags exit-code sufficiency"
+assert_contains "$task_closure" 'final expanded [`Change Contract`](../protocol-blocks/change-contract.md)' "closure bound-contract reconciliation"
+assert_contains "$task_closure" "does not define Semantic Intent or source-localization stages" "closure stays a consumer"
 
 plan_feature="$(<templates/skill/workflows/plan-feature.md)"
+assert_contains "$plan_feature" "## Deliverable Gate" "plan classifies the requested deliverable before expansion"
+assert_contains "$plan_feature" "Method/review/brainstorm requests are read-only advisory work" "plan keeps advisory requests bounded"
+assert_contains "$plan_feature" "inspect only representative evidence needed to support the evaluation" "plan advisory review uses representative evidence"
+assert_contains "$plan_feature" "do not execute every Design Slice, materialize artifacts, or build Task Breakdown" "plan advisory review does not run the full plan"
 assert_contains "$plan_feature" "it is not the runtime Native Plan" "design plan runtime boundary"
 assert_contains "$plan_feature" "pass its chosen outcome, acceptance criteria, boundaries, and task breakdown" "design to execution transition"
 assert_contains "$plan_feature" "## User-Confirmed Decision Mainline" "plan user-confirmed decision source"
@@ -261,20 +306,43 @@ assert_contains "$plan_feature" "Authority: user-confirmed" "plan user-answer au
 assert_contains "$plan_feature" "Plan Mainline Handoff" "plan business-rule handoff"
 assert_contains "$plan_feature" "trace the smallest concrete business flow" "plan grounds business questions in a real flow"
 assert_contains "$plan_feature" "form an evidence-backed working conclusion" "plan requires an Agent conclusion before asking"
+assert_contains "$plan_feature" "Stop reading when evidence resolves or falsifies the current question or identifies the next semantic owner" "plan stops evidence expansion at the current decision"
+assert_contains "$plan_feature" "suspected consumers, risks, and adjacent flows remain candidates" "plan defers adjacent evidence until needed"
+assert_contains "$plan_feature" "Do not inventory every possible consumer before the first decision" "plan rejects eager whole-system inventory"
 assert_contains "$plan_feature" "ask the user to correct, complete, or choose against it" "plan asks for comparison instead of blank definition"
 assert_contains "$plan_feature" "decision-relevant uncertainty budget, not an exhaustive questionnaire" "plan limits questions to decision-relevant uncertainty"
 assert_contains "$plan_feature" "cross-check implementation evidence against existing user-confirmed answers" "plan cross-checks code and user answers"
 assert_contains "$plan_feature" "accept the point and stop asking" "plan stops asking when evidence and answers align"
+assert_contains "$plan_feature" "select the highest-impact unresolved decision first" "plan resumes active plans from one open decision"
+assert_contains "$plan_feature" "keep every other Open Question and suspected evidence path unopened until its turn" "plan does not fan out active-plan open questions"
 assert_contains "$plan_feature" "never ask the user to restate an implementation fact" "plan does not ask for already-proven facts"
 assert_contains "$plan_feature" "Do not open with abstract prompts" "plan rejects empty business abstractions"
 assert_contains "$plan_feature" "trace distinct flows independently" "plan closes distinct implementation flows separately"
 assert_contains "$plan_feature" "do not combine two incomplete flows into a binary choice" "plan rejects binary questions built from incomplete traces"
 assert_contains "$plan_feature" "## Modeling Gap Intake Handoff" "plan accepts confirmed gaps only after modeling scope"
 assert_contains "$plan_feature" "Show the full deduplicated gap set" "plan presents the complete gap intake before solution discussion"
-assert_contains "$plan_feature" "### Plan-Complete Brainstorm Handoff" "plan completion activates detailed user discussion"
+assert_contains "$plan_feature" "## Progressive Brainstorm Handoff" "plan analysis activates detailed user discussion"
+assert_contains "$plan_feature" "This handoff is progressive, not only a final ceremony" "plan brainstorm runs during analysis"
+assert_contains "$plan_feature" "before opening an unrelated Slice" "plan brainstorm creates an inter-slice user boundary"
+assert_contains "$plan_feature" "only when the user explicitly requests an artifact-only or end-to-end Plan without checkpoints" "plan autonomous expansion requires explicit request"
 assert_contains "$plan_feature" "automatically enter a detailed user-facing brainstorm" "plan completion does not end the conversation"
 assert_contains "$plan_feature" "exactly one topic" "plan brainstorm discusses one topic at a time"
 assert_contains "$plan_feature" "three-line summary" "plan brainstorm rejects shallow summaries"
+assert_contains "$plan_feature" "Complexity changes analysis depth, never file creation" "plan complexity changes analysis, not storage"
+assert_contains "$plan_feature" "## Design Slice" "plan closes one load-bearing design question"
+assert_contains "$plan_feature" "question -> current evidence -> decision -> impact/risk -> proof" "plan design slice evidence chain"
+assert_contains "$plan_feature" "Do not open the next independent Design Slice while the current one still contains a user-owned normative choice" "plan blocks unrelated expansion before user decision"
+assert_contains "$plan_feature" "## Artifact Pressure Gate" "plan artifact creation has a pressure gate"
+assert_contains "$plan_feature" "Complexity, activity, or reaching a universal evidence-ready checkpoint is not pressure" "plan rejects size and fixed-stage materialization"
+assert_contains "$plan_feature" 'Never pre-create a Plan, directory, `design.md`, or a taxonomy of empty files from complexity alone' "plan rejects eager artifact sets"
+assert_contains "$plan_feature" "Alternatives appear only when genuinely different viable shapes" "plan rejects fake alternatives"
+assert_contains "$plan_feature" "Resolved questions leave Open Questions" "plan removes stale open questions"
+assert_contains "$plan_feature" "Task Breakdown stays absent until stable executable interfaces exist" "plan rejects placeholder decomposition"
+assert_not_contains "$plan_feature" 'Record at least two real options' "plan no longer forces two options"
+assert_not_contains "$plan_feature" 'Create only `prd.md` initially' "plan no longer auto-creates prd"
+assert_contains "$plan_feature" "change-contract.md" "plan semantic-contract hook"
+assert_contains "$plan_feature" "source-localization.md" "plan technical-owner hook"
+assert_contains "$plan_feature" "Any activated Change Contract is consumed" "plan contract-consumption acceptance"
 
 subagent_driven="$(<templates/skill/workflows/subagent-driven.md)"
 assert_contains "$subagent_driven" "Worker-local status never advances the Native Plan" "worker status main-plan boundary"
@@ -345,6 +413,9 @@ assert_contains "$fix_bug" "Reusable engineering lessons discovered while fixing
 assert_contains "$fix_bug" "No Bug-derived or Agent-derived content entered the business model" "fix-bug completion protects user-intent fidelity"
 assert_contains "$fix_bug" "User Decision Drift Gate" "fix-bug immediate drift escalation"
 assert_contains "$fix_bug" "task-execution.md#user-decision-drift-gate" "fix-bug drift-owner link"
+assert_contains "$fix_bug" "Reuse a clear observed/expected contract as the fast path" "fix-bug semantic fast path"
+assert_contains "$fix_bug" "source-localization.md" "fix-bug technical-owner hook"
+assert_contains "$fix_bug" "must identify the repair target and root-cause path before mutation" "fix-bug contract-consumption acceptance"
 
 change_managed="$(<templates/skill/workflows/change-managed.md)"
 assert_contains "$change_managed" "Map semantic fan-out" "change-managed invariant fan-out"
@@ -354,6 +425,24 @@ assert_contains "$change_managed" "source Plan's relevant user-confirmed Decisio
 assert_contains "$change_managed" "Purely technical Design-derived work replays the source Plan without requiring a business model" "change-managed technical-plan business-leaf boundary"
 assert_contains "$change_managed" "User Decision Drift Gate" "change-managed immediate drift escalation"
 assert_contains "$change_managed" "task-execution.md#user-decision-drift-gate" "change-managed drift-owner link"
+assert_contains "$change_managed" "clear source Plans and explicit requests take its fast path" "change-managed semantic fast path"
+assert_contains "$change_managed" "source-localization.md" "change-managed technical-owner hook"
+assert_contains "$change_managed" "bind the returned owner/Current -> Target/affected path before mutation" "change-managed contract-consumption acceptance"
+
+assert_contains "$clarity_gate" "identify whether the blocker is normative" "request clarity consumes Change Contract blocker"
+assert_contains "$clarity_gate" "instead of asking the user" "request clarity sends technical unknowns to localization"
+
+for consumer_file in \
+  templates/skill/workflows/plan-feature.md \
+  templates/skill/workflows/fix-bug.md \
+  templates/skill/workflows/change-managed.md \
+  templates/skill/protocol-blocks/ambiguous-request-gate.md \
+  templates/skill/workflows/task-execution.md \
+  templates/skill/workflows/task-closure.md; do
+  consumer_content="$(<"$consumer_file")"
+  assert_not_contains "$consumer_content" "Every material requirement-bearing input receives an evidenced disposition" "$consumer_file does not copy the Semantic Intent definition"
+  assert_not_contains "$consumer_content" "## Adaptive Evidence Funnel" "$consumer_file does not copy the localization procedure"
+done
 
 assert_contains "$plan_feature" "business-model impact: unchanged / proposed change / unknown" "plan business-model impact"
 assert_contains "$plan_feature" "Before implementation handoff" "plan distills desired truth before coding"
@@ -411,6 +500,26 @@ done
 plan_large="$(<templates/skill/workflows/plan-large.md)"
 assert_contains "$plan_large" "Read this file only after" "large-plan conditional read"
 assert_contains "$plan_large" "If an angle would be read only with every sibling" "large-plan independent angle reason"
+assert_contains "$plan_large" "Large changes analysis depth, not artifact count" "large-plan size does not decide files"
+assert_contains "$plan_large" "a perspective is not a file" "large-plan separates lenses from artifacts"
+assert_contains "$plan_large" "A suspected risk or consumer list is a candidate queue" "large-plan perspectives activate incrementally"
+assert_contains "$plan_large" "Keep tightly coupled angles together" "large-plan keeps coupled design integrated"
+assert_contains "$plan_large" "Never create one file per lens" "large-plan rejects lens file explosion"
+assert_contains "$plan_large" "conversation when no artifact is justified" "large-plan supports artifact-free synthesis"
+assert_contains "$plan_large" "Do not dispatch broad “scan the subsystem” work before that boundary" "large-plan bounds parallel evidence scans"
+assert_not_contains "$plan_large" "Each selected lens gets a naturally named sibling file" "large-plan removes automatic lens files"
+
+plan_archive="$(<docs/plans/README.md)"
+assert_contains "$plan_archive" "Complexity changes analysis depth, not materialization timing" "plan archive separates complexity and materialization"
+assert_contains "$plan_archive" "Use one dated file for a focused one-file record" "plan archive supports focused one-file carrier"
+assert_contains "$plan_archive" "Use a directory when the durable object is a named dossier" "plan archive supports pressure-triggered dossier carrier"
+assert_contains "$plan_archive" 'A correct dossier may contain only `prd.md`' "plan archive does not require eager siblings"
+assert_contains "$plan_archive" "Headings are not the completeness unit" "plan archive rejects section-count completeness"
+
+plan_template="$(<docs/plans/_TEMPLATE.md)"
+assert_contains "$plan_template" "Artifact Pressure Gate admits a durable Plan" "plan template activates only after pressure"
+assert_contains "$plan_template" "Do not pre-create sibling files" "plan template rejects eager siblings"
+assert_contains "$plan_template" "observable behavior and the evidence that will prove it" "plan template acceptance is evidence-bearing"
 
 echo ""
 echo "Summary: $PASS passed, $FAIL failed"

@@ -18,26 +18,26 @@ primary: true
 
 ## Always Read
 
-These files apply to every task. Read them first:
+Default is empty. Only files that every task needs before its workflow starts belong here:
 <!-- ALWAYS_READ_START -->
-1. `rules/project-rules.md`
-2. `rules/coding-standards.md`
-3. `rules/agent-behavior.md`
+None by default; workflows load knowledge at evidence and phase boundaries.
 <!-- ALWAYS_READ_END -->
 
-<!-- FILL: edit routing.yaml always_read, then run scripts/sync-routing.sh. Keep to 2–3 files max. Domain-specific rules do NOT go here. agent-behavior.md is pre-filled universal defaults — remove it only if your project explicitly overrides those defaults. -->
+<!-- Edit routing.yaml always_read only after proving every real task needs the file before workflow selection. -->
 
 ## Session Discipline
 
 **Every new task — even the second or third in the same session — must re-match the route below before acting.** Re-matching is cheap and catches the most common error: a new task that belongs to a different route than the last one.
 
 - **Re-match the route every task** (scan Common Tasks / `routing.yaml`). Never assume the new task uses the last route.
-- **Re-read the route's files only when the route changed, or context was compacted** (a fresh SKILL.md injection from your SessionStart hook is the signal context was dropped). Otherwise the files you read last task are still in context — re-reading them every task is wasted work and the main per-task tax this skill exists to avoid.
-- **Use minimal sufficient context** — start with Always Read + route `required_reads` + workflow. Expand only on signals from `rules/agent-behavior.md` § 4; tasks beyond one clear action/check then follow `workflows/task-execution.md`, while Simple tasks skip it.
+- **Re-read only what changed or was lost** — after a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence.
+- **Use evidence-driven context** — start with the selected workflow and the smallest source slice that can decide the next action. One clear action/check stays Simple; otherwise load `workflows/task-execution.md`.
+- **Bind domains late** — explicit business-rule requests or source Plans that already declare the applicable business-domain owner may read `domain-routing.yaml` after workflow selection. Ambiguous work inspects evidence first; keywords identify candidates only. A source Plan is read directly by its workflow and does not by itself activate a domain. Clearly technical work never reads the domain manifest. A domain appends knowledge and cannot replace the workflow; load one owner by default and expand only on cross-domain evidence.
+- **Load lifecycle contracts at their boundary** — modifying workflows read `rules/change-discipline.md` before the first mutation; adopted testing guidance loads when constructing evidence; `workflows/task-closure.md` loads only when completion begins.
 - **If you cannot tell whether context was compacted, re-read** — partial memory is worse than no memory.
-- Before final validation/commit after a long or interrupted task, run `protocol-blocks/reboot-check.md`: restate the original user constraints and chosen route; if you cannot, re-read the request, the route's files, and the workflow before proceeding.
+- Before final validation/commit after a long or interrupted task, run `protocol-blocks/reboot-check.md`: restate the original user constraints and chosen route; if you cannot, re-read the request, current workflow, and decision-relevant evidence before proceeding.
 
-**Request-clarity judgment (Principle 1 gate)** — vague wording is a signal, not an automatic blocker. Match the likely intent, use the smallest read-only project evidence to derive scope and constraints, and ask only when a normative preference, authority boundary, or materially different outcome remains unresolved. Do not mutate until the requested outcome is concrete enough to verify. See `protocol-blocks/ambiguous-request-gate.md`.
+**Request-clarity judgment** — vague wording is a signal, not an automatic blocker. Use the smallest read-only evidence to derive scope and ask only for a remaining normative decision. See `protocol-blocks/ambiguous-request-gate.md`.
 
 </always-applicable>
 
@@ -45,20 +45,19 @@ These files apply to every task. Read them first:
 
 ## Common Tasks
 
-Each entry lists the core files to read first. Additional context is signal-driven, not preloaded:
+Each entry selects the first workflow. The workflow gathers evidence and pulls later knowledge:
 
 <!-- FILL: edit routing.yaml, then run scripts/sync-routing.sh. Keep 3–8 real recurring task types and an Other fallback. -->
 <!-- ROUTING_SUMMARY_START -->
-- Fix bug / 修复 bug / 排查异常 (`fix-bug`) -> reads none; workflow `workflows/fix-bug.md`; follow `workflows/fix-bug.md`; ref `references/gotchas.md` only when a concrete signal points there; triggers: "这个接口报错了", "测试挂了", "fix this failing test"
-- Add / refactor / optimize non-bug behavior / 新增 / 重构 / 优化非 bug 行为 (`change-managed`) -> reads none; workflow `workflows/change-managed.md`; follow `workflows/change-managed.md`; for refactors that touch ≥5 independent usage points, use `workflows/refactor-fanout.md`; triggers: "优化这个模块", "帮我加一个功能", "refactor this flow"
-- Refactor across many usage points (rename / change signature / migrate) / 跨多处的同型重构(改名 / 改签名 / 迁移) (`refactor-fanout`) -> reads none; workflow `workflows/refactor-fanout.md`; follow `workflows/refactor-fanout.md`; fan-out the multi-site change phase to parallel subagents; triggers: "把这个函数改名,所有地方都跟着改", "rename X across the codebase", "extract this interface, update all implementers"
-- Plan a complex feature or long-running change / 规划复杂功能 / 长任务 (`plan-feature`) -> reads none; workflow `workflows/plan-feature.md`; follow `workflows/plan-feature.md`; create a task dossier only for complex, long-running, or external-research work; triggers: "先帮我把这个需求问清楚", "这个功能比较大,先规划一下", "plan this feature before coding"
-- Profile / refresh project understanding / 梳理 / 刷新项目理解 (`profile-project`) -> reads none; workflow `workflows/profile-project.md`; follow `workflows/profile-project.md`; write only evidence-labeled conclusions; triggers: "帮我理解这个项目", "重新梳理项目规则", "refresh the project profile"
-- Update from skill-based-architecture upstream / 从上游 skill-based-architecture 更新 (`update-upstream`) -> reads none; workflow `workflows/update-upstream.md`; follow `workflows/update-upstream.md`; agent compares, patches, and validates without asking user to diff; triggers: "上游项目更新了,帮我更新一下", "更新 skill-based-architecture 模板", "refresh from upstream"
-- Update skill rules or record lessons / 更新 skill 规则 / 记录经验 (`update-rules`) -> reads none; workflow `workflows/update-rules.md`; follow `workflows/update-rules.md`; classify first; read `references/gotchas.md` only for a project/technical gotcha, `references/behavior-failures.md` only for an Agent behavior failure, and the target rule/reference only for that destination; never preload both evidence stores; triggers: "记录这个规则", "把这次踩坑记下来", "update the project skill rules"
-- Multi-subtask / long run / 多子任务 / 长任务 (`subagent-driven`) -> reads none; workflow `workflows/subagent-driven.md`; follow `workflows/subagent-driven.md`; triggers: "这个任务比较大,分几路做", "多个独立子任务并行", "run multiple subtasks"
-- Act on code review feedback / 处理代码评审意见 (`receiving-review`) -> reads none; workflow `workflows/receiving-review.md`; follow `workflows/receiving-review.md`; verify each point against code before acting, push back with evidence when wrong; triggers: "帮我看看这些评审意见", "reviewer 提了几个问题,处理一下", "address this PR review feedback"
-- Other / unlisted task / 其他 / 未列出的任务 (`other`) -> reads none; workflow Check `workflows/` for closest match; read `rules/project-rules.md` + `rules/coding-standards.md`, then match by workflow filename; if no match, proceed with Always Read rules; triggers: "其他没有明确路由的任务"
+- Fix bug / 修复 bug / 排查异常 (`fix-bug`) -> workflow `workflows/fix-bug.md`; triggers: "这个接口报错了", "测试挂了", "fix this failing test"
+- Add / refactor / optimize non-bug behavior / 新增 / 重构 / 优化非 bug 行为 (`change-managed`) -> workflow `workflows/change-managed.md`; triggers: "优化这个模块", "帮我加一个功能", "refactor this flow"
+- Refactor across many usage points (rename / change signature / migrate) / 跨多处的同型重构(改名 / 改签名 / 迁移) (`refactor-fanout`) -> workflow `workflows/refactor-fanout.md`; triggers: "把这个函数改名,所有地方都跟着改", "rename X across the codebase", "extract this interface, update all implementers"
+- Plan a feature or design decision / 规划功能 / 设计决策 (`plan-feature`) -> workflow `workflows/plan-feature.md`; triggers: "先帮我把这个需求问清楚", "这个功能比较大,先规划一下", "plan this feature before coding"
+- Profile / refresh project understanding / 梳理 / 刷新项目理解 (`profile-project`) -> workflow `workflows/profile-project.md`; triggers: "帮我理解这个项目", "重新梳理项目规则", "refresh the project profile"
+- Update from skill-based-architecture upstream / 从上游 skill-based-architecture 更新 (`update-upstream`) -> workflow `workflows/update-upstream.md`; triggers: "上游项目更新了,帮我更新一下", "更新 skill-based-architecture 模板", "refresh from upstream"
+- Update skill rules or record lessons / 更新 skill 规则 / 记录经验 (`update-rules`) -> workflow `workflows/update-rules.md`; triggers: "记录这个规则", "把这次踩坑记下来", "update the project skill rules"
+- Act on code review feedback / 处理代码评审意见 (`receiving-review`) -> workflow `workflows/receiving-review.md`; triggers: "帮我看看这些评审意见", "reviewer 提了几个问题,处理一下", "address this PR review feedback"
+- Other / unlisted task / 其他 / 未列出的任务 (`other`) -> workflow `workflows/task-execution.md`; triggers: "其他没有明确路由的任务"
 <!-- ROUTING_SUMMARY_END -->
 
 </task-routing>

@@ -71,7 +71,7 @@ For projects where the agent runs side-effecting operations (schema / prod / sec
 
 ## Simple Route vs Advanced Route
 
-Most routes need only `id`, `labels`, `route`, `required_reads`, `workflow`, and `trigger_examples`. Keep them simple.
+Task routes need only `id`, `labels`, `workflow`, and `trigger_examples`. They select the first procedure; later knowledge belongs to workflow evidence gates or optional domain routing.
 
 Use optional advanced fields only for high-risk routing where a wrong match has a real cost:
 

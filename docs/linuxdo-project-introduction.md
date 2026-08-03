@@ -140,9 +140,6 @@ tasks:
     labels:
       en: Fix bug
       zh: 修复 bug / 排查异常
-    required_reads:
-      - rules/project-rules.md
-      - rules/coding-standards.md
     workflow: workflows/fix-bug.md
     trigger_examples:
       - "这个接口报错了"
@@ -228,9 +225,9 @@ Task routes live in `skills/<name>/routing.yaml`.
 For every new task:
 1. Read `skills/<name>/SKILL.md`.
 2. Read `skills/<name>/routing.yaml`.
-3. Match by `labels`, `trigger_examples`, and task intent.
-4. Read only that route's `required_reads`, then follow its `workflow`.
-5. If no route matches, use the `other` route.
+3. Match exactly one task route; if none matches, use `other`.
+4. Follow only that route's `workflow`; the route does not preload project knowledge.
+5. Let the workflow inspect minimal evidence, then evaluate optional `domain-routing.yaml` only when business semantics are actually required.
 ```
 
 薄壳只回答“从哪里开始、怎么路由”，规则正文仍然只放在 skill 目录里。

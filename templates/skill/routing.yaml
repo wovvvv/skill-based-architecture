@@ -1,30 +1,27 @@
 # Canonical Routing Manifest
 #
-# Source of truth for Always Read, Common Tasks, and shell bootstraps.
+# Source of truth for optional Always Read entries, task-to-workflow routing,
+# and shell bootstraps. Domain selection is a later evidence-gated phase owned
+# by domain-routing.yaml when the first real domain is admitted.
 # Edit this file first, then run `bash scripts/sync-routing.sh`.
 # Downstream from repo root: `bash skills/<name>/scripts/sync-routing.sh <name>`.
 # Do not hand-edit generated Always Read lists, route summaries, bootstrap blocks,
 # or shell behavior blocks (auto-triggers + red flags). Edit the behavior block in
 # scripts/sync-routing.sh, then re-run sync.
 
-# FILL: Keep this to 2-3 files that apply to every task. Domain-specific rules
-# belong in task required_reads below, not here.
-always_read:
-  - rules/project-rules.md
-  - rules/coding-standards.md
-  - rules/agent-behavior.md
+# Default empty. Add an entry only when every task demonstrably needs it before
+# its workflow can start; domain, mutation, testing, and closure knowledge do
+# not qualify because their workflows activate them later.
+always_read: []
 
 # FILL: Replace scaffold rows with this project's real 3-8 recurring task types;
-# keep an "other" fallback. required_reads lists ONLY route-specific core reads
-# not already in always_read. It is not a safety blanket: add context only on
-# concrete ambiguity/risk signals in the Always Read behavior rule, not by splitting
-# routes into small/large variants. Optional high-risk routing fields:
-# positive_signals, negative_signals, confidence, slots, target. Two-root skills:
-# prefix required_reads/workflow with `skill:`/`code:` + add path_resolution.
+# keep an "other" fallback. A task row selects only the first workflow; it must
+# not carry required_reads or inline domain overlays. The workflow gathers the
+# smallest evidence and pulls knowledge only when an unresolved decision needs it.
+# Two-root skills may prefix workflow with `skill:`/`code:` and add path_resolution.
 tasks:
   - id: fix-bug
     labels: { en: Fix bug, zh: 修复 bug / 排查异常 }
-    route: follow `workflows/fix-bug.md`; ref `references/gotchas.md` only when a concrete signal points there
     workflow: workflows/fix-bug.md
     trigger_examples:
       - 这个接口报错了
@@ -32,7 +29,6 @@ tasks:
       - fix this failing test
   - id: change-managed
     labels: { en: Add / refactor / optimize non-bug behavior, zh: 新增 / 重构 / 优化非 bug 行为 }
-    route: follow `workflows/change-managed.md`; for refactors that touch ≥5 independent usage points, use `workflows/refactor-fanout.md`
     workflow: workflows/change-managed.md
     trigger_examples:
       - 优化这个模块
@@ -40,7 +36,6 @@ tasks:
       - refactor this flow
   - id: refactor-fanout
     labels: { en: Refactor across many usage points (rename / change signature / migrate), zh: 跨多处的同型重构(改名 / 改签名 / 迁移) }
-    route: follow `workflows/refactor-fanout.md`; fan-out the multi-site change phase to parallel subagents
     workflow: workflows/refactor-fanout.md
     trigger_examples:
       - 把这个函数改名,所有地方都跟着改
@@ -48,8 +43,7 @@ tasks:
       - extract this interface, update all implementers
       - 这个 API 签名改了,所有 caller 也改一下
   - id: plan-feature
-    labels: { en: Plan a complex feature or long-running change, zh: 规划复杂功能 / 长任务 }
-    route: follow `workflows/plan-feature.md`; create a task dossier only for complex, long-running, or external-research work
+    labels: { en: Plan a feature or design decision, zh: 规划功能 / 设计决策 }
     workflow: workflows/plan-feature.md
     trigger_examples:
       - 先帮我把这个需求问清楚
@@ -57,7 +51,6 @@ tasks:
       - plan this feature before coding
   - id: profile-project
     labels: { en: Profile / refresh project understanding, zh: 梳理 / 刷新项目理解 }
-    route: follow `workflows/profile-project.md`; write only evidence-labeled conclusions
     workflow: workflows/profile-project.md
     trigger_examples:
       - 帮我理解这个项目
@@ -65,7 +58,6 @@ tasks:
       - refresh the project profile
   - id: update-upstream
     labels: { en: Update from skill-based-architecture upstream, zh: 从上游 skill-based-architecture 更新 }
-    route: follow `workflows/update-upstream.md`; agent compares, patches, and validates without asking user to diff
     workflow: workflows/update-upstream.md
     trigger_examples:
       - 上游项目更新了,帮我更新一下
@@ -73,23 +65,13 @@ tasks:
       - refresh from upstream
   - id: update-rules
     labels: { en: Update skill rules or record lessons, zh: 更新 skill 规则 / 记录经验 }
-    route: follow `workflows/update-rules.md`; classify first; read `references/gotchas.md` only for a project/technical gotcha, `references/behavior-failures.md` only for an Agent behavior failure, and the target rule/reference only for that destination; never preload both evidence stores
     workflow: workflows/update-rules.md
     trigger_examples:
       - 记录这个规则
       - 把这次踩坑记下来
       - update the project skill rules
-  - id: subagent-driven
-    labels: { en: Multi-subtask / long run, zh: 多子任务 / 长任务 }
-    route: follow `workflows/subagent-driven.md`
-    workflow: workflows/subagent-driven.md
-    trigger_examples:
-      - 这个任务比较大,分几路做
-      - 多个独立子任务并行
-      - run multiple subtasks
   - id: receiving-review
     labels: { en: Act on code review feedback, zh: 处理代码评审意见 }
-    route: follow `workflows/receiving-review.md`; verify each point against code before acting, push back with evidence when wrong
     workflow: workflows/receiving-review.md
     trigger_examples:
       - 帮我看看这些评审意见
@@ -98,7 +80,6 @@ tasks:
       - 改一下 code review 提的点
   - id: other
     labels: { en: Other / unlisted task, zh: 其他 / 未列出的任务 }
-    route: read `rules/project-rules.md` + `rules/coding-standards.md`, then match by workflow filename; if no match, proceed with Always Read rules
-    workflow: Check `workflows/` for closest match
+    workflow: workflows/task-execution.md
     trigger_examples:
       - 其他没有明确路由的任务

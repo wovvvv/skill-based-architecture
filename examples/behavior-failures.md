@@ -168,7 +168,7 @@ Cost: two days of debugging, a revert, a re-implementation with actual measureme
 >
 > After v2: 1 650 docs/s, p95 latency 310 ms — improvement. Shipping with delta in commit message."
 
-**The mechanism that catches it:** `rules/agent-behavior.md § 7` gates every performance-related change on a before/after benchmark. The ✓ Check cannot be answered ("can you cite the before-and-after results?") without having actually run them.
+**The mechanism that catches it:** the project's adopted performance/testing contract requires a before/after benchmark, and `task-execution.md` loads that contract while constructing fitted evidence. The generic scaffold owns the timing; the project owns whether performance work requires this benchmark.
 
 **Rationalizations that would have bypassed it:**
 
@@ -190,13 +190,13 @@ One failure mode scans superficially, invents a 4-phase target architecture, and
 
 ### ✅ Agent behavior with evidence-first judgment
 
-Agent reads the Always Read rules, treats "重构 / 更清晰" as an uncertainty signal, and performs a bounded read-only inspection of package constraints, dependency structure, recent changes, and tests. It discovers that large package moves are forbidden, narrows the technical candidates without designing a replacement architecture, and proceeds with diagnosis when evidence identifies an owning boundary. It asks one minimum question only if several materially different product outcomes remain, such as dependency isolation versus newcomer readability. No mutation starts until the chosen outcome has verifiable evidence.
+Agent starts from the selected workflow, treats "重构 / 更清晰" as an uncertainty signal, and performs a bounded read-only inspection of package constraints, dependency structure, recent changes, and tests. It loads the project rule only when the planned scope reaches that boundary, discovers that large package moves are forbidden, and narrows the technical candidates without designing a replacement architecture. It asks one minimum question only if several materially different product outcomes remain. No mutation starts until the chosen outcome has verifiable evidence.
 
 **Mechanism:** Ambiguous Request Gate — `templates/skill/protocol-blocks/ambiguous-request-gate.md`. It is a pre-mutation judgment contract: route likely intent, gather the smallest decision-changing evidence, then clarify only the owner decision evidence cannot supply.
 
 ### Lessons folded back upstream
 
-1. **Shells must list Always Read files in a preamble**, not only in per-task routing rows. Agents answering meta-queries ("what should I prepare before修 bug?") retrieve from shells and miss the global Always Read if it's not surfaced there.
+1. **Shells must preserve the route-first bootstrap**, not copy a universal rule list. The workflow loads project rules only when evidence reaches their scope.
 2. **Vague verbs are uncertainty signals, not objectives or blockers.** The Agent must not plan from them, but it also must not demand repository facts from the user before checking available evidence.
 3. The stop condition belongs at mutation: read-only diagnosis may continue; an unresolved normative preference, authority boundary, or materially different outcome requires minimum clarification before editing.
 
@@ -206,11 +206,11 @@ Agent reads the Always Read rules, treats "重构 / 更清晰" as an uncertainty
 
 ### ❌ Test author behavior without awareness of this pitfall
 
-Test author writes a subagent prompt: "in `/Users/shiqi/IdeaProjects/foo` please add a principle to `rules/agent-behavior.md`." The Agent tool creates a worktree at some temp path, the subagent runs with CWD = worktree root, but **uses the absolute path from the prompt** for its Read/Edit calls. Edits therefore land in the main repo, not the worktree. When the subagent finishes with changes present, the Agent tool **still reports the worktree as clean** (the worktree is unchanged because all edits went to the absolute path outside it) and silently cleans it up — no path returned, no warning. Main branch is silently polluted. Across a 20-subagent test round, the polluted state compounds into "the file under test grew by 80 lines from test artifacts the user half-notices and half-accepts".
+Test author writes a subagent prompt: "in `/Users/shiqi/IdeaProjects/foo` please edit `rules/change-discipline.md`." The Agent tool creates a worktree at some temp path, the subagent runs with CWD = worktree root, but **uses the absolute path from the prompt** for its Read/Edit calls. Edits therefore land in the main repo, not the worktree. When the subagent finishes with changes present, the Agent tool **still reports the worktree as clean** (the worktree is unchanged because all edits went to the absolute path outside it) and silently cleans it up — no path returned, no warning. Main branch is silently polluted. Across repeated subagent test rounds, the polluted state compounds into unnoticed edits to the main checkout.
 
 ### ✅ Test author behavior with this pitfall recorded
 
-Test author uses **relative paths** in subagent prompts ("in this repo, edit `rules/agent-behavior.md`") OR accepts that absolute-path prompts will pollute main and explicitly `git checkout` after each round. Before dispatching, the test author verifies the subagent prompt does not contain absolute paths that cross the worktree boundary.
+Test author uses **relative paths** in subagent prompts ("in this repo, edit `rules/change-discipline.md`") OR accepts that absolute-path prompts will pollute main and explicitly restores each test edit after the round. Before dispatching, the test author verifies the subagent prompt does not contain absolute paths that cross the worktree boundary.
 
 **Mechanism:** awareness, not a tool — there is no runtime protection. `isolation: worktree` is designed to isolate *relative* working-directory edits; absolute paths escape it by design. Record this in `WORKFLOW.md § Upgrading` and in any testing workflow.
 
@@ -233,7 +233,7 @@ The Agent traces one nearby merge path, leaves the page entry, MR-creation endpo
 
 The Agent traces the two flows independently across frontend entry, API call, backend write/merge owner, target branch, and protection checks. It states the current implementation conclusion directly, cross-checks it with prior user answers, and asks only whether the future business rule should change, permit bypass, or fail closed.
 
-**Mechanism:** [`templates/skill/rules/agent-behavior.md` § Implementation-Fact Question Gate](../templates/skill/rules/agent-behavior.md#implementation-fact-question-gate), activated locally by Plan, business-modeling, and Fix Bug workflows.
+**Mechanism:** [`templates/skill/protocol-blocks/ambiguous-request-gate.md` § Implementation-Fact Question Gate](../templates/skill/protocol-blocks/ambiguous-request-gate.md#implementation-fact-question-gate), activated locally by Plan, business-modeling, and Fix Bug workflows.
 
 ### Lessons folded back upstream
 

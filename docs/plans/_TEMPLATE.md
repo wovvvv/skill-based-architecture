@@ -1,70 +1,42 @@
 ---
-date: YYYY-MM-DD                       # day the plan was drafted; filename uses the same date
+date: YYYY-MM-DD
 status: draft                          # draft | executing | done | abandoned
-# distilled_to:                        # initialize at implementation handoff; reconcile final live targets on close
-#   - rules/<topic>.md                 # for "must / must not do X" conclusions
-#   - references/business/<domain>.md  # for user-confirmed stable desired business truth
-#   - references/gotchas.md            # for "we tried Y; here is why Y is wrong" anti-patterns
-#   - SKILL.md § Common Pitfalls #N    # if Pitfalls is the right home
-# Omit distilled_to entirely if status is abandoned, OR if you genuinely judged no
-# conclusion was load-bearing. Note that judgment in the plan body.
+# distilled_to:                        # initialize only at implementation handoff
+#   - rules/<topic>.md
+#   - references/business/<domain>.md
+#   - references/gotchas.md
 ---
 
 # Plan: {{Title}}
 
-> **Canonical structure lives in [`templates/skill/workflows/plan-feature.md` § Plan Skeleton](../../templates/skill/workflows/plan-feature.md).** This file mirrors it; if the two ever disagree, plan-feature.md wins. Do not redefine the section list here.
->
-> Plans are active decision records while `status: draft` or `executing`, then frozen snapshots at `done` / `abandoned`. At design-to-implementation handoff, distill user-confirmed stable business meaning into the routed business leaf and pass this Plan path/mainline to implementation. On final `done`, reconcile later deltas and all other load-bearing content before freezing.
+> Current conclusion: {{one sentence that implementers and reviewers can act on}}
 
-## Context
+> Use this template only after `plan-feature.md` § Artifact Pressure Gate admits a durable Plan. Delete instructions and unused optional sections. Do not pre-create sibling files.
 
-Why are we drafting this plan? What changed?
+## Problem And Scope
 
-## Problem
+State the concrete problem, desired outcome, current owner/flow/state, affected scope, and meaningful exclusions. Cite the smallest implementation evidence that changes the design.
 
-The thing we are trying to solve, stated concretely.
+## Current Decisions
 
-## Decision Context
+State the chosen current mainline and why. When a user answer carries normative authority, add compact `Decision Context`: trigger/question, faithful answer, `Authority: user-confirmed`, meaning/scope, Agent-derived consequences, and evidence source. Mark replaced decisions `superseded`; do not preserve routine acknowledgements or the investigation transcript.
 
-Include only when product/business decisions were confirmed. For each load-bearing answer or correction, record `Status: proposed | confirmed | superseded`, `Authority: user-confirmed` when applicable, the Agent question or user correction, the direct answer, its meaning and scope, and `Evidence / Source: current conversation`. Preserve short answers verbatim with their context; summarize long answers faithfully. Do not rewrite old decisions in place.
+## Requirements And Acceptance
 
-## Options Considered
-
-≥ 2 genuinely distinct approaches (different shape, not one + strawmen). Diverge before converging.
-
-- **Option A: ...** — Pros / cons.
-- **Option B: ...** — Pros / cons.
-
-## Chosen Approach
-
-Which option won, and the one or two sentences of "why" that will survive into the live structure on close.
-
-## Requirements & Acceptance Criteria
-
-Testable outcomes. What proves this plan was delivered.
-
-## Out of Scope
-
-Explicit exclusions.
-
-## Task Breakdown
-
-Executable decomposition — **omit this section for a single-task plan**. One block per task; each declares its interface so it can be built and verified independently (and dispatched to a subagent with zero re-derivation).
-
-### Task 1 — <verb-noun>
-
-- **Files**: owns `...`; shares `...` (read-only); forbidden: everything else
-- **Consumes**: the interface(s) earlier tasks or existing code expose that this task depends on
-- **Produces**: the interface later tasks rely on — exact signatures / types / exports / routes
-- **Acceptance**: a literal check — `<test cmd>` exits 0 / `grep -c X` returns 0 / observable behavior
-- [ ] sub-steps only when the path is non-obvious
+List observable behavior and the evidence that will prove it. Requirements identify actor/scenario/invariant/boundary; acceptance proves outcomes rather than command execution alone.
 
 ## Open Questions
 
-Unresolved *decisions* at the time of drafting (a "what happens when the dependency is down?" decision is an open question, not just a missing input value). Closed questions move into the body above as decisions, not left here as resolved checkboxes.
+Keep only unresolved decisions that can change design, acceptance, risk, migration, or ownership. Write `None` when the Plan is ready; remove resolved questions from this section.
 
-<!-- Large task: split analysis into angle files (architecture.md / risks.md / ...). Each angle file opens with `> Conclusion: <one line>`; add a `## Synthesis` section above that links every angle and states the chosen path. See plan-feature.md § Large Plan. -->
+<!-- Add only when evidence warrants it; use natural headings, not this comment text. -->
+<!-- Current -> Target Design: owners, models, state/data/contract/lifecycle paths, preserved behavior. -->
+<!-- Change / Impact: semantic readers, writers, callers, copies, merges, deletes, UI/API/ops/tests. -->
+<!-- Risk Scenarios: scenario, invariant, failure, mechanism/boundary, recovery, proof, residual risk. -->
+<!-- Options: genuinely different viable shapes or a load-bearing rejected path only. -->
+<!-- Task Interfaces: for stable dependent tasks, Files / Consumes / Produces / observable Acceptance. -->
+<!-- Synthesis: when independent siblings exist, link them and reconcile conflicts in the entry Plan. -->
 
-<!-- For abandoned plans, replace the body with a single section: -->
+<!-- For abandoned Plans, replace the active body with: -->
 <!-- ## Why Abandoned -->
-<!-- One paragraph. Do not distill; the absence of a decision is itself the record. -->
+<!-- One concise explanation. Do not distill an unchosen direction. -->

@@ -31,7 +31,7 @@ Task Execution sits after route selection and before Task Closure. One clear act
 
 If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. This reference keeps the activation consequence—pause the affected path and consult the user—but does not duplicate the gate's trigger, state transition, evidence, or resume procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
 
-The separation is load-bearing: Workflow owns the reusable domain procedure and mandatory gates; Task Anchor owns this task's outcome; Native Plan owns current runtime step state; Task Closure owns the final completion decision. A user-visible Plan may group Workflow steps but cannot replace the Workflow or weaken a gate. New independent tasks re-route and replace the old Anchor/Plan; refinements update the current one.
+The separation is load-bearing: Workflow owns the reusable domain procedure and mandatory gates; Task Anchor owns this task's outcome; Native Plan owns current runtime step state; Task Closure owns the readiness and final completion decisions. Closure may begin with only explicit delivery-dependent Done When evidence outstanding, declare `Ready for Delivery` after local checks, remain open across authorized delivery, and complete only after the requested artifact is verified. It does not grant delivery authority. A user-visible Plan may group Workflow steps but cannot replace the Workflow or weaken a gate. New independent tasks re-route and replace the old Anchor/Plan; refinements update the current one.
 
 For the user-facing design and examples, see [`docs/task-anchor-native-plan.md`](../docs/task-anchor-native-plan.md).
 
@@ -43,7 +43,9 @@ This reference deliberately gives only the operating summary: task closure
 applies only when the **Trigger Policy** admits the task (code or doc was
 changed); for those tasks, closure means main-work verification, the 30-second
 AAR scan, and any triggered recording, path-integrity, route-path, cross-
-reference, behavior-validation, or external-fact checks. Keep the exact gate
+reference, behavior-validation, or external-fact checks. For requested commit,
+push, MR, deploy, publish, or similar delivery, Closure distinguishes local
+readiness from completion and verifies the actual artifact before closing. Keep the exact gate
 wording and trigger table in `task-closure.md` so the protocol does not drift
 across guide/reference copies.
 
@@ -141,6 +143,7 @@ When one topic touches both destinations, the business leaf owns the complete cr
 - Ordered task step or completion check → `workflows/`
 - Task routing changed → `routing.yaml`, then `scripts/sync-routing.sh`
 - Always-read set changed → `routing.yaml`, then `scripts/sync-routing.sh`
+- Business domain owner changed → update the owner and `domain-routing.yaml` atomically, then run routing/orphan/reachability checks
 - Tool entry routing or Always Read changed → `routing.yaml`, then regenerate thin-shell generated blocks (`AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, `.cursor/rules/*.mdc`)
 
 Prefer integrating into the closest existing entry/section over creating a parallel entry or file. Create a new file only when a real task selects it independently and activation points to it.
@@ -185,14 +188,14 @@ If a lesson is both:
 then do **not** leave it buried in `references/` only. Also surface it in at least one activation path:
 
 - add or update a completion check in the relevant `workflows/*.md`
-- update `routing.yaml` so generated Common Tasks and thin-shell blocks point at the pitfall/reference file
+- update the owning workflow so concrete evidence activates the pitfall/reference; for business truth, register the owner in `domain-routing.yaml`
 - if the lesson is really a stable constraint, promote a concise summary into `rules/`
 
 Rule of thumb:
 
 - `references/` stores the explanation
 - `workflows/` prevents omission at task closure
-- `routing.yaml`-generated `SKILL.md` Always Read, Common Tasks, and thin-shell bootstraps make the right file more likely to be read
+- `routing.yaml`-generated `SKILL.md` Common Tasks and thin-shell bootstraps select the workflow; the workflow owns later evidence-based activation
 
 If a future agent could still miss the lesson while following the normal task path, the knowledge is stored but not yet activated.
 

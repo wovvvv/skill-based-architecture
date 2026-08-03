@@ -4,6 +4,12 @@
 # their own checks.
 
 required_sections:
+  - file: routing.yaml
+    must_contain:
+      - "id: receiving-review"
+      - "workflow: workflows/receiving-review.md"
+      - "reviewer 提了几个问题,处理一下"
+
   - file: protocol-blocks/ambiguous-request-gate.md
     must_contain:
       - "Vague wording is a signal, not an automatic blocker"
@@ -50,6 +56,10 @@ required_sections:
       - "mark the prior decision `superseded`"
       - "do not wait for review or Closure"
       - "bind the material risk, fitted evidence, and stop/escalation condition"
+      - "the evidence that could resolve or falsify it"
+      - "receiving a successful exit code"
+      - "If it contradicts the premise"
+      - "if it is inconclusive"
       - "do not narrate it before every tool call"
       - "does not create durable planning files or recover task state across Sessions"
     must_not_contain:
@@ -59,8 +69,16 @@ required_sections:
 
   - file: workflows/plan-feature.md
     must_contain:
+      - "## Deliverable Gate"
+      - "First distinguish producing/updating a concrete Plan from explaining a planning method"
+      - "Method/review/brainstorm requests are read-only advisory work"
+      - "inspect only representative evidence needed to support the evaluation"
+      - "do not execute every Design Slice, materialize artifacts, or build Task Breakdown"
+      - "only when the user asks to draft, update, complete, or decide the concrete feature/design Plan"
       - "## Complexity Gate"
+      - "Complexity changes analysis depth, never file creation"
       - "## Question Gate"
+      - "Evidence Baseline - Implementation facts closed?"
       - "Implementation facts closed?"
       - "trace distinct flows independently"
       - "do not combine two incomplete flows into a binary choice"
@@ -68,6 +86,9 @@ required_sections:
       - "If the user says the answer is in code"
       - "trace the smallest concrete business flow"
       - "form an evidence-backed working conclusion"
+      - "Stop reading when evidence resolves or falsifies the current question or identifies the next semantic owner"
+      - "suspected consumers, risks, and adjacent flows remain candidates"
+      - "Do not inventory every possible consumer before the first decision"
       - "ask the user to correct, complete, or choose against it"
       - "decision-relevant uncertainty budget, not an exhaustive questionnaire"
       - "cross-check implementation evidence against existing user-confirmed answers"
@@ -76,6 +97,9 @@ required_sections:
       - "ask only which normative meaning governs"
       - "Do not open with abstract prompts"
       - "working conclusion remains `proposed` / `current implementation fact`"
+      - "When resuming an active Plan that already has Open Questions"
+      - "select the highest-impact unresolved decision first"
+      - "keep every other Open Question and suspected evidence path unopened until its turn"
       - "## User-Confirmed Decision Mainline"
       - "canonical owner of Decision Delta capture and Plan Mainline Handoff"
       - "## Business-Semantics Gate"
@@ -83,7 +107,23 @@ required_sections:
       - "after `profile-business-model.md` finishes the user's agreed modeling scope"
       - "never create one PRD per gap"
       - "Show the full deduplicated gap set"
-      - "### Plan-Complete Brainstorm Handoff"
+      - "## Design Slice"
+      - "question -> current evidence -> decision -> impact/risk -> proof"
+      - "internal completeness check, not a visible template"
+      - "Do not open the next independent Design Slice while the current one still contains a user-owned normative choice"
+      - "Alternatives appear only when genuinely different viable shapes"
+      - "Resolved questions leave Open Questions"
+      - "Task Breakdown stays absent until stable executable interfaces exist"
+      - "## Artifact Pressure Gate"
+      - "Start in conversation plus the harness-native Plan"
+      - "Complexity, activity, or reaching a universal evidence-ready checkpoint is not pressure"
+      - "Create the smallest current owner"
+      - "Never pre-create a Plan, directory, `design.md`, or a taxonomy of empty files from complexity alone"
+      - "## Progressive Brainstorm Handoff"
+      - "This handoff is progressive, not only a final ceremony"
+      - "as soon as the first Design Slice exposes a user-owned normative choice or high-impact assumption"
+      - "before opening an unrelated Slice"
+      - "only when the user explicitly requests an artifact-only or end-to-end Plan without checkpoints"
       - "A written and internally checked Plan does not end the planning conversation"
       - "automatically enter a detailed user-facing brainstorm"
       - "Current conclusion"
@@ -93,7 +133,9 @@ required_sections:
       - "Agent recommendation"
       - "three-line summary"
       - "exactly one topic"
-      - "## Complex Plan"
+      - "## Plan Contract And Handoff"
+      - "current requirement/design and implementation-review contract, not a full transcript"
+      - "No stale question, fake alternative, authority mixing, placeholder task, duplicated conclusion, or unjustified artifact remains"
       - "[workflow-state:planning]"
       - "it is not the runtime Native Plan"
       - "pass its chosen outcome, acceptance criteria, boundaries, and task breakdown"
@@ -105,17 +147,36 @@ required_sections:
       - "Plan Mainline Handoff"
       - "Before implementation handoff"
       - "for business-bearing work, distilled confirmed business meaning"
-      - "legacy source, active destination, owner, activation path, and validation"
     must_not_contain:
       - "Pervasive reverse-question — default habit"
       - "one per lens"
+      - "Record at least two real options"
+      - "Create only `prd.md` initially"
+      - "create `docs/plans/YYYY-MM-DD-<slug>/prd.md`"
 
   - file: workflows/plan-large.md
     must_contain:
       - "## Multi-Perspective Analysis"
+      - "Large changes analysis depth, not artifact count"
+      - "a perspective is not a file"
+      - "A suspected risk or consumer list is a candidate queue"
       - "## Angle Contract"
+      - "Keep tightly coupled angles together"
+      - "If an angle would be read only with every sibling"
+      - "Never create one file per lens"
+      - "## Risk Scenarios"
+      - "Eventual consistency"
+      - "Concurrency"
+      - "Performance"
+      - "Migration/compatibility"
       - "## Synthesis"
+      - "conversation when no artifact is justified"
       - "## Parallel Analysis"
+      - "bounded evidence region, expected result, and stop condition"
+      - "Do not dispatch broad “scan the subsystem” work before that boundary"
+    must_not_contain:
+      - "Each selected lens gets a naturally named sibling file"
+      - "Every angle file"
 
   - file: workflows/task-closure.md
     must_contain:
@@ -136,6 +197,15 @@ required_sections:
       - "for business-bearing decisions, also read the routed business rule"
       - "durable knowledge migrated/deleted/superseded"
       - "rather than creating a mandatory ledger"
+      - "Ready for Delivery"
+      - "is a checkpoint, not task completion"
+      - "Closure never grants commit, push, MR, deploy, publish"
+      - "leaves Closure open"
+      - "without rerunning unrelated local checks"
+      - "Closure Complete"
+      - "The command exited 0, so the stage is complete"
+      - "proves only the command's own contract"
+      - "treating that exit code as sufficient completion evidence by itself"
 
   - file: workflows/update-rules.md
     must_contain:
@@ -199,16 +269,22 @@ required_sections:
       - "immediate responsibility to pause the affected path"
       - "task-execution.md#user-decision-drift-gate"
       - "Do not ask code and the confirmed model to compete for authority"
+      - "--workspace-root <workspace-root>"
+      - "plain `scripts/sync-routing.sh --check` is sufficient only when every owner is skill-local"
 
   - file: scripts/sync-routing.sh
     must_contain:
       - "domain_overlays"
       - "domain overlay must inherit the task workflow"
       - "owner_roots"
-      - "owner:<owner-id>:<path>"
+      - "owner_ref_pattern"
       - "--workspace-root"
-      - "task_route_id"
+      - "task route does not preload knowledge"
+      - "workflow must select a workflows/*.md procedure"
+      - "Keywords identify candidates only"
       - "cross-owner target verification remains open"
+      - "code-root target verification remains open"
+      - "code target missing"
     must_not_contain:
       - "allowed_apps"
 
@@ -267,33 +343,37 @@ required_sections:
       - "directly `spawn_agent`"
       - "as candidate business knowledge"
 
-  - file: rules/agent-behavior.md
+  - file: protocol-blocks/ambiguous-request-gate.md
     must_contain:
-      - "### Implementation-Fact Question Gate"
+      - "## Implementation-Fact Question Gate"
       - "close the smallest decision-relevant implementation path"
       - "never ask the user to choose them"
       - "Trace distinct flows independently"
       - "remaining normative ambiguity"
-      - "## 2. Semantic Completeness Before Minimality"
-      - "Default to **Product Development**"
-      - "state ownership/provenance"
-      - "Dependency count is risk evidence, not a veto"
-      - "Enter **Operational Stabilization** only when"
-      - "## 4. Minimal Context, Sufficient Evidence"
-      - "explicit boundaries/non-goals"
-      - "One clear action with one direct check proceeds without planning ceremony"
+
+  - file: rules/change-discipline.md
+    must_contain:
+      - "## Semantic Boundary"
+      - "Default to Product Development"
+      - "project-rules.md"
+      - "coding-standards.md"
+      - "ownership/provenance"
+      - "Dependency count is risk evidence"
+      - "Use Operational Stabilization only"
+      - "## Mutation Boundary"
+
+  - file: workflows/task-execution.md
+    must_contain:
+      - "## Evidence and Knowledge Gate"
+      - "smallest source/runtime slice"
+      - "diagnostic evidence, never correctness gates"
+      - "material Boundaries such as scope, non-goals"
       - "harness's native Plan"
       - "present only useful alignment"
-      - "without duplicating visible steps in chat"
-      - "Before every main Plan step"
-      - "do not use test count as a proxy for evidence quality"
-      - "Run scoped, reversible work end-to-end"
-      - "diagnostic signals, not objectives"
-      - "## 6. Delegate Only for Net Benefit"
-      - "Inline is the default"
-    must_not_contain:
-      - "must directly call `spawn_agent`"
-      - "continuous self-judgment + auto-dispatch"
+      - "do not repeat its steps in chat"
+      - "Before each main Plan step"
+      - "cross-cutting modifier, never a first-workflow route"
+      - "task size or duration alone does not activate it"
 
   - file: workflows/subagent-auxiliary.md
     must_contain:
@@ -368,6 +448,93 @@ required_sections:
       - "batch by physical region anyway to enable parallel dispatch"
       - "Full test suite passes"
 
+  - file: protocol-blocks/source-localization.md
+    must_contain:
+      - "This file owns the complete technical narrowing contract"
+      - "skip directly to a selected-source check when the target is already proven concrete"
+      - "one Session-only runtime map"
+      - "## Adaptive Evidence Funnel"
+      - "Search deterministically"
+      - "Stages 1-2 expose no source bodies"
+      - "Stage 4 is the first selected-source read"
+      - "a path, lexical match, file read, or successful command is not owner proof"
+      - "Source evidence may falsify Semantic Intent but cannot rewrite desired meaning"
+      - "ordinary localization creates no repository artifact"
+
+  - file: protocol-blocks/change-contract.md
+    must_contain:
+      - "This file owns the complete translation and implementation-binding state"
+      - "PRD/Figma presence, keywords, task size, or complexity never activate this protocol alone"
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "inference may generate candidates but cannot create authority"
+      - "`semantic-ready` means the intent can constrain localization and reject a false owner"
+      - "Agent-discoverable files, symbols, callers"
+      - "Treat ordinary Current/Target difference as the change to bind"
+      - "`implementation-ready` requires still-valid Semantic Intent"
+      - "A final file list, line-level design, exhaustive call graph"
+      - "Evidence inside the bound contract updates it"
+      - "ordinary tasks create no contract file, ledger, Wiki, manifest, index, database, or generated state"
+    must_not_contain:
+      - "## Adaptive Evidence Funnel"
+      - "Search deterministically"
+
+  - file: workflows/plan-feature.md
+    must_contain:
+      - "change-contract.md"
+      - "source-localization.md"
+      - "Any activated Change Contract is consumed into reconstructable Current -> Target"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/fix-bug.md
+    must_contain:
+      - "Reuse a clear observed/expected contract as the fast path"
+      - "change-contract.md"
+      - "source-localization.md"
+      - "must identify the repair target and root-cause path before mutation"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/change-managed.md
+    must_contain:
+      - "clear source Plans and explicit requests take its fast path"
+      - "change-contract.md"
+      - "source-localization.md"
+      - "bind the returned owner/Current -> Target/affected path before mutation"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: protocol-blocks/ambiguous-request-gate.md
+    must_contain:
+      - "let [`change-contract.md`](change-contract.md) identify whether the blocker is normative"
+      - "use [`source-localization.md`](source-localization.md) instead of asking the user"
+      - "Owner inversion"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/task-execution.md
+    must_contain:
+      - "let [`change-contract.md`](../protocol-blocks/change-contract.md) bind it"
+      - "consume [`source-localization.md`](../protocol-blocks/source-localization.md)"
+      - "Clear tasks keep the direct fast path"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/task-closure.md
+    must_contain:
+      - "final expanded [`Change Contract`](../protocol-blocks/change-contract.md)"
+      - "Closure consumes that contract; it does not define Semantic Intent or source-localization stages"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
 required_files:
   - path: routing.yaml
   - path: workflows/task-execution.md
+  - path: protocol-blocks/source-localization.md
+  - path: protocol-blocks/change-contract.md

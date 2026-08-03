@@ -44,20 +44,18 @@ One-line summary.
 
 ## Always Read
 
-These files apply to every task. Read them first:
-1. `rules/project-rules.md`
-2. `rules/coding-standards.md`
+Default to empty. Add a file only when every real task needs it before its first workflow starts; domain-specific and lifecycle-specific knowledge does not qualify.
 
-Keep this list to 2–3 files max. Domain-specific rules do NOT go here.
+Modifying workflows load `rules/change-discipline.md` immediately before the first mutation. That owner then links `rules/project-rules.md` and `rules/coding-standards.md`, which are read only when the planned mutation reaches their scope.
 
 ## Common Tasks
 
-Each task entry lists the exact files to read — don't read files not listed for your task:
+Each task entry selects the first workflow. The workflow gathers the smallest evidence and pulls knowledge only when a current decision needs it:
 
-- Add feature X → read `rules/<domain>-rules.md` + follow `workflows/<task>.md`
-- Add feature Y → read `rules/<domain>-rules.md` + follow `workflows/<task>.md`; ref: `references/<topic>.md`
-- Fix bug → read task-relevant `rules/*.md` + follow `workflows/fix-bug.md`; ref: `references/gotchas.md`
-- **Other / unlisted task** → read `rules/project-rules.md` + `rules/coding-standards.md` (Already Read above), then match by workflow filename (verb-noun convention: `add-page.md`, `fix-bug.md`, etc.). If no filename matches, proceed with just the Always Read rules.
+- Add feature X → follow `workflows/<task>.md`; load domain/rules/references only after its evidence gate
+- Add feature Y → follow `workflows/<task>.md`; read `references/<topic>.md` only when the workflow reaches that decision
+- Fix bug → follow `workflows/fix-bug.md`; load task-relevant rules before mutation and Gotchas only when diagnosis needs them
+- **Other / unlisted task** → select `workflows/task-execution.md`; do not synthesize an eager read bundle
 
 ## Known Gotchas
 
@@ -131,16 +129,17 @@ description: >
 
 Re-read the `description` block aloud after changing frontmatter. Listen for over-broad scope, workflow keyword stuffing, near-misses you cannot exclude, and (in multi-skill repos) duplicate trigger phrases between skills. No script substitutes for this judgment.
 
-The template above uses a two-tier structure:
+The template above uses evidence-separated stages:
 
-- **Always Read** (2–3 core files, ~150 lines total) — read every time; in the full scaffold this list is generated from `routing.yaml`
-- **Common Tasks** (task-routed) — Agent reads ONLY the files listed for the current task; in the full scaffold these rows are generated from `routing.yaml`; always include a fallback entry for unlisted tasks
+- **Always Read** — empty by default; add only a file every real task needs before workflow selection
+- **Common Tasks** — each generated row selects exactly one first workflow and carries no knowledge bundle
+- **Domain selection** — optional `domain-routing.yaml`, evaluated by the workflow only after an explicit business-rule request, known owner, or decision-relevant evidence requires business semantics
 
-**Keep routing in sync:** When you create or rename an always-read, workflow, or reference file, add or update `routing.yaml`, then run `scripts/sync-routing.sh`. The `update-rules.md` workflow includes this as a checklist item.
+**Keep routing in sync:** When task-to-workflow selection or Always Read changes, update `routing.yaml`. When a business owner is first added or changed, update `domain-routing.yaml` atomically. Run `scripts/sync-routing.sh` for both cases; it validates the optional domain manifest without copying it into startup summaries.
 
-**Common Tasks sizing:** Keep entries to 8–10 tasks maximum. Beyond that, agents waste tokens scanning unrelated entries. If you have more than 10 recurring task types, group related tasks under domain headings (e.g., `### Backend Tasks`, `### Frontend Tasks`) or merge low-frequency tasks into the "Other" fallback.
+**Common Tasks sizing:** Keep entries to 8–10 task procedures maximum. Beyond that, agents waste tokens scanning unrelated entries. Merge low-frequency procedures into a real fallback workflow; do not encode business domains into the task table.
 
-**"Other / unlisted task" matching:** The fallback entry should tell agents how to find the right workflow without reading every file. Workflow files use a verb-noun naming convention (`add-page.md`, `fix-bug.md`, `release.md`) — agents can match by filename alone. If that's not sufficient, add a one-line directory listing in the fallback entry: `Available workflows: add-controller, add-entity, fix-bug, release`.
+**"Other / unlisted task" matching:** The fallback entry still selects one real workflow, normally the generic task-execution workflow. It must not hide executable search instructions inside the `workflow` field.
 
 This keeps per-task reading to the minimum set needed, rather than loading all rules for every task.
 

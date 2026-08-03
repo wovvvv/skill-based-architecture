@@ -68,13 +68,13 @@ grep -rn 'FILL:' "skills/$NAME" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor
 
 Every hit is mandatory for the agent before shipping the skill. A user should not have to interpret these markers; they are migration work items.
 
-Always Read lists, Common Tasks, and shell bootstraps are generated from `skills/$NAME/routing.yaml`. Edit that manifest, then run:
+Always Read lists, first-workflow Common Tasks, and shell bootstraps are generated from `skills/$NAME/routing.yaml`. Domain-free projects omit `domain-routing.yaml`; the first real business owner materializes a non-empty manifest in the same change. Run the same command after either manifest changes:
 
 ```bash
 bash "skills/$NAME/scripts/sync-routing.sh" "$NAME"
 ```
 
-Do not hand-edit generated Always Read / Common Tasks in `SKILL.md` or generated blocks in thin shells.
+Do not hand-edit generated Always Read / Common Tasks in `SKILL.md` or generated blocks in thin shells. Domain entries remain out of those startup summaries and are validated only for delayed workflow use.
 
 **Step 4 — Verify structure and migration evidence.** After all FILLs and preserved-entry merges are resolved, run the automated smoke test:
 

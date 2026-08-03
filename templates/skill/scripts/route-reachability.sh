@@ -29,6 +29,7 @@ while [[ $# -gt 0 ]]; do
     *) usage; exit 2 ;;
   esac
 done
+DOMAIN_ROUTING="$(dirname "$ROUTING")/domain-routing.yaml"
 
 if [[ -z "$NAMESPACE" ]]; then
   if [[ -f "$ROUTING" ]] && grep -q '^path_resolution:' "$ROUTING"; then
@@ -77,7 +78,10 @@ normalize_tokens() {
 
 # A two-root route must use an explicit prefix; local hub edges may remain
 # unprefixed because they resolve inside the root currently being checked.
-reachable="$(grep -vE '^[[:space:]]*#' "$ROUTING" | normalize_tokens routing)"
+reachable="$({
+  grep -vE '^[[:space:]]*#' "$ROUTING"
+  if [[ -f "$DOMAIN_ROUTING" ]]; then grep -vE '^[[:space:]]*#' "$DOMAIN_ROUTING"; fi
+} | normalize_tokens routing)"
 
 while :; do
   add=""

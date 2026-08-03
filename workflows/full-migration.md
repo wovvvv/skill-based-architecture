@@ -173,9 +173,11 @@ Task routes live in `skills/<name>/routing.yaml`.
 
 For every new task:
 1. Read `skills/<name>/routing.yaml`.
-2. Match by `labels`, `trigger_examples`, and task intent.
-3. Read only that route's `required_reads` plus Always Read files.
-4. Follow that route's `workflow`.
+2. Match exactly one task route; if none matches, use `other`.
+3. Follow only that route's `workflow`; the task route does not preload knowledge.
+4. Let the workflow inspect the smallest evidence that can decide the next action.
+5. Evaluate optional `domain-routing.yaml` only for an explicit or evidence-backed business-semantic need.
+6. Load mutation, testing, Managed execution, and Closure contracts at their phase boundaries.
 ```
 
 This survives context truncation without copying the full route table into every entry file.

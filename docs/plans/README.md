@@ -1,91 +1,85 @@
-# Plan Decision Records and Archive
+# Plan Decision Records And Archive
 
-Plans are active decision records while `draft` or `executing`, then frozen snapshots after `done` or `abandoned`. The active Plan folder is the authority for its user-confirmed brainstorm and implementation mainline; frozen Plans are historical artifacts, not default task knowledge.
+Plans are current requirement/design and implementation-review contracts while `draft` or `executing`, then frozen snapshots after `done` or `abandoned`. They are not default task knowledge and are not full conversation transcripts.
 
-## Why archive plans at all
+## When A Plan File Exists
 
-Plans contain things that don't naturally fit into `rules/` or `references/`: the full context as it stood at the time, dead-end branches, calendar pressure, prior assumptions, who-said-what. Most of that has no ongoing value — but occasionally someone needs to ask "wait, why did we even consider doing it that way back then?", and the surviving rule alone is not enough.
+Planning starts in the conversation plus the harness-native Plan. Complexity changes analysis depth, not materialization timing. Create a durable Plan only after [`plan-feature.md` § Artifact Pressure Gate](../../templates/skill/workflows/plan-feature.md#artifact-pressure-gate) admits it: the user explicitly requests an artifact, a load-bearing decision needs persistence/handoff, an independent consumer/reviewer/validator/lifecycle exists, a cross-module conflict needs one reconciled owner, or an integrated surface has become harder to use than an extracted owner.
 
-The deal: archive is cheap (one file, no maintenance burden), so we keep it. During delivery, the source Plan is explicitly handed to its implementation/review tasks; outside that lineage it is **not default active knowledge**:
-- It is **not** linked from `SKILL.md` routing for unrelated future tasks.
-- It is required only when the current task modifies that Plan or implements/reviews its confirmed mainline.
-- It is **not** maintained once frozen.
+A concrete problem or Complex/Large label does not automatically create a file. Create the smallest current carrier; every later sibling must pass the same gate independently.
 
-If something in here turns out to be load-bearing — i.e. an agent making a future change would do the wrong thing without it — that fragment must be **lifted into the live structure** (see "When a plan closes" below). Keeping it alive only in a plan archive is the same as losing it.
+## Physical Shape
 
-## File format
-
-Plans take **either** of two shapes — pick by whether one file can hold the work:
-
-### Simple plan — one file `YYYY-MM-DD-slug.md`
-
-Default. Use when the work is a focused refactor or small feature: one or two files touched, no separate research material that wants its own file.
-
-```yaml
----
-date: 2026-05-12
-status: done             # draft | executing | done | abandoned
-distilled_to:            # initialize at implementation handoff when applicable; required/finally reconciled when done
-  - SKILL.md § Common Pitfalls #N
-  - rules/<topic>.md
-  - references/gotchas.md
-# omit distilled_to entirely if abandoned, or if you genuinely judged no content was load-bearing
----
-```
-
-Body follows the **canonical Plan Skeleton** — defined once in [`../../templates/skill/workflows/plan-feature.md`](../../templates/skill/workflows/plan-feature.md), mirrored by [`_TEMPLATE.md`](_TEMPLATE.md): Context → Problem → Decision Context (when user-confirmed decisions exist) → Options Considered → Chosen Approach → Requirements & Acceptance Criteria → Out of Scope → Task Breakdown (omit if single-task) → Open Questions.
-
-### Complex plan — directory `YYYY-MM-DD-slug/`
-
-Use when one file genuinely cannot hold the work (extensive research notes, long evidence quotes, multiple parallel investigations). Required structure:
+Use one dated file for a focused one-file record:
 
 ```text
-docs/plans/YYYY-MM-DD-slug/
-└── prd.md          ← frontmatter goes here; everything else is your call
+docs/plans/YYYY-MM-DD-<slug>.md
 ```
 
-That is the entire required structure. Add whatever else this specific task needs — a decisions log, research notes, evidence snippets, a checklist — using filenames that fit the work, **not** a canonical schema. If `prd.md` is the only file that ever exists in the directory, the plan is correct and complete.
+Use a directory when the durable object is a named dossier, must collect multiple admitted topics, follows an existing local archive contract, or already has an independently justified sibling:
 
-Resist pre-creating empty files. Add a sibling only when `prd.md` itself starts to bloat with content that wants to live separately. **Don't promote past behavior into a contract**: if past plans happened to use `decisions.md` or `research/`, that does not mean the next plan owes them.
+```text
+docs/plans/YYYY-MM-DD-<slug>/
+├── prd.md       # requirement/decision synthesis and links
+└── <name>.md    # only the independently consumed design/evidence surface
+```
 
-`prd.md`'s *internal* sections follow the canonical Plan Skeleton (above); that shapes the document, not the directory. The "no canonical schema" rule is about **files** in the directory — the section list inside `prd.md` is canonical, the set of sibling files is not.
+`prd.md` is the directory entry, not a reason to pre-create `design.md`, `risks.md`, `database.md`, or any other taxonomy. A correct dossier may contain only `prd.md`. Name siblings by their actual question. Content always read, reviewed, and changed together stays together. If a sibling would not change a decision, task boundary, risk treatment, or proof when read alone, merge it into the current owner.
+
+When a one-file Plan later gains real dossier or sibling pressure, it may move into a directory as `prd.md` with Git history preserved. Do not predict that pressure by pre-creating files or empty siblings.
+
+## Semantic Contract
+
+Use [`_TEMPLATE.md`](_TEMPLATE.md) only after materialization is admitted. A useful Plan lets an implementer and reviewer reconstruct:
+
+- the concrete problem, scope, current owner/flow/state, and desired outcome;
+- current user-confirmed decisions with compact `Decision Context` when authority matters;
+- observable requirements and acceptance;
+- Current -> Target design, semantic impact, activated risks, recovery, and proof when evidence makes them relevant;
+- executable `Files / Consumes / Produces / Acceptance` interfaces only after decomposition is stable;
+- genuine unresolved decisions, with resolved questions removed.
+
+Headings are not the completeness unit. Add only warranted sections in a natural order. Alternatives appear only when genuinely different viable shapes or a load-bearing rejection exists. A created file, filled section list, long transcript, placeholder Task Breakdown, or successful command is not Plan readiness.
 
 ## Lifecycle
 
-```
-draft  →  executing  →  done       →  final reconciliation  →  archive frozen
-          │
-          └─ design confirmed → distill business mainline before implementation
-                    ↘
-                      abandoned    →  archive frozen, no distillation
+```text
+no artifact -> draft -> executing -> done -> final reconciliation -> frozen
+                         |
+                         -> abandoned -> frozen, no distillation
 ```
 
-- **draft** — being written; can change freely, but confirmed decisions are appended/superseded rather than silently overwritten.
-- **executing** — work in progress. At design-to-implementation handoff, first distill business-bearing stable user-confirmed meaning into the routed owner, initialize `distilled_to:` with actual targets, and pass the Plan path/mainline to implementation. Purely technical Plans create no business leaf. Later Plan changes must replay and reconcile those records before affected code resumes.
-- **done** — work landed. **Before flipping to done, reconcile later Decision Deltas, implementation evidence, all other load-bearing content, and truthful `distilled_to:` targets.** This is the final closure step, not a follow-up.
-- **abandoned** — explicitly decided not to do this. Archive with a one-line `## Why Abandoned` section at the top of the body. Do **not** distill — the absence of a decision is itself the record.
+- **draft**: active design. Confirmed decisions are superseded explicitly, not silently rewritten.
+- **executing**: implementation is consuming the current mainline. At handoff, distill stable business-bearing meaning into its routed owner, initialize truthful `distilled_to:`, and pass the Plan path plus relevant decisions to Task Execution. Purely technical Plans create no business leaf.
+- **done**: delivery landed. Before changing status, reconcile later Decision Deltas, implementation evidence, activated destinations, and final `distilled_to:` targets.
+- **abandoned**: explain why in one short section. Do not distill an unchosen direction.
 
-Once a file moves out of `draft` / `executing`, treat it as read-only.
+Frozen Plans are read-only audit history. Outside direct implementation/review lineage, they are reached by explicit path, provenance link, `git log docs/plans/`, or archive search, not by default routing.
 
-## When a plan closes — where load-bearing content goes
+## Frontmatter
 
-Sort each surviving conclusion (wherever in the plan directory it landed — `prd.md`, a sibling file, or a simple plan's body) into an active destination or provenance-only archive. There is no generic fourth directory called "decisions" — the Plan keeps the decision evidence while routed live files activate its stable meaning.
+```yaml
+---
+date: YYYY-MM-DD
+status: draft            # draft | executing | done | abandoned
+distilled_to:            # initialize at implementation handoff when applicable
+  - rules/<topic>.md
+  - references/business/<domain>.md
+  - references/gotchas.md
+---
+```
 
-| Conclusion shape | Lives in | Why this location |
-|---|---|---|
-| User-confirmed stable business type/flow/state/boundary/invariant/reason | Routed `references/business/<domain>.md` with Requirement Provenance | The Plan retains question/answer evidence; the business leaf activates desired truth for later Plan, code, fix, review, and closure work while current implementation fact remains separate |
-| "Future work must / must not do X" (a constraint on future tasks) | `rules/<topic>.md` (downstream skills) | SKILL.md routing pulls `rules/` onto every relevant task path; the constraint is read automatically when it matters |
-| "We tried Y; here is why Y is wrong" (anti-pattern, footgun, rejected alternative) | `references/gotchas.md` or SKILL.md § Common Pitfalls | Already on task paths; covered by `templates/skill/workflows/maintain-docs.md` Tier-0/1/2 stale-check; the "why rejected" framing is exactly what gotchas.md exists for |
-| Neither — purely "what happened, why we did it then" | Stays in the plan archive only; `distilled_to:` is omitted | Pure provenance with no future binding — archiving alone is correct |
+Omit `distilled_to` when abandoned or when final reconciliation proves no conclusion is load-bearing; state that judgment in the Plan.
 
-If one topic serves multiple task paths, classify each surviving meaning separately. One active destination owns the complete definition; another destination may keep only distinct audience-specific content or the smallest action hook plus an owner link. In particular, a business leaf owns the full normative rule while a Gotcha owns only the implementation-specific failure experience. Do not copy the complete conclusion into both places merely because both audiences need activation.
+## When A Plan Closes
 
-## Discoverability
+Move only surviving, future-binding meaning into active owners:
 
-Frozen Plans are **not** linked from `SKILL.md` or `REFERENCE.md` routing. An active Plan is reached through explicit implementation/review handoff and its Requirement Provenance links. Frozen Plans remain reachable from:
+| Conclusion | Active owner |
+|---|---|
+| Stable user-confirmed business type/flow/state/boundary/invariant/reason | routed `references/business/<domain>.md` as desired business truth with Plan provenance |
+| Future task constraint | the routed `rules/` owner |
+| Costly repeatable failed approach | `references/gotchas.md` or routed domain pitfall owner |
+| Pure history and rationale for this delivery | frozen Plan only |
 
-1. `git log docs/plans/` if you want to scan history directly.
-2. `ls docs/plans/` — filename includes date, so chronological order is free.
-3. Soft references in `rules/` / `references/gotchas.md` entries (e.g. "see `docs/plans/2026-05-12-thin-shells-generator.md` for rejected alternatives") when the maintainer wanted to leave breadcrumbs.
-
-That is intentional: routing should pull active knowledge, not archaeology.
+One destination owns the complete definition. Other audiences may keep only the smallest action hook and owner link. Do not copy the same conclusion into business, rule, Gotcha, and Plan merely for visibility.
