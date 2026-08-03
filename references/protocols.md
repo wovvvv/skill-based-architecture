@@ -27,9 +27,9 @@ For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES
 
 Canonical source: [`templates/skill/workflows/task-execution.md`](../templates/skill/workflows/task-execution.md).
 
-Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple; other tasks establish Task Anchor state and use the visible native Plan for step display rather than duplicating it in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work escalates presentation while the state remains runtime state, not a fixed chat template. Design-derived work carries the source Plan path and relevant user-confirmed Decision Context; each main step refreshes the applicable decision and its evidence boundary through an Anchor Checkpoint.
+Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple; other tasks establish Task Anchor state and use the visible native Plan for step display rather than duplicating it in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work escalates presentation while the state remains runtime state, not a fixed chat template. Design-derived work carries every governing Plan path and relevant user-confirmed Decision Context. Composite execution identifies one Integrating owner, checks Component interfaces from their owners, and derives exactly one Native Plan/semantic `Current Task`; it adds no mirror status or runtime store. Each main step refreshes the applicable decision and evidence boundary through an Anchor Checkpoint.
 
-If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. This reference keeps the activation consequence—pause the affected path and consult the user—but does not duplicate the gate's trigger, state transition, evidence, or resume procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
+If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. Composite conflicts return to the narrowest owner: Integrating for order/legal adapters/integrated proof, Component for its meaning or interface. Schema-structure work also pauses application mutation until the Plan's explicit impact checkpoint, authoritative baseline, dedicated SQL artifact, execution owner, and authorization boundary are ready. This reference does not duplicate either gate's complete procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
 
 The separation is load-bearing: Workflow owns the reusable domain procedure and mandatory gates; Task Anchor owns this task's outcome; Native Plan owns current runtime step state; Task Closure owns the readiness and final completion decisions. Closure may begin with only explicit delivery-dependent Done When evidence outstanding, declare `Ready for Delivery` after local checks, remain open across authorized delivery, and complete only after the requested artifact is verified. It does not grant delivery authority. A user-visible Plan may group Workflow steps but cannot replace the Workflow or weaken a gate. New independent tasks re-route and replace the old Anchor/Plan; refinements update the current one.
 
@@ -39,15 +39,7 @@ For the user-facing design and examples, see [`docs/task-anchor-native-plan.md`]
 
 Canonical source: [`templates/skill/workflows/task-closure.md`](../templates/skill/workflows/task-closure.md#task-closure-protocol).
 
-This reference deliberately gives only the operating summary: task closure
-applies only when the **Trigger Policy** admits the task (code or doc was
-changed); for those tasks, closure means main-work verification, the 30-second
-AAR scan, and any triggered recording, path-integrity, route-path, cross-
-reference, behavior-validation, or external-fact checks. For requested commit,
-push, MR, deploy, publish, or similar delivery, Closure distinguishes local
-readiness from completion and verifies the actual artifact before closing. Keep the exact gate
-wording and trigger table in `task-closure.md` so the protocol does not drift
-across guide/reference copies.
+This reference deliberately gives only the operating summary: task closure applies only when the **Trigger Policy** admits the task (code or doc was changed). For those tasks, closure means main-work verification, the 30-second AAR scan, and any triggered recording, path-integrity, route-path, cross-reference, behavior-validation, or external-fact checks. Composite Closure reconciles every affected Component owner to `done` before integrated acceptance and delivery; stale, abandoned, unresolved, or replaced inputs block completion. Schema-changing work verifies the Plan-local SQL contract separately from any project-owned DB delivery. For requested commit, push, MR, deploy, publish, or similar delivery, Closure distinguishes local readiness from completion and verifies the actual artifact before closing. Keep the exact gate wording and trigger table in `task-closure.md` so the protocol does not drift across guide/reference copies.
 
 **Pure Q&A, code explanation, read-only investigation, and advice with no file
 changes are exempt** — do not enter the protocol, do not run AAR, do not run

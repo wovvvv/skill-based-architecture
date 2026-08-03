@@ -1,6 +1,8 @@
 ---
 date: 2026-08-03
 status: done
+consumes:
+  - ../2026-07-31-evidence-funnel-code-localization.md
 distilled_to:
   - templates/skill/protocol-blocks/source-localization.md
   - templates/skill/protocol-blocks/change-contract.md
@@ -33,7 +35,7 @@ Today the responsibilities are fragmented:
 - `ambiguous-request-gate.md` prevents asking users for implementation facts, but it owns question discipline rather than the complete desired meaning;
 - `task-execution.md` owns Goal, Done When, Boundaries, evidence progression, and return behavior, but must not become a product-semantics or source-search workflow;
 - `task-closure.md` reconciles the final result, but it is too late to define the contract for the first time;
-- the approved [Evidence-Funnel Code Localization Plan](2026-07-31-evidence-funnel-code-localization.md) defines how to prove current code ownership without broad reading, but deliberately does not own desired product meaning.
+- the approved [Evidence-Funnel Code Localization Plan](../2026-07-31-evidence-funnel-code-localization.md) defines how to prove current code ownership without broad reading, but deliberately does not own desired product meaning.
 
 The missing capability is a conditional translation and binding owner:
 
@@ -324,7 +326,7 @@ Review workflows receive no hook in the first implementation unless an actual va
 ### T1 - Implement The Approved Source-Localization Owner
 
 - **Files:** `templates/skill/protocol-blocks/source-localization.md`; source-localization registrations in `templates/skill/conformance.yaml` and `references/self-hosting-conformance.yaml`; focused self-hosting scenarios in `scripts/check-self-scenarios.sh`.
-- **Consumes:** [Evidence-Funnel Code Localization Plan](2026-07-31-evidence-funnel-code-localization.md), especially D3-D8, the adaptive funnel, tool/context boundary, runtime map, acceptance, and scenarios.
+- **Consumes:** [Evidence-Funnel Code Localization Plan](../2026-07-31-evidence-funnel-code-localization.md), especially D3-D8, the adaptive funnel, tool/context boundary, runtime map, acceptance, and scenarios.
 - **Produces:** one complete conditional technical-localization owner with adaptive entry/skip/return, bounded deterministic-search interface, selected-source proof, and Session-only map behavior.
 - **Acceptance:** known-target, ambiguous-target, empty/noisy-result, generated-source, no-map, read-only, compaction, and internal/audit visibility scenarios behave as the approved localization Plan requires; no search executable or persistent map is added.
 

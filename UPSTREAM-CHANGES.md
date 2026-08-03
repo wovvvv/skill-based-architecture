@@ -48,6 +48,19 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-08-03 - Plan composition and database-change artifacts
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `plan-feature.md` distinguishes ordinary dependencies, independently authoritative Component Plans, durable Integrating dossiers, and true `subplan_of` children. Composition stays Session-only unless persistence pressure exists, promotes an existing truthful common-outcome owner before creating another Plan, and records only one-way `consumes` / `subplan_of` / `supersedes` graph edges without status mirrors.
+  - `task-execution.md` derives exactly one Integrating Task Anchor, Native Plan, and semantic `Current Task`; validates Component lifecycle/interface preconditions; returns conflicts to the narrowest owning Plan; and requires active Decision Deltas or frozen successors without adding runtime stores or durable progress states.
+  - `task-closure.md` reconciles every affected Component owner before integrated acceptance and delivery. Missing, abandoned, unresolved, unfinished, or superseded-but-still-consumed Components block completion; abandoning an Integrating Plan leaves independent Components unchanged.
+  - `docs/plans/README.md` and `_TEMPLATE.md` own the durable archive shape and graph metadata. The completed Requirement-Semantics Plan moved into its existing composition owner as a dossier `prd.md` with a repository-local `consumes` edge; frozen semantic content remained unchanged.
+  - Database-structure changes now require a separately disclosed user checkpoint and a natural Plan-local `.sql` sibling before implementation: authoritative complete target DDL, forward schema/data update, historical-data treatment, read-only verification, and safe rollback or explicit backup/stop/forward-repair recovery.
+  - Template and self-hosting conformance plus behavior scenarios protect the single Native Plan, Component-first Closure, non-mirrored graph, frozen-successor boundary, conditional SQL creation, SQL completeness, and the distinction between a reviewed SQL artifact and authorized database delivery.
+- Why it matters: two independently valid Plans can govern one outcome without either surrendering ownership, but parallel runtime Plans and physically parallel archives made integration state, conflict authority, and final reconciliation ambiguous. Separately, prose-only schema impact let application persistence code advance without an explicit database contract or user-visible execution boundary.
+- Downstream refresh guidance: adapt the composition and database gates into the downstream's existing Plan, execution, Closure, conformance, and database-delivery owners as one contract. Preserve project-specific business/domain rules, permission/security gates, test/browser acceptance, generated/source boundaries, and the real migration or version-platform workflow. Keep one runtime Native Plan, resolve Component truth at each owner, use successors for frozen semantic changes, and create SQL siblings only for real schema impact. Do not copy archive paths, project-specific SQL/dialects, generic status fields, reverse-consumer indexes, or direct database execution commands; a SQL dossier never authorizes bypassing the downstream database workflow.
+
 ## 2026-08-03 - Product semantics to proven code owner
 
 - Upstream commit: pending in this working tree
