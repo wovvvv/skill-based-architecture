@@ -1,6 +1,6 @@
 ---
 date: 2026-08-03
-status: executing
+status: done
 distilled_to:
   - docs/sba-bible.md
   - docs/plans/README.md
@@ -535,4 +535,18 @@ Implementation handoff:
 - keep unrelated working-tree changes and historical untracked Plans untouched;
 - preserve D11's downstream MR messaging and external-write boundaries through Closure.
 
-The user authorized execution on 2026-08-03. T1-T7 now run through one Native Plan; external database writes and MR merge remain unauthorized.
+The user authorized execution on 2026-08-03. T1-T7 completed through one Native Plan; external database writes and MR merge remain unauthorized.
+
+## Implementation And Delivery Outcome
+
+T1-T7 completed on 2026-08-03 without changing the confirmed composition, lifecycle, SQL-artifact, or authorization meaning.
+
+- **SBA owners and archive:** commit `abb20735617d853fe4a11354faa1dfad920eb1d1` contains the exact 14-file implementation and Plan migration set. The branch `codex/plan-composition-db-artifacts-20260803` was pushed and fetched back with local/remote equality `0/0`; `.codex/`, unrelated historical Plan directories, and root planning ledgers remained excluded.
+- **SBA proof:** targeted template conformance passed `457/457`, self-hosting conformance passed `306/306`, self-hosting scenarios passed `433/433`, and the full Bucket A `bash scripts/check-all.sh --base HEAD` completed successfully with routing, shell, temporary-instantiation, smoke, orphan, reachability, path-integrity, workflow-budget, and clean-diff checks.
+- **Canonical adaptation:** commit `a54214d62059ac8493de5ed07a721eb8d5b2226f` changes exactly eight canonical Chaos/chaos-web owner files. Backend conformance passed `714/714`, frontend conformance passed `674/674`, and both sides passed workspace-aware routing sync, smoke, orphan, reachability, route health, shell syntax, `aii lint`, and clean-diff checks. The canonical branch was pushed and fetched back with local/remote equality `0/0`.
+- **0.77 assembly:** `aii update release-0.77_shiqi --no-pull --no-self-upgrade` assembled the canonical commit. Backend and frontend canonical, `.codex`, and `.claude` trees are recursively identical, while both business repositories retained their exact pre-assembly HEAD, status, and diff fingerprints.
+- **Database-change dossier:** the 0.77 iteration-testing-mode `prd.md` now has a separate schema-impact checkpoint and its sibling `schema.sql` contains the live MySQL 8.0.27 baseline, complete target DDL, forward schema/data update, read-only verification, and rollback/recovery contract. Live read-only evidence remains version `547`, `0.77.4`, `SEALED`; the platform definition still lacks `tester_involved`.
+- **Canonical MR:** Codeup MR `#22` is `https://codeup.aliyun.com/60dd34bf4690c27532d3d021/aiinfra/chaos/change/22`, source `codex/plan-composition-db-artifacts-20260803`, target `master`, state `待合并`, one commit, eight files, and `无代码冲突`. Its rendered description contains none of the forbidden upstream/GitHub wording and the MR was not merged.
+- **Remaining delivery boundary:** no version revision, `save-table-content`, database or platform write, SQL execution, deploy, release, publish, or MR merge occurred. Database delivery is intentionally incomplete until separately authorized; the completed Plan outcome is the verified contract, local dossier reconciliation, assembled downstream skill state, and reviewable canonical MR.
+
+Final Closure replayed D1-D11, reconciled the independent Component owners before the Integrating result, verified all requested remote and MR artifacts directly, and found no new reusable rule beyond the already active delivery-verification and database-authorization contracts. The `distilled_to` list remains the complete durable destination set.
