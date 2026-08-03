@@ -173,6 +173,26 @@ assert_contains "$clarity_gate" "normative product or business preference" "requ
 assert_contains "$clarity_gate" "Do not mutate until the requested outcome is concrete enough to verify" "request clarity mutation stop"
 assert_not_contains "$clarity_gate" "Let me scan the project first, then ask" "request clarity old lexical stop"
 
+change_contract="$(<templates/skill/protocol-blocks/change-contract.md)"
+source_localization="$(<templates/skill/protocol-blocks/source-localization.md)"
+assert_not_contains "$(<templates/skill/routing.yaml)$(<references/self-hosting-routing.yaml)" "id: change-contract" "Change Contract is not a first-workflow route"
+assert_not_contains "$(<templates/skill/routing.yaml)$(<references/self-hosting-routing.yaml)" "id: source-localization" "source localization is not a first-workflow route"
+assert_not_contains "$(<templates/skill/routing.yaml)" "protocol-blocks/change-contract.md" "Change Contract is not an eager routing read"
+assert_not_contains "$(<templates/skill/routing.yaml)" "protocol-blocks/source-localization.md" "source localization is not an eager routing read"
+assert_contains "$change_contract" "clear request, confirmed Plan, observed/expected contract, or already proven owner" "Change Contract readiness fast path"
+assert_contains "$change_contract" "Every material requirement-bearing input receives an evidenced disposition" "Change Contract input coverage"
+assert_contains "$change_contract" "Agent-discoverable files, symbols, callers" "Change Contract keeps technical discovery with the Agent"
+assert_contains "$change_contract" "Treat ordinary Current/Target difference as the change to bind" "Change Contract binds normal Current/Target difference"
+assert_contains "$change_contract" "A final file list, line-level design, exhaustive call graph" "Change Contract avoids broad pre-mutation inventory"
+assert_contains "$change_contract" "Evidence inside the bound contract updates it" "Change Contract evidence-driven expansion"
+assert_contains "$change_contract" "ordinary tasks create no contract file" "Change Contract Session-only default"
+assert_contains "$source_localization" "skip directly to a selected-source check when the target is already proven concrete" "source localization known-target fast path"
+assert_contains "$source_localization" "Stages 1-2 expose no source bodies" "source localization progressive source exposure"
+assert_contains "$source_localization" "Empty/noisy/truncated results refine or return" "source localization failed-search return"
+assert_contains "$source_localization" "a path, lexical match, file read, or successful command is not owner proof" "source localization owner-proof boundary"
+assert_contains "$source_localization" "Source evidence may falsify Semantic Intent but cannot rewrite desired meaning" "source localization authority boundary"
+assert_contains "$source_localization" "ordinary localization creates no repository artifact" "source localization no-map default"
+
 for shell in \
   templates/shells/AGENTS.md \
   templates/shells/CLAUDE.md \
@@ -235,6 +255,8 @@ assert_contains "$task_execution" "cannot omit or reorder a mandatory gate" "tas
 assert_not_contains "$task_execution" "task_plan.md" "task execution no fixed task-plan file"
 assert_not_contains "$task_execution" "cross-tool state sync" "task execution no cross-tool state system"
 assert_not_contains "$task_execution" "Plan: <concise task-specific steps" "task execution no fixed chat block"
+assert_contains "$task_execution" "Clear tasks keep the direct fast path" "task execution Change Contract fast path"
+assert_contains "$task_execution" "source-localization.md" "task execution technical-owner hook"
 
 change_discipline="$(<templates/skill/rules/change-discipline.md)"
 assert_contains "$change_discipline" "## Semantic Boundary" "mutation-time semantic owner"
@@ -268,6 +290,8 @@ assert_contains "$task_closure" "Closure Complete" "closure verifies delivery be
 assert_contains "$task_closure" "The command exited 0, so the stage is complete" "closure build-success false-completion scenario"
 assert_contains "$task_closure" "proves only the command's own contract" "closure exit-code evidence boundary"
 assert_contains "$task_closure" "treating that exit code as sufficient completion evidence by itself" "closure red-flags exit-code sufficiency"
+assert_contains "$task_closure" 'final expanded [`Change Contract`](../protocol-blocks/change-contract.md)' "closure bound-contract reconciliation"
+assert_contains "$task_closure" "does not define Semantic Intent or source-localization stages" "closure stays a consumer"
 
 plan_feature="$(<templates/skill/workflows/plan-feature.md)"
 assert_contains "$plan_feature" "## Deliverable Gate" "plan classifies the requested deliverable before expansion"
@@ -316,6 +340,9 @@ assert_contains "$plan_feature" "Resolved questions leave Open Questions" "plan 
 assert_contains "$plan_feature" "Task Breakdown stays absent until stable executable interfaces exist" "plan rejects placeholder decomposition"
 assert_not_contains "$plan_feature" 'Record at least two real options' "plan no longer forces two options"
 assert_not_contains "$plan_feature" 'Create only `prd.md` initially' "plan no longer auto-creates prd"
+assert_contains "$plan_feature" "change-contract.md" "plan semantic-contract hook"
+assert_contains "$plan_feature" "source-localization.md" "plan technical-owner hook"
+assert_contains "$plan_feature" "Any activated Change Contract is consumed" "plan contract-consumption acceptance"
 
 subagent_driven="$(<templates/skill/workflows/subagent-driven.md)"
 assert_contains "$subagent_driven" "Worker-local status never advances the Native Plan" "worker status main-plan boundary"
@@ -386,6 +413,9 @@ assert_contains "$fix_bug" "Reusable engineering lessons discovered while fixing
 assert_contains "$fix_bug" "No Bug-derived or Agent-derived content entered the business model" "fix-bug completion protects user-intent fidelity"
 assert_contains "$fix_bug" "User Decision Drift Gate" "fix-bug immediate drift escalation"
 assert_contains "$fix_bug" "task-execution.md#user-decision-drift-gate" "fix-bug drift-owner link"
+assert_contains "$fix_bug" "Reuse a clear observed/expected contract as the fast path" "fix-bug semantic fast path"
+assert_contains "$fix_bug" "source-localization.md" "fix-bug technical-owner hook"
+assert_contains "$fix_bug" "must identify the repair target and root-cause path before mutation" "fix-bug contract-consumption acceptance"
 
 change_managed="$(<templates/skill/workflows/change-managed.md)"
 assert_contains "$change_managed" "Map semantic fan-out" "change-managed invariant fan-out"
@@ -395,6 +425,24 @@ assert_contains "$change_managed" "source Plan's relevant user-confirmed Decisio
 assert_contains "$change_managed" "Purely technical Design-derived work replays the source Plan without requiring a business model" "change-managed technical-plan business-leaf boundary"
 assert_contains "$change_managed" "User Decision Drift Gate" "change-managed immediate drift escalation"
 assert_contains "$change_managed" "task-execution.md#user-decision-drift-gate" "change-managed drift-owner link"
+assert_contains "$change_managed" "clear source Plans and explicit requests take its fast path" "change-managed semantic fast path"
+assert_contains "$change_managed" "source-localization.md" "change-managed technical-owner hook"
+assert_contains "$change_managed" "bind the returned owner/Current -> Target/affected path before mutation" "change-managed contract-consumption acceptance"
+
+assert_contains "$clarity_gate" "identify whether the blocker is normative" "request clarity consumes Change Contract blocker"
+assert_contains "$clarity_gate" "instead of asking the user" "request clarity sends technical unknowns to localization"
+
+for consumer_file in \
+  templates/skill/workflows/plan-feature.md \
+  templates/skill/workflows/fix-bug.md \
+  templates/skill/workflows/change-managed.md \
+  templates/skill/protocol-blocks/ambiguous-request-gate.md \
+  templates/skill/workflows/task-execution.md \
+  templates/skill/workflows/task-closure.md; do
+  consumer_content="$(<"$consumer_file")"
+  assert_not_contains "$consumer_content" "Every material requirement-bearing input receives an evidenced disposition" "$consumer_file does not copy the Semantic Intent definition"
+  assert_not_contains "$consumer_content" "## Adaptive Evidence Funnel" "$consumer_file does not copy the localization procedure"
+done
 
 assert_contains "$plan_feature" "business-model impact: unchanged / proposed change / unknown" "plan business-model impact"
 assert_contains "$plan_feature" "Before implementation handoff" "plan distills desired truth before coding"

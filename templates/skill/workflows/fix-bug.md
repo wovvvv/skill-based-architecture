@@ -6,6 +6,8 @@ Use this route to determine whether observed behavior is an implementation defec
 
 Re-match the task route. Do not preload domain knowledge and do not patch before expected behavior and the actual root cause are established. An explicit business-rule request or a source Plan that already declares the applicable business-domain owner may activate `domain-routing.yaml` immediately after workflow selection; otherwise inspect the smallest reproduction/source slice first. Read a source Plan directly when one governs the fix; its existence alone does not activate a domain. Keywords alone identify candidates. Activate one domain only when expected behavior remains unresolved because of a business type, flow, state, boundary, or invariant.
 
+Reuse a clear observed/expected contract as the fast path. When expected behavior, authority, preserved behavior, scope, or acceptance is still material, use [`change-contract.md`](../protocol-blocks/change-contract.md); when only the technical entry/owner/change point is unresolved, consume [`source-localization.md`](../protocol-blocks/source-localization.md). The resulting bound contract must identify the repair target and root-cause path before mutation.
+
 **Design-or-defect gate:** when behavior depends on business semantics, compare the routed business model, architecture/contracts, and code/tests/runtime. Classify:
 
 - `IMPLEMENTATION_BUG` — implementation violates the current model/contract;
@@ -45,6 +47,7 @@ After three failed approaches, stop and report the attempts and false premise in
 - Implementation evidence and existing user-confirmed answers were cross-checked; aligned points did not trigger another question, and only ambiguity that could change classification or expected behavior was asked.
 - Explicit user business statements were evaluated for durability; qualifying content was faithfully reconciled through `update-rules.md` before Closure. No Bug-derived or Agent-derived content entered the business model, and reusable engineering lessons stayed on the normal Closure/AAR path.
 - Task Closure ran once after the integrated fix.
+- Any activated Change Contract was consumed into the defect classification, repair owner, preserved behavior, and red-to-green proof without copying its complete fields or state transitions here.
 
 ## Final Report
 

@@ -12,7 +12,7 @@ Use this before mutation when wording leaves the requested outcome unclear. Vagu
 
 ## Implementation-Fact Question Gate
 
-Before asking a product or business question, close the smallest decision-relevant implementation path: trigger/entry, caller chain, actual write target and target branch/state, ordering or progression, guards/protection/validation/failure behavior, and UI/API ownership. Omit irrelevant dimensions, but do not stop while a decision-bearing hop remains untraced.
+Before asking a product or business question, let [`change-contract.md`](change-contract.md) identify whether the blocker is normative; when the missing fact is a technical entry/owner/path/symbol/change point, use [`source-localization.md`](source-localization.md) instead of asking the user, then close the smallest decision-relevant implementation path: trigger/entry, caller chain, actual write target and target branch/state, ordering or progression, guards/protection/validation/failure behavior, and UI/API ownership. Omit irrelevant dimensions, but do not stop while a decision-bearing hop remains untraced.
 
 Establish current implementation facts from code, tests, configuration, contracts, traces, or runtime evidence; never ask the user to choose them. Trace distinct flows independently before relating them. Ask only the remaining normative ambiguity that could change the expected outcome, business invariant, authority boundary, or failure policy. If the user says the answer is in code, stop asking and finish the trace first.
 
@@ -29,3 +29,4 @@ Establish current implementation facts from code, tests, configuration, contract
 - User-as-index: asking which file or module before checking the repository's source of truth.
 - Speculative plan: proposing phases or target architecture before the outcome and constraints are evidenced.
 - Hidden assumption: mutating on an unresolved product preference instead of requesting the minimum clarification.
+- Owner inversion: redefining Semantic Intent or source-localization stages here instead of consuming their blocker and returning one minimum question.

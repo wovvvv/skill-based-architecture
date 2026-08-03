@@ -4,6 +4,8 @@ Use this for non-bug changes whose partial edits can drift: features, refactors,
 
 Start without domain knowledge. An explicit business-rule request or a source Plan that already declares the applicable business-domain owner may activate `domain-routing.yaml` immediately after this workflow is selected; otherwise inspect the smallest source slice first and activate one domain only when an unresolved business decision appears. Read a source Plan directly when this workflow owns it; the Plan's existence alone does not activate a domain. Keywords alone do not activate a domain. Before the first mutation, read [`change-discipline.md`](../rules/change-discipline.md).
 
+Use [`change-contract.md`](../protocol-blocks/change-contract.md) only when the observable target, authority, preserved behavior, scope, or acceptance is not implementation-ready; clear source Plans and explicit requests take its fast path. When Semantic Intent is ready but canonical ownership remains technical, consume [`source-localization.md`](../protocol-blocks/source-localization.md). Steps 1-3 must bind the returned owner/Current -> Target/affected path before mutation.
+
 ## Steps
 
 1. **Define scope and replay the decision source** — name owned files/modules and the observable outcome. For Design-derived work, read the source Plan's relevant user-confirmed Decision Context before reasoning about or editing code; for business-bearing work, also read the routed business model. Carry the applicable rules, boundaries, rationale, and acceptance into the Task Anchor. Purely technical Design-derived work replays the source Plan without requiring a business model. Record `business-model impact: unchanged / proposed change / unknown`; a proposed type/flow/state/boundary/invariant change requires an approved Plan.
@@ -20,4 +22,4 @@ If templates, scaffolds, entry shells, or reusable project structure change, als
 
 ## Completion Check
 
-Scope, applicable source Plan/mainline, invariant, ownership/provenance, call chain, all semantic paths, fan-out targets, sync, user-resolved drift, targeted validation, and Task Closure are all accounted for.
+Scope, applicable source Plan/mainline, any activated Change Contract, invariant, ownership/provenance, call chain, all semantic paths, fan-out targets, sync, user-resolved drift, targeted validation, and Task Closure are all accounted for without copying the complete shared protocols here.

@@ -25,7 +25,7 @@ If implementation work or non-delivery evidence is missing, return to [`task-exe
 
 ### Closure Steps
 
-1. **Read back the contract** — restate the Task Anchor (or Simple-task outcome), matched route, Goal-level acceptance evidence, material Boundaries, forbidden shortcuts, and for Design-derived work the source Plan path. After a long/interrupted task, use `protocol-blocks/reboot-check.md`.
+1. **Read back the contract** — restate the Task Anchor (or Simple-task outcome), matched route, Goal-level acceptance evidence, material Boundaries, forbidden shortcuts, for Design-derived work the source Plan path, and when activated the final expanded [`Change Contract`](../protocol-blocks/change-contract.md). Closure consumes that contract; it does not define Semantic Intent or source-localization stages. After a long/interrupted task, use `protocol-blocks/reboot-check.md`.
 2. **Replay the user-confirmed mainline** — read the relevant Decision Context; for business-bearing decisions, also read the routed business rule. Closure owns final reconciliation: verify the confirmed record remains intact, compare `desired business truth` with code/tests/runtime `current implementation fact`, and account for every later Delta in the Plan, Task Anchor, implementation evidence, and any business rule. If Closure is the first time a material drift is surfaced, Closure fails: return to [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate) and consult the user immediately; that gate owns the resolution procedure.
 3. **Verify with fresh, fitted evidence**:
    - bind each material risk to the cheapest evidence that can falsify it and state the stop/escalation condition before running checks;

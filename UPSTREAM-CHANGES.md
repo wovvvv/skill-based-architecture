@@ -48,6 +48,18 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-08-03 - Product semantics to proven code owner
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - New `protocol-blocks/change-contract.md` is the single complete owner for conditional product-language translation, desired-meaning authority, Semantic Intent readiness, Current -> Target implementation binding, evidence-driven return/expansion, and Session-only lifetime.
+  - New `protocol-blocks/source-localization.md` independently owns adaptive technical narrowing: bounded owner regions, deterministic candidate search, selected-source tracing, canonical owner/source proof, generated-source return, and a Session-only runtime map.
+  - `plan-feature.md`, `fix-bug.md`, `change-managed.md`, `ambiguous-request-gate.md`, `task-execution.md`, and `task-closure.md` receive thin trigger/input/output/acceptance hooks. Clear requests, confirmed Plans, observed/expected contracts, and proven targets retain direct fast paths; Closure remains a consumer of the final expanded contract.
+  - Template and self-hosting conformance plus self-scenarios protect authority separation, normal Current/Target binding, progressive source exposure, technical-fact ownership, consumer non-duplication, no eager route/read, and no persistent contract/map artifact.
+  - The SBA Bible records the product boundary: the Agent translates product semantics into an executable change contract and proves the current code owner; users decide only unresolved normative meaning, authority, permission, scope, preservation, acceptance, and high-cost trade-offs.
+- Why it matters: product-language requests previously relied on users or developers to translate PRDs/design inputs into repository vocabulary before SBA workflows could act safely. That gap could omit material surfaces, turn references or inference into fake authority, expand related behavior without approval, stop on noisy lexical matches, or bind a coherent change to the wrong implementation owner.
+- Downstream refresh guidance: compare and port both protocol owners as one composed capability, then map the six thin hooks to the downstream's actual Plan, Bug Fix, Managed Change, question, execution, and Closure owners. Preserve project-specific business leaves, authority rules, routes, validation commands, delivery permissions, and generated/source boundaries; do not add a first-workflow route, Always Read entry, global keyword dictionary, visible mandatory form, search wrapper/index service, or persistent Change Contract/technical map. Verify known-target fast paths and one ambiguous product-language task against real downstream code before assembly or delivery. Treat project adaptation, generated-copy refresh, commit, push, MR, and release as separately authorized work.
+
 ## 2026-07-31 - Pressure-triggered planning artifacts
 
 - Upstream commit: pending in this working tree

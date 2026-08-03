@@ -448,6 +448,93 @@ required_sections:
       - "batch by physical region anyway to enable parallel dispatch"
       - "Full test suite passes"
 
+  - file: protocol-blocks/source-localization.md
+    must_contain:
+      - "This file owns the complete technical narrowing contract"
+      - "skip directly to a selected-source check when the target is already proven concrete"
+      - "one Session-only runtime map"
+      - "## Adaptive Evidence Funnel"
+      - "Search deterministically"
+      - "Stages 1-2 expose no source bodies"
+      - "Stage 4 is the first selected-source read"
+      - "a path, lexical match, file read, or successful command is not owner proof"
+      - "Source evidence may falsify Semantic Intent but cannot rewrite desired meaning"
+      - "ordinary localization creates no repository artifact"
+
+  - file: protocol-blocks/change-contract.md
+    must_contain:
+      - "This file owns the complete translation and implementation-binding state"
+      - "PRD/Figma presence, keywords, task size, or complexity never activate this protocol alone"
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "inference may generate candidates but cannot create authority"
+      - "`semantic-ready` means the intent can constrain localization and reject a false owner"
+      - "Agent-discoverable files, symbols, callers"
+      - "Treat ordinary Current/Target difference as the change to bind"
+      - "`implementation-ready` requires still-valid Semantic Intent"
+      - "A final file list, line-level design, exhaustive call graph"
+      - "Evidence inside the bound contract updates it"
+      - "ordinary tasks create no contract file, ledger, Wiki, manifest, index, database, or generated state"
+    must_not_contain:
+      - "## Adaptive Evidence Funnel"
+      - "Search deterministically"
+
+  - file: workflows/plan-feature.md
+    must_contain:
+      - "change-contract.md"
+      - "source-localization.md"
+      - "Any activated Change Contract is consumed into reconstructable Current -> Target"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/fix-bug.md
+    must_contain:
+      - "Reuse a clear observed/expected contract as the fast path"
+      - "change-contract.md"
+      - "source-localization.md"
+      - "must identify the repair target and root-cause path before mutation"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/change-managed.md
+    must_contain:
+      - "clear source Plans and explicit requests take its fast path"
+      - "change-contract.md"
+      - "source-localization.md"
+      - "bind the returned owner/Current -> Target/affected path before mutation"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: protocol-blocks/ambiguous-request-gate.md
+    must_contain:
+      - "let [`change-contract.md`](change-contract.md) identify whether the blocker is normative"
+      - "use [`source-localization.md`](source-localization.md) instead of asking the user"
+      - "Owner inversion"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/task-execution.md
+    must_contain:
+      - "let [`change-contract.md`](../protocol-blocks/change-contract.md) bind it"
+      - "consume [`source-localization.md`](../protocol-blocks/source-localization.md)"
+      - "Clear tasks keep the direct fast path"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
+  - file: workflows/task-closure.md
+    must_contain:
+      - "final expanded [`Change Contract`](../protocol-blocks/change-contract.md)"
+      - "Closure consumes that contract; it does not define Semantic Intent or source-localization stages"
+    must_not_contain:
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "## Adaptive Evidence Funnel"
+
 required_files:
   - path: routing.yaml
   - path: workflows/task-execution.md
+  - path: protocol-blocks/source-localization.md
+  - path: protocol-blocks/change-contract.md

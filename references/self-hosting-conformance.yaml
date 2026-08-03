@@ -311,6 +311,66 @@ required_sections:
       - "implementation drift"
       - "Consumers keep only their immediate action and acceptance hook"
 
+  - file: docs/sba-bible.md
+    must_contain:
+      - "产品语义 → 可执行变更契约 → 当前代码 owner"
+      - "语义翻译与实现绑定由同一运行时 Change Contract 贯通"
+      - "文件、类、搜索词、当前 owner 等 Agent 能从仓库获得的技术事实不得转交用户"
+      - "PRD、Figma、关键词、任务大小或固定流程"
+      - "直接复用并走快路径"
+
+  - file: templates/skill/protocol-blocks/source-localization.md
+    must_contain:
+      - "complete technical narrowing contract"
+      - "one Session-only runtime map"
+      - "## Adaptive Evidence Funnel"
+      - "Stages 1-2 expose no source bodies"
+      - "Stage 4 is the first selected-source read"
+      - "cannot rewrite desired meaning"
+      - "ordinary localization creates no repository artifact"
+
+  - file: templates/skill/protocol-blocks/change-contract.md
+    must_contain:
+      - "complete translation and implementation-binding state"
+      - "Every material requirement-bearing input receives an evidenced disposition"
+      - "`semantic-ready` means the intent can constrain localization and reject a false owner"
+      - "Agent-discoverable files, symbols, callers"
+      - "Treat ordinary Current/Target difference as the change to bind"
+      - "`implementation-ready` requires still-valid Semantic Intent"
+      - "A final file list, line-level design, exhaustive call graph"
+      - "ordinary tasks create no contract file, ledger, Wiki, manifest, index, database, or generated state"
+
+  - file: templates/skill/workflows/plan-feature.md
+    must_contain:
+      - "change-contract.md"
+      - "source-localization.md"
+      - "Any activated Change Contract is consumed"
+
+  - file: templates/skill/workflows/fix-bug.md
+    must_contain:
+      - "Reuse a clear observed/expected contract as the fast path"
+      - "source-localization.md"
+
+  - file: templates/skill/workflows/change-managed.md
+    must_contain:
+      - "clear source Plans and explicit requests take its fast path"
+      - "bind the returned owner/Current -> Target/affected path before mutation"
+
+  - file: templates/skill/protocol-blocks/ambiguous-request-gate.md
+    must_contain:
+      - "identify whether the blocker is normative"
+      - "instead of asking the user"
+
+  - file: templates/skill/workflows/task-execution.md
+    must_contain:
+      - "Clear tasks keep the direct fast path"
+      - "source-localization.md"
+
+  - file: templates/skill/workflows/task-closure.md
+    must_contain:
+      - "final expanded [`Change Contract`](../protocol-blocks/change-contract.md)"
+      - "does not define Semantic Intent or source-localization stages"
+
 # Files required to exist (presence-only check). Drift here means a
 # self-hosting structural piece was deleted without updating routing.
 required_files:
@@ -325,5 +385,7 @@ required_files:
   - path: templates/skill/conformance.yaml
   - path: templates/skill/scripts/check-version-conformance.sh
   - path: templates/skill/workflows/task-execution.md
+  - path: templates/skill/protocol-blocks/source-localization.md
+  - path: templates/skill/protocol-blocks/change-contract.md
   - path: docs/task-anchor-native-plan.md
   - path: docs/sba-bible.md
