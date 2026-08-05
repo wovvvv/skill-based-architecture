@@ -53,6 +53,12 @@ Start in conversation plus the harness-native Plan. Create a durable artifact on
 
 Create the smallest current owner. Use one `docs/plans/YYYY-MM-DD-<slug>.md` for a focused one-file record, or `docs/plans/YYYY-MM-DD-<slug>/prd.md` when the durable object is a named dossier, must collect multiple admitted topics, follows an existing local archive contract, or already needs an independent sibling. `prd.md` owns the requirement/decision synthesis and links siblings. Add `design.md` or another natural sibling only when it can be read alone and changes a decision, task boundary, risk treatment, or proof. Never pre-create a Plan, directory, `design.md`, or a taxonomy of empty files from complexity alone.
 
+When multiple independently authoritative Plans jointly govern one outcome, distinguish an ordinary dependency from composition before materializing anything. A Plan is `subplan_of` and physically nested only when it cannot independently complete, freeze, and be directly consumed without its parent; otherwise it remains an external Component. Materialize a durable Integrating dossier only when the composition itself has persistence, handoff, review, recovery, conflict, authorization, integrated-proof, or Closure pressure; promote an existing truthful common-outcome owner before creating a third Plan. Its `prd.md` records one-way `consumes` paths and the common outcome/order/conflict/integrated acceptance without mirroring Component status or content.
+
+## Database-Change Artifact Gate
+
+Any database-structure change independently requires a dossier plus a naturally named `.sql` sibling before implementation approval. Show the user a separate checkpoint naming the affected database/table, target change, compatibility/backfill, SQL path, execution owner, and authorization boundary. Derive the file from the real current schema and dialect; include complete target DDL, forward schema/data update, read-only verification, and safe rollback or an explicit recovery plan. The SQL artifact is a review/handoff contract, never permission to bypass the project-owned database workflow.
+
 ## Progressive Brainstorm Handoff
 
 This handoff is progressive, not only a final ceremony. In interactive Complex/Large planning, run it as soon as the first Design Slice exposes a user-owned normative choice or high-impact assumption, before opening an unrelated Slice. Continue autonomously across independent slices only when the user explicitly requests an artifact-only or end-to-end Plan without checkpoints.
@@ -63,7 +69,7 @@ A written and internally checked Plan does not end the planning conversation. Un
 
 A durable Plan is the current requirement/design and implementation-review contract, not a full transcript. Keep only warranted sections in a natural order: Problem/Scope, current decisions, requirements/observable acceptance, chosen design and Current -> Target evidence, impacts/risks/proof, executable tasks, and genuine Open Questions. Provenance stays compact; frozen Plans retain history without remaining default task knowledge.
 
-For two or more dependent tasks, declare `Files`, `Consumes`, `Produces`, and observable `Acceptance`; omit placeholder decomposition. Before implementation handoff, reconcile authority, Current/Target, impact, risks, proof, Open Questions, artifact links, and task interfaces. Run Plan Mainline Handoff: replay confirmed/superseded decisions; for business-bearing work, distilled confirmed business meaning goes through [`update-rules.md`](update-rules.md); initialize truthful `distilled_to:` targets; retain the source Plan path; and pass its chosen outcome, acceptance criteria, boundaries, and task breakdown to [`task-execution.md`](task-execution.md). The dossier owns decisions, not live step status.
+For two or more dependent tasks, declare `Files`, `Consumes`, `Produces`, and observable `Acceptance`; omit placeholder decomposition. Before implementation handoff, reconcile authority, Current/Target, impact, risks, proof, Open Questions, artifact links, and task interfaces. Run Plan Mainline Handoff: replay confirmed/superseded decisions; for business-bearing work, distilled confirmed business meaning goes through [`update-rules.md`](update-rules.md); initialize truthful `distilled_to:` targets; retain the source Plan path; and pass its chosen outcome, acceptance criteria, boundaries, and task breakdown to [`task-execution.md`](task-execution.md). For an Integrating Plan, every consumed interface must be stable and it becomes the only source for the Native Plan; Component reconciliation precedes integrated `done`. The dossier owns decisions, not live step status.
 
 ## Completion Check
 
@@ -72,6 +78,7 @@ For two or more dependent tasks, declare `Files`, `Consumes`, `Produces`, and ob
 - Current -> Target and semantic consumers are reconstructable; activated risks state scenario, invariant, failure, mechanism/boundary, recovery, proof, and residual risk.
 - No stale question, fake alternative, authority mixing, placeholder task, duplicated conclusion, or unjustified artifact remains.
 - Business-bearing desired truth remains distinct from current implementation fact; technical Plans create no business leaf.
+- Every activated Plan graph edge resolves to one semantic owner; schema-changing Plans have a complete SQL sibling and explicit user confirmation rather than prose-only DB impact.
 - At final `done`, reconcile later deltas and implementation evidence, verify activated destinations, and freeze the Plan.
 
 [workflow-state:planning]

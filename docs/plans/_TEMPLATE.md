@@ -5,6 +5,10 @@ status: draft                          # draft | executing | done | abandoned
 #   - rules/<topic>.md
 #   - references/business/<domain>.md
 #   - references/gotchas.md
+# consumes:                            # durable Integrating prd.md only; paths to independent Components
+#   - ../YYYY-MM-DD-<component>.md
+# supersedes:                          # successor only; the frozen predecessor stays unchanged
+#   - ../YYYY-MM-DD-<frozen-plan>.md
 ---
 
 # Plan: {{Title}}
@@ -13,9 +17,15 @@ status: draft                          # draft | executing | done | abandoned
 
 > Use this template only after `plan-feature.md` § Artifact Pressure Gate admits a durable Plan. Delete instructions and unused optional sections. Do not pre-create sibling files.
 
+<!-- A true subplan is not an independent Plan: place it inside the parent dossier, use only `subplan_of: prd.md` frontmatter, omit independent date/status/distilled_to, and let the parent own lifecycle and Closure. -->
+
 ## Problem And Scope
 
 State the concrete problem, desired outcome, current owner/flow/state, affected scope, and meaningful exclusions. Cite the smallest implementation evidence that changes the design.
+
+<!-- Durable Integrating Plan: use a dossier `prd.md`, list independent Component paths in `consumes`, and synthesize only the common outcome, Component roles, dependency order, composition conflicts, integrated acceptance, authorization/delivery boundary, and final Closure. Do not mirror Component content or status. -->
+
+<!-- Database-structure change: before implementation, separately disclose the affected database object, change, compatibility/backfill, SQL artifact, execution owner, and authorization. Add one natural `.sql` sibling containing authoritative complete target DDL, forward schema/data update SQL, verification SQL, and safe rollback or explicit backup/stop/forward-repair recovery. The SQL artifact never grants DB-write authority. Delete this comment when no database structure changes. -->
 
 ## Current Decisions
 

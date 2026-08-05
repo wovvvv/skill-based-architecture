@@ -1,6 +1,6 @@
 # Rule Update Workflow
 
-Use this workflow when standalone business modeling delivers a leaf, a confirmed Plan reaches implementation handoff, Fix Bug forwards explicit user business content for possible admission before Closure, Task Closure decides other knowledge is worth recording, the user explicitly asks to record it, or an existing rule is inaccurate. Standalone modeling delivers stable confirmed meaning directly; Plan handoff admits its user-confirmed load-bearing decisions; active Bug Fix supplies only what the user said; Closure decides other recording. This file decides **what, where, and how**.
+Use this workflow when standalone business modeling delivers a leaf, a confirmed Plan reaches implementation handoff, Task Execution or Fix Bug supplies a verified failure after red-to-green repair, Fix Bug forwards explicit user business content for possible admission before Closure, Task Closure supplies a user-accepted workflow-distillation candidate or decides other knowledge is worth recording, the user explicitly asks to record it, or an existing rule is inaccurate. Standalone modeling delivers stable confirmed meaning directly; Plan handoff admits its user-confirmed load-bearing decisions; verified failures supply proven engineering prevention; active Bug Fix business input supplies only what the user said; accepted workflow candidates supply a consented procedure mutation; Closure decides other recording. This file decides **what, where, and how**.
 
 ## Classification Guide
 
@@ -50,7 +50,39 @@ When the project adopts business modeling, its local `business-global-model.md` 
 
 The only business-recording source during Fix Bug is the user's explicit business statement: a correction, answer, expected rule, rationale, boundary, or rejected direction that carries business meaning. [`fix-bug.md`](fix-bug.md) may invoke this workflow before Closure, and the Agent may decide whether that user content is durable enough to persist. Preserve the user's meaning faithfully, then apply Recording Threshold (unless correcting existing content), Fidelity, Reconciliation, Activation, Generalization, and provenance here.
 
-Do not derive a business rule from the Bug. Bug symptoms, root cause, repaired behavior, code, tests, runtime evidence, and Agent summaries are not `desired business truth`; an implementation suggestion is not business content merely because the user said it. Reusable engineering lessons discovered while fixing the Bug follow normal Closure/AAR into gotcha, rule, or reference destinations, never into business as user intent. Fix Bug owns noticing and immediate invocation; this workflow owns admission, fidelity, reconciliation, provenance, activation, and the user-content-only boundary.
+Do not derive a business rule from the Bug. Bug symptoms, root cause, repaired behavior, code, tests, runtime evidence, and Agent summaries are not `desired business truth`; an implementation suggestion is not business content merely because the user said it. Reusable engineering lessons discovered while fixing the Bug enter Verified Failure Input immediately after fitted red-to-green proof and go to technical rule, Gotcha, workflow, reference, or executable prevention owners, never into business as user intent. Fix Bug owns noticing and immediate invocation; this workflow owns admission, fidelity, reconciliation, provenance, activation, and the user-content-only boundary.
+
+## Verified Failure Input
+
+Use this input after Task Execution or Fix Bug proves all of: the failure boundary, root cause, completed repair, fitted red-to-green evidence, and a stable prevention action that can change a future task. Rejected hypotheses, unresolved causes, raw messages, and retries remain Session-only. A first proven actionable failure bypasses only the Recording Threshold; when the write is within current authority, reconcile it directly into its canonical owner and activate it in the same change rather than waiting for another occurrence or final AAR. Every other gate below still applies; an authority boundary returns `requires-user-authority` instead of mutating.
+
+Return exactly one lifecycle outcome:
+
+1. **`covered/no-write`** — an active owner already changes the required next action.
+2. **`extend-existing`** — the same root cause/prevention needs another applicability condition or symptom.
+3. **`correct-existing`** — current knowledge is inaccurate, over-broad, obsolete, or must be retired.
+4. **`add-and-activate`** — a distinct prevention is added to the nearest canonical owner with its action-changing path.
+5. **`transient/no-write`** — no stable future action exists, such as a one-off command mistake or transient external interruption.
+6. **`requires-user-authority`** — intended meaning, personal/team promotion, or a shared/costly enforcement boundary needs a user decision.
+7. **`escalate-prevention`** — applicable written prevention was reached yet the same mistake recurred, so a stronger scoped mechanism is justified.
+
+Match recurrence by `same proven root cause + same applicability boundary + same prevention action`; raw text only finds candidates, and retries inside one unresolved task are one occurrence. On independent recurrence, first verify whether the active prevention was reached before the mistake-prone action. If it was missed or inert, repair activation instead of adding prose. If it was reached and still failed, strengthen the earliest triggering tool only when the gate stays inside the authorized repository/task scope, is local, low-cost, reversible, uses existing tooling/dependencies, has fitted proof, and keeps a scoped escape path.
+
+Ask before changing CI, hooks, server-side enforcement, default shared build/test commands, hard-failure policy, dependencies/plugins/services, team or cross-repository rules, public/external contracts, shared/non-local state, difficult rollback, or materially increased routine cost. Failure learning never grants commit, push, MR, deploy, publish, database, production, or other external authority. Project-local prevention writes to project owners by default; iteration/personal/team promotion remains an explicit higher-scope action.
+
+## Accepted Workflow-Distillation Input
+
+Use this input only after Task Closure presents one evidence-backed proposal and the user accepts it. That acceptance is the approved upgrade plan for the described workflow mutation and starts a newly routed maintenance task without another start confirmation. It bypasses only the ordinary Recording Threshold and redundant upgrade-plan approval; Fidelity, Reconciliation, Activation, Generalization, durability, validation, provenance, and authority gates still apply.
+
+Reconstruct the accepted contract from at least two independently completed semantic instances: reusable goal, ordered stage relations, inputs/outputs, integrated acceptance, authority checkpoints, runtime parameters, and only evidence-proven conditional branches. Then inspect existing owners and choose exactly one result:
+
+1. **`extend`** — the owner of the same result/acceptance is missing a stage, parameter, branch, authority check, proof, route, or local action hook.
+2. **`compose`** — complete owners already express the sequence. With no durable gap, make no workflow change; a missing route/hook belongs to `extend`, not a wrapper.
+3. **`create`** — no owner has the independently reusable goal, cross-step decisions/state, authority checkpoints, and integrated acceptance. Create one complete orchestration owner; consumers keep only evidence-required trigger, participation, and acceptance hooks.
+
+Resolve provenance before mutation: the canonical owner may be downstream-owned, meta-generated, or package/market-maintained. Edit only that owner, use the repository-owned assembly/install path, and verify every affected downstream consumer and harness surface. A source-only change without downstream consumption is incomplete; generated or installed copies are never independent owners and must not be hand-edited in parallel. If canonical-source mutation or required assembly crosses current authority, return `requires-user-authority` without mutation.
+
+Workflow acceptance authorizes only the described durable mutation and fitted local verification. It never grants commit, push, MR, deploy, publish, database, work-item, version-revision, reviewer-selection, merge, tenant/session, team-promotion, or other external/shared-system authority.
 
 ## Recording Gates
 
@@ -58,7 +90,7 @@ Run the applicable gates in order. A record that fails any required gate does no
 
 ### Recording Threshold
 
-For new knowledge, at least two must pass:
+For ordinary AAR, user-requested, or Agent-observed new knowledge, at least two must pass. Verified Failure Input and confirmed Plan/business-model handoffs use their explicit admission contracts and bypass only this threshold:
 
 1. **Repeatable** — likely to recur.
 2. **Costly** — absence wastes meaningful time or causes regressions.
@@ -115,7 +147,7 @@ No new reference or business-model content ships without a declared path that is
 
 If no answer exists, add the nearest pointer in the same change, promote a concise constraint into a routed rule/workflow, or skip the record. `audit-orphans`, route reachability, and smoke tests prove structural reach, not actionability.
 
-At Single-file tier, do not escalate the architecture merely to store one lesson. At Folder-light tier, a SKILL.md route or rules bullet may activate it. A recorded + activated landmine that causes another verified costly miss may graduate to a machine gate in the triggering tool, with a scoped escape hatch.
+At Single-file tier, do not escalate the architecture merely to store one lesson. At Folder-light tier, a SKILL.md route or rules bullet may activate it. Verified Failure Input owns recurrence-to-machine-gate graduation; this check only proves the written prevention changes the next applicable action.
 
 ## Placement and Shape
 
@@ -153,10 +185,11 @@ Do not force business names out of a business model merely to make it cross-proj
 | Plan confirmed for implementation | reconcile load-bearing conclusions into active destinations; set truthful `distilled_to:` and Requirement Provenance before coding |
 | Plan or user-confirmed decision changed | replay the prior mainline, record the Delta/supersession, and reconcile affected rules before implementation resumes |
 | Business implementation aligned/changed | update current implementation evidence and reconcile any declared gap without rewriting desired truth |
+| Workflow-distillation proposal accepted | resolve canonical provenance, mutate one owner, assemble/install through the owned path, and verify every affected downstream consumer |
 
 ## When NOT to Record
 
-- one-off workaround or minor preference;
+- one-off workaround or minor preference with no stable prevention action;
 - fact immediately obvious from code or already covered by official docs;
 - session transcript, chronological debug log, or date-named narrative under `references/`;
 - unconfirmed inference presented as intent;
@@ -167,7 +200,7 @@ Do not force business names out of a business model merely to make it cross-proj
 
 When a task exposes a documentation failure, classify it before editing:
 
-1. missing knowledge → threshold + all recording gates;
+1. missing knowledge → its applicable admission contract (ordinary threshold or Verified Failure Input) + all remaining recording gates;
 2. outdated/inaccurate knowledge → correct in place and check consumers;
 3. obsolete premise → delete, or scope a temporary legacy remainder with reason/date;
 4. rule existed but was missed → improve its activation/prominence instead of duplicating it.
@@ -177,7 +210,7 @@ When deleting/renaming a file, update routing and inbound links, run sync, and i
 ## Completion Criteria
 
 - [ ] Destination was classified before writing
-- [ ] New knowledge passed threshold/evidence gates; outdated content was corrected directly
+- [ ] New knowledge passed its applicable admission contract and evidence gates; outdated content was corrected directly
 - [ ] Fidelity preserved definitions, conditions, boundaries/counterexamples, and reasons
 - [ ] User-confirmed records preserve question/correction, answer, authority, scope, and applicable leaf/Plan provenance; ordinary standalone modeling created no PRD, confirmed gaps use one dossier, and proposed candidates were not promoted
 - [ ] Reconciliation selected no-write / extend / correct / retire / independent-add
@@ -185,5 +218,7 @@ When deleting/renaming a file, update routing and inbound links, run sync, and i
 - [ ] Business leaves own complete normative truth; Gotchas contain only distinct implementation failure experience plus a minimal owner link
 - [ ] Generic content passed cross-project generalization; business models passed cross-implementation stability
 - [ ] New/changed content has an action-changing activation path
+- [ ] Every Verified Failure Input returned one lifecycle outcome; first proven actionable prevention was written directly, while transient/no-write had no stable future action
+- [ ] Every accepted workflow candidate returned `extend` / pure `compose` / `create`; durable mutations have one canonical owner, an action-changing path, and verified downstream consumption without authority expansion
 - [ ] Routing, generated entries, consumers, and plan `distilled_to:` were synchronized where triggered
 - [ ] Desired business truth and current implementation fact remain distinct; known implementation gaps are explicit

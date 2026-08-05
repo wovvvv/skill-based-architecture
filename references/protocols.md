@@ -5,6 +5,8 @@
 - [Meta-Workflow Templates](#meta-workflow-templates)
 - [Task Execution Protocol](#task-execution-protocol)
 - [Task Closure Protocol](#task-closure-protocol)
+- [Verified Failure Learning](#verified-failure-learning)
+- [Proactive Workflow Distillation](#proactive-workflow-distillation)
 - [Recording Threshold](#recording-threshold)
 - [Where To Record](#where-to-record)
 - [Recording Destination Guide](#recording-destination-guide)
@@ -16,9 +18,9 @@
 
 The canonical workflow templates live under `templates/skill/workflows/`. Every project should adopt at least these:
 
-- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — cross-cutting task-start and progress contract: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
-- [`task-closure.md`](../templates/skill/workflows/task-closure.md) — cross-cutting closure gate (Task Closure Protocol, AAR, Rationalizations, Red Flags); referenced by every behavior-changing workflow at closure.
-- [`update-rules.md`](../templates/skill/workflows/update-rules.md) — recording mechanics the gate calls into: threshold, fidelity, reconciliation, activation, destination durability, sync, and retirement.
+- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — cross-cutting task-start and progress contract: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
+- [`task-closure.md`](../templates/skill/workflows/task-closure.md) — cross-cutting closure gate (verified-failure outcome accounting, Task Closure Protocol, AAR, post-completion workflow proposal, Rationalizations, Red Flags); referenced by every behavior-changing workflow at closure.
+- [`update-rules.md`](../templates/skill/workflows/update-rules.md) — complete durable owner for verified failures, accepted workflow candidates, and ordinary recording: first proven actionable prevention, workflow ownership/provenance/downstream consumption, lifecycle outcomes, recurrence/authority, threshold, fidelity, reconciliation, activation, destination durability, sync, and retirement.
 - [`maintain-docs.md`](../templates/skill/workflows/maintain-docs.md) — independent-load-reason audit, semantic before/after reconciliation, file health, split/merge/index decisions, and reference integrity.
 
 For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES-GUIDE.md`](../TEMPLATES-GUIDE.md).
@@ -27,9 +29,9 @@ For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES
 
 Canonical source: [`templates/skill/workflows/task-execution.md`](../templates/skill/workflows/task-execution.md).
 
-Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple; other tasks establish Task Anchor state and use the visible native Plan for step display rather than duplicating it in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work escalates presentation while the state remains runtime state, not a fixed chat template. Design-derived work carries the source Plan path and relevant user-confirmed Decision Context; each main step refreshes the applicable decision and its evidence boundary through an Anchor Checkpoint.
+Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple; other tasks establish Task Anchor state and use the visible native Plan for step display rather than duplicating it in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work escalates presentation while the state remains runtime state, not a fixed chat template. Design-derived work carries every governing Plan path and relevant user-confirmed Decision Context. Composite execution identifies one Integrating owner, checks Component interfaces from their owners, and derives exactly one Native Plan/semantic `Current Task`; it adds no mirror status or runtime store. Each main step refreshes the applicable decision and evidence boundary through an Anchor Checkpoint.
 
-If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. This reference keeps the activation consequence—pause the affected path and consult the user—but does not duplicate the gate's trigger, state transition, evidence, or resume procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
+If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. Composite conflicts return to the narrowest owner: Integrating for order/legal adapters/integrated proof, Component for its meaning or interface. Schema-structure work also pauses application mutation until the Plan's explicit impact checkpoint, authoritative baseline, dedicated SQL artifact, execution owner, and authorization boundary are ready. This reference does not duplicate either gate's complete procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
 
 The separation is load-bearing: Workflow owns the reusable domain procedure and mandatory gates; Task Anchor owns this task's outcome; Native Plan owns current runtime step state; Task Closure owns the readiness and final completion decisions. Closure may begin with only explicit delivery-dependent Done When evidence outstanding, declare `Ready for Delivery` after local checks, remain open across authorized delivery, and complete only after the requested artifact is verified. It does not grant delivery authority. A user-visible Plan may group Workflow steps but cannot replace the Workflow or weaken a gate. New independent tasks re-route and replace the old Anchor/Plan; refinements update the current one.
 
@@ -39,15 +41,7 @@ For the user-facing design and examples, see [`docs/task-anchor-native-plan.md`]
 
 Canonical source: [`templates/skill/workflows/task-closure.md`](../templates/skill/workflows/task-closure.md#task-closure-protocol).
 
-This reference deliberately gives only the operating summary: task closure
-applies only when the **Trigger Policy** admits the task (code or doc was
-changed); for those tasks, closure means main-work verification, the 30-second
-AAR scan, and any triggered recording, path-integrity, route-path, cross-
-reference, behavior-validation, or external-fact checks. For requested commit,
-push, MR, deploy, publish, or similar delivery, Closure distinguishes local
-readiness from completion and verifies the actual artifact before closing. Keep the exact gate
-wording and trigger table in `task-closure.md` so the protocol does not drift
-across guide/reference copies.
+This reference deliberately gives only the operating summary: task closure applies only when the **Trigger Policy** admits the task (code or doc was changed). For those tasks, closure means main-work verification, accounting for every already-proven failure outcome, the 30-second AAR scan for additional lessons, and any triggered recording, path-integrity, route-path, cross-reference, behavior-validation, or external-fact checks. Closure does not diagnose root cause or defer a proven actionable lesson until final AAR. Composite Closure reconciles every affected Component owner to `done` before integrated acceptance and delivery; stale, abandoned, unresolved, or replaced inputs block completion. Schema-changing work verifies the Plan-local SQL contract separately from any project-owned DB delivery. For requested commit, push, MR, deploy, publish, or similar delivery, Closure distinguishes local readiness from completion and verifies the actual artifact before closing. Keep the exact gate wording and trigger table in `task-closure.md` so the protocol does not drift across guide/reference copies.
 
 **Pure Q&A, code explanation, read-only investigation, and advice with no file
 changes are exempt** — do not enter the protocol, do not run AAR, do not run
@@ -105,9 +99,25 @@ Use the canonical questions and exemptions in
 [`templates/skill/workflows/task-closure.md`](../templates/skill/workflows/task-closure.md#after-action-review).
 Do not maintain a second question list here.
 
+## Verified Failure Learning
+
+Canonical semantics: [`templates/skill/workflows/update-rules.md` § Verified Failure Input](../templates/skill/workflows/update-rules.md#verified-failure-input). Task Execution owns the Session-only candidate and proof handoff; Fix Bug triggers the handoff immediately after red-to-green; Rule Update owns durable meaning and authority; Closure checks that every verified failure has one completed outcome.
+
+Do not persist a raw message or first hypothesis. Once the root cause, repair, fitted proof, and stable future action are proven, write or reconcile that prevention directly in its nearest canonical rule, Gotcha, workflow, reference, or existing executable owner and activate it before the next mistake-prone action. The first proven actionable occurrence does not wait for a second occurrence, ordinary Recording Threshold, or final AAR. A transient failure with no stable future action receives no durable write and creates no candidate ledger, counter, chronology, Memory route, or database.
+
+Recurrence identity is the same proven root cause, applicability boundary, and prevention action; retries inside one unresolved task remain one occurrence. On a later independent recurrence, first test whether the prevention was reached and acted on. Repair missing/inert activation before adding prose. Strengthen to a machine gate only under Rule Update's local/reversible/authorized boundary; shared, costly, external, or higher-scope promotion still requires its existing authority.
+
+## Proactive Workflow Distillation
+
+Canonical timing and proposal semantics: [`task-closure.md` § Post-Completion Workflow Distillation](../templates/skill/workflows/task-closure.md#post-completion-workflow-distillation). Canonical accepted-mutation semantics: [`update-rules.md` § Accepted Workflow-Distillation Input](../templates/skill/workflows/update-rules.md#accepted-workflow-distillation-input).
+
+Two independently completed semantic instances may justify one optional result-first question after `Closure Complete`; retries inside unfinished work do not. Match goal, ordered relations, inputs/outputs, integrated acceptance, and authority rather than commands. Inspect existing owners and stay silent for pure composition; otherwise recommend one `extend` or `create`. Decline/defer creates no candidate record and suppresses the same Session proposal.
+
+Acceptance starts a newly routed maintenance task, not automatic workflow generation or external delivery. Resolve canonical provenance, keep one complete orchestration owner plus thin local hooks, assemble/install through the real owner path, and verify every affected downstream consumer. The accepted workflow mutation does not inherit commit, push, MR, deploy, database, work-item, version, reviewer, publish, merge, or other external authority.
+
 ## Recording Threshold
 
-Record only when at least 2 of these 3 are true:
+Ordinary AAR, user-requested, or Agent-observed candidates record only when at least 2 of these 3 are true. Verified Failure Input and confirmed Plan/business-model handoffs bypass only this admission threshold and still pass fidelity, reconciliation, activation, generalization, durability, and authority gates:
 
 1. **Repeatable** — likely to recur in future work
 2. **Costly** — missing it wastes meaningful time or causes real regressions

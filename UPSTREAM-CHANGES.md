@@ -48,6 +48,41 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-08-04 - Post-completion proactive workflow distillation
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `task-closure.md` may normalize repeated-procedure evidence during execution but presents at most one optional proposal only after `Closure Complete` and the completion report. Two independently completed semantic instances are required; retries, adjacency, frequency, and command similarity do not qualify. Pure composition is silent, decline/defer is Session-only, and no candidate store or exhaustive history scan is created.
+  - `update-rules.md` receives only a user-accepted candidate, treats that consent as the approved scoped upgrade plan, and chooses `extend`, pure `compose`, or `create` after inspecting existing owners. It resolves downstream/meta/package provenance, mutates one canonical owner, requires owned assembly/install plus downstream readback, and keeps complete cross-repository orchestration in one owner with thin local hooks.
+  - Bible principle 14 and `references/protocols.md` preserve the stable product and operating boundary. Template/self-hosting conformance plus sixteen transcript-shaped self-scenarios protect evidence, timing, suppression, ownership, source-to-consumer activation, proposal payload, acceptance transition, authority, and the absence of a new route/store/Always Read surface.
+- Why it matters: repeated end-to-end delivery work was easy to leave as transient chat even when the stable relations among steps, authority checkpoints, and integrated acceptance could reduce future user effort. Automatically generating workflows or tracking every task would create prompt fatigue, duplicate owners, and a new subsystem; the useful capability is a result-first consent question backed by proven repetition and ordinary maintenance only after acceptance.
+- Downstream refresh guidance: adapt the two-owner contract into the downstream's existing Closure and Rule Update owners, then fit conformance/scenarios to real repeated procedures. Preserve project-specific routes, workflow names, parameters, permission checkpoints, canonical source provenance, installation/assembly commands, and verification evidence. If a meta-repository or package owns the workflow, edit only that source and verify every actual consumer; if the downstream owns it directly, keep the complete owner there. Do not copy example platform/product values, add a workflow-candidate route/store/ledger/counter/signature database, scan all task history, ask before verified completion, persist refusals, wrap pure composition, hand-edit generated copies, duplicate complete cross-repository bodies, or infer commit/push/MR/deploy/database/work-item/version/reviewer/publish/merge authority from workflow consent.
+
+## 2026-08-04 - First proven failure writes to active prevention
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `task-execution.md` keeps failed commands, tests, runtime checks, delivery actions, and premise changes as one Session-only candidate until root cause and red-to-green proof exist; nontrivial diagnosis reclassifies Simple work to Managed, and every proven failure hands off to Rule Update before Closure.
+  - `update-rules.md` is the complete durable owner. A first proven actionable failure bypasses only the ordinary Recording Threshold, reconciles directly into the nearest canonical rule/Gotcha/workflow/reference/executable owner, and activates before the next mistake-prone action. It returns one bounded outcome, matches recurrence by root cause + applicability + prevention, repairs missed activation before adding prose, and preserves machine-gate, promotion, delivery, and external authority boundaries.
+  - `fix-bug.md` invokes verified engineering learning immediately after fitted red-to-green proof while keeping Bug evidence out of desired business truth. `task-closure.md` accounts for completed outcomes and additional AAR lessons; it no longer diagnoses root cause or defers the first write.
+  - `references/protocols.md` and Bible principle 13 preserve the operating/product boundary without adding a Memory route, ledger, counter, chronology, database, new workflow, or default Always Read content.
+  - Template/self-hosting conformance and self-scenarios protect direct first write, Session-only hypotheses, retry/recurrence separation, activation repair, lifecycle outcomes, authority non-expansion, and the absence of Closure-only engineering learning.
+- Why it matters: repeated Mockito/JDK, test-construction, duplicate-coverage, and stale-evidence failures showed that completion-time AAR and stored notes can be too late. The useful contract is not another failure history; it is that proven prevention changes the next applicable action at its existing owner.
+- Downstream refresh guidance: port `task-execution.md`, `update-rules.md`, `fix-bug.md`, `task-closure.md`, the compact protocol summary, and fitted conformance/scenarios together. Preserve project-specific testing/runtime facts, Gotcha locations, business leaves, routes, validation commands, and authority rules. For example, a project-specific JDK constraint belongs in that project's activated testing owner, not in the generic SBA template. Remove wording that sends proven engineering lessons only to final Closure/AAR. Do not add a Memory route/store, failure ledger/counter, eager read, generic error catalog, automatic personal/team promotion, or shared/costly machine gate without the existing approval boundary.
+
+## 2026-08-03 - Plan composition and database-change artifacts
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `plan-feature.md` distinguishes ordinary dependencies, independently authoritative Component Plans, durable Integrating dossiers, and true `subplan_of` children. Composition stays Session-only unless persistence pressure exists, promotes an existing truthful common-outcome owner before creating another Plan, and records only one-way `consumes` / `subplan_of` / `supersedes` graph edges without status mirrors.
+  - `task-execution.md` derives exactly one Integrating Task Anchor, Native Plan, and semantic `Current Task`; validates Component lifecycle/interface preconditions; returns conflicts to the narrowest owning Plan; and requires active Decision Deltas or frozen successors without adding runtime stores or durable progress states.
+  - `task-closure.md` reconciles every affected Component owner before integrated acceptance and delivery. Missing, abandoned, unresolved, unfinished, or superseded-but-still-consumed Components block completion; abandoning an Integrating Plan leaves independent Components unchanged.
+  - `docs/plans/README.md` and `_TEMPLATE.md` own the durable archive shape and graph metadata. The completed Requirement-Semantics Plan moved into its existing composition owner as a dossier `prd.md` with a repository-local `consumes` edge; frozen semantic content remained unchanged.
+  - Database-structure changes now require a separately disclosed user checkpoint and a natural Plan-local `.sql` sibling before implementation: authoritative complete target DDL, forward schema/data update, historical-data treatment, read-only verification, and safe rollback or explicit backup/stop/forward-repair recovery.
+  - Template and self-hosting conformance plus behavior scenarios protect the single Native Plan, Component-first Closure, non-mirrored graph, frozen-successor boundary, conditional SQL creation, SQL completeness, and the distinction between a reviewed SQL artifact and authorized database delivery.
+- Why it matters: two independently valid Plans can govern one outcome without either surrendering ownership, but parallel runtime Plans and physically parallel archives made integration state, conflict authority, and final reconciliation ambiguous. Separately, prose-only schema impact let application persistence code advance without an explicit database contract or user-visible execution boundary.
+- Downstream refresh guidance: adapt the composition and database gates into the downstream's existing Plan, execution, Closure, conformance, and database-delivery owners as one contract. Preserve project-specific business/domain rules, permission/security gates, test/browser acceptance, generated/source boundaries, and the real migration or version-platform workflow. Keep one runtime Native Plan, resolve Component truth at each owner, use successors for frozen semantic changes, and create SQL siblings only for real schema impact. Do not copy archive paths, project-specific SQL/dialects, generic status fields, reverse-consumer indexes, or direct database execution commands; a SQL dossier never authorizes bypassing the downstream database workflow.
+
 ## 2026-08-03 - Product semantics to proven code owner
 
 - Upstream commit: pending in this working tree
@@ -166,6 +201,8 @@ The archive file has the same format and is read on demand if a downstream agent
 - Downstream refresh guidance: strengthen the local Plan Question Gate, then link business-model and Fix Bug clarification paths to it. Preserve the distinction that the Agent's conclusion is proposed/current implementation fact while the user's answer supplies normative business meaning.
 
 ## 2026-07-28 - Active business-knowledge capture during Bug Fix
+
+- Status: superseded by 2026-08-04 - First proven failure writes to active prevention
 
 - Upstream commit: pending in this working tree
 - Changed areas:
