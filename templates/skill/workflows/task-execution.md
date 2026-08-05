@@ -63,6 +63,12 @@ Run the checkpoint again after a later user message, a failed check or surprisin
 
 If the Goal or Done When can no longer be stated accurately from the current Session, stop mutation and reconstruct them from the user request, matched route, and Workflow before continuing. Do not invent missing task state or create persistence as a fallback.
 
+## Verified Failure Handoff
+
+When a command, test, runtime check, delivery action, or implementation premise fails, keep one Session-only failure candidate with the affected boundary and current evidence. Retries inside the same unresolved task remain one occurrence. Do not persist the raw message or first hypothesis. If diagnosis, repeated repair, or cross-step verification makes a Simple task nontrivial, reclassify it as Managed and preserve the candidate in the Task Anchor.
+
+After evidence proves the root cause, the current repair, and fitted red-to-green behavior, invoke [`update-rules.md` § Verified Failure Input](update-rules.md#verified-failure-input) before the candidate can disappear or the task enters Closure. Rule Update owns durable reconciliation and returns one learning outcome; Task Execution owns only the Session candidate, reclassification, and proof handoff.
+
 ## Execution Loop
 
 1. Keep exactly one main step active; pending steps remain explicit.
@@ -95,4 +101,4 @@ For each later user message: a refinement/correction updates the current Anchor 
 
 ## Exit To Closure
 
-Enter `task-closure.md` only when every non-delivery Plan step is verified, local acceptance evidence is present, Boundaries were respected, no stale Plan/Component branch remains, and every triggered User Decision Drift Gate has an explicit resolution reflected in its owner and, for business-bearing decisions, its active rule. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure performs Component-first reconciliation, decides `Ready for Delivery`, remains open across authorized delivery, verifies the requested artifact, and makes the final completion decision; it does not finish implementation work or grant delivery authority.
+Enter `task-closure.md` only when every non-delivery Plan step is verified, local acceptance evidence is present, Boundaries were respected, no stale Plan/Component branch remains, every triggered User Decision Drift Gate has an explicit resolution reflected in its owner and, for business-bearing decisions, its active rule, and every verified failure has a Rule Update learning outcome. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure performs Component-first reconciliation, decides `Ready for Delivery`, remains open across authorized delivery, verifies the requested artifact, and makes the final completion decision; it does not finish implementation work, diagnose root cause, or grant delivery authority.

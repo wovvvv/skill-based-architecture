@@ -106,6 +106,17 @@ required_sections:
       - "只有用户明确需要持久产物"
       - "模块间冲突等真实承载压力"
       - "首个文件与每个后续 sibling 都必须独立证明"
+      - "第一次已经证明、且能改变未来动作的失败经验"
+      - "立即写回正确 owner 并接入下一次动作"
+      - "不等待第二次复发，不拖到最终 AAR"
+      - "没有命中就修激活，命中后仍失败才在现有权限边界内加强可执行预防"
+      - "复发本身不扩大提交、推送、MR、部署、数据库、团队规则或外部系统权限"
+      - "完整流程只有在至少两次独立完成后"
+      - "身份来自共同目标、有序阶段、输入输出、集成验收和权限关卡"
+      - "纯组合没有持久缺口时不提案"
+      - "提案必须排在 `Closure Complete` 的结果报告之后"
+      - "沿真实 provenance 只修改 canonical owner，并完成下游装配/安装与验证"
+      - "Workflow 接受不扩大提交、推送、MR、部署、数据库、工单、版本、评审人、发布或合并权限"
       - "## 方向决策检查"
       - "它不进入下游模板"
 
@@ -151,6 +162,14 @@ required_sections:
       - "Anchor Checkpoint"
       - "does not duplicate either gate's complete procedure"
       - "## Task Closure Protocol"
+      - "## Verified Failure Learning"
+      - "first proven actionable occurrence does not wait for a second occurrence"
+      - "creates no candidate ledger, counter, chronology, Memory route, or database"
+      - "Repair missing/inert activation before adding prose"
+      - "## Proactive Workflow Distillation"
+      - "Two independently completed semantic instances may justify one optional result-first question"
+      - "stay silent for pure composition"
+      - "verify every affected downstream consumer"
       - "## Recording Threshold"
       - "## Generalization Rule"
       - "fidelity"
@@ -222,6 +241,11 @@ required_sections:
       - "## Database-Structure Mutation Gate"
       - "dedicated Plan-local SQL sibling"
       - "never permission to bypass the project migration workflow or write a database"
+      - "## Verified Failure Handoff"
+      - "Session-only failure candidate"
+      - "Retries inside the same unresolved task remain one occurrence"
+      - "update-rules.md#verified-failure-input"
+      - "every verified failure has a Rule Update learning outcome"
     must_not_contain:
       - "locally_done"
       - "ready_for_parent"
@@ -285,6 +309,9 @@ required_sections:
       - "Implementation-Fact Question Gate"
       - "Never ask the user to choose a current implementation fact"
       - "If the user says the answer is in code"
+      - "update-rules.md#verified-failure-input"
+      - "For each verified engineering failure, run Verified Failure Input now"
+      - "does not defer the verified-failure write"
 
   - file: templates/skill/workflows/update-rules.md
     must_contain:
@@ -293,6 +320,33 @@ required_sections:
       - "## Standalone Business-Model Input"
       - "Do not require a feature Plan"
       - "create or reuse one draft gap dossier"
+      - "## Verified Failure Input"
+      - "first proven actionable failure bypasses only the Recording Threshold"
+      - "activate it in the same change rather than waiting for another occurrence or final AAR"
+      - "same proven root cause + same applicability boundary + same prevention action"
+      - "Failure learning never grants commit, push, MR, deploy, publish, database, production, or other external authority"
+      - "## Accepted Workflow-Distillation Input"
+      - "approved upgrade plan for the described workflow mutation"
+      - "Create one complete orchestration owner"
+      - "A source-only change without downstream consumption is incomplete"
+      - "generated or installed copies are never independent owners"
+      - "Workflow acceptance authorizes only the described durable mutation"
+    must_not_contain:
+      - "### Post-Completion Workflow Distillation"
+
+  - file: templates/skill/workflows/task-closure.md
+    must_contain:
+      - "Account for verified failures"
+      - "completed [`update-rules.md` § Verified Failure Input]"
+      - "Closure does not diagnose root cause or postpone the first write"
+      - "Do not re-record an already-reconciled verified failure"
+      - "### Post-Completion Workflow Distillation"
+      - "proposal presentation may happen only after `Closure Complete`, with the completion report first"
+      - "Pure composition produces no proposal"
+      - "creates no durable candidate/rejection record"
+      - "update-rules.md#accepted-workflow-distillation-input"
+    must_not_contain:
+      - "## Accepted Workflow-Distillation Input"
 
   - file: docs/plans/README.md
     must_contain:

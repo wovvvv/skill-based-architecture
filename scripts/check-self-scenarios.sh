@@ -257,6 +257,12 @@ assert_not_contains "$task_execution" "cross-tool state sync" "task execution no
 assert_not_contains "$task_execution" "Plan: <concise task-specific steps" "task execution no fixed chat block"
 assert_contains "$task_execution" "Clear tasks keep the direct fast path" "task execution Change Contract fast path"
 assert_contains "$task_execution" "source-localization.md" "task execution technical-owner hook"
+assert_contains "$task_execution" "## Verified Failure Handoff" "task execution verified-failure owner hook"
+assert_contains "$task_execution" "Session-only failure candidate" "failed check stays Session-only before proof"
+assert_contains "$task_execution" "Retries inside the same unresolved task remain one occurrence" "unresolved retries are not recurrence"
+assert_contains "$task_execution" "update-rules.md#verified-failure-input" "proven repair hands off to Rule Update"
+assert_contains "$task_execution" "Rule Update owns durable reconciliation" "task execution does not duplicate durable semantics"
+assert_contains "$task_execution" "every verified failure has a Rule Update learning outcome" "execution blocks unclassified failure at Closure handoff"
 
 change_discipline="$(<templates/skill/rules/change-discipline.md)"
 assert_contains "$change_discipline" "## Semantic Boundary" "mutation-time semantic owner"
@@ -299,6 +305,11 @@ assert_contains "$task_closure" 'Reject missing, `abandoned`, unresolved-Delta, 
 assert_contains "$task_closure" "Abandoning the Integrating Plan leaves independent Component states unchanged" "integration abandonment preserves Component lifecycle"
 assert_contains "$task_closure" "SQL-file existence alone is neither schema readiness nor DB delivery" "closure separates SQL review from DB delivery"
 assert_contains "$task_closure" "authoritative schema/data readback" "closure requires authoritative DB delivery proof"
+assert_contains "$task_closure" "Account for verified failures" "closure accounts for repair-time learning"
+assert_contains "$task_closure" 'completed [`update-rules.md` § Verified Failure Input]' "closure requires one outcome per verified failure"
+assert_contains "$task_closure" "Closure does not diagnose root cause or postpone the first write" "closure stays accounting-only"
+assert_contains "$task_closure" "Do not re-record an already-reconciled verified failure" "closure does not duplicate repair-time learning"
+assert_contains "$task_closure" "verified failure that lacks a completed learning outcome" "closure rejects missing learning outcome"
 
 plan_feature="$(<templates/skill/workflows/plan-feature.md)"
 assert_contains "$plan_feature" "## Deliverable Gate" "plan classifies the requested deliverable before expansion"
@@ -443,7 +454,10 @@ assert_contains "$fix_bug" "instead of waiting for Task Closure" "fix-bug does n
 assert_contains "$fix_bug" 'the only source eligible for a `references/business/<module>.md` record is the user' "fix-bug user-content-only source"
 assert_contains "$fix_bug" "Do not derive a business rule from the Bug" "fix-bug rejects bug-derived business rules"
 assert_contains "$fix_bug" "Bug symptoms, root cause, repaired behavior, code, tests, runtime evidence, and Agent summaries are not" "fix-bug excludes repair evidence from desired truth"
-assert_contains "$fix_bug" "Reusable engineering lessons discovered while fixing the Bug follow normal Closure/AAR" "fix-bug routes engineering lessons through closure"
+assert_contains "$fix_bug" "update-rules.md#verified-failure-input" "fix-bug immediate engineering-learning owner link"
+assert_contains "$fix_bug" "After Step 8 proves an engineering failure and repair" "fix-bug waits for red-to-green proof"
+assert_contains "$fix_bug" "For each verified engineering failure, run Verified Failure Input now" "fix-bug writes proven prevention before Closure"
+assert_contains "$fix_bug" "does not defer the verified-failure write" "fix-bug rejects Closure-only learning"
 assert_contains "$fix_bug" "No Bug-derived or Agent-derived content entered the business model" "fix-bug completion protects user-intent fidelity"
 assert_contains "$fix_bug" "User Decision Drift Gate" "fix-bug immediate drift escalation"
 assert_contains "$fix_bug" "task-execution.md#user-decision-drift-gate" "fix-bug drift-owner link"
@@ -488,8 +502,20 @@ assert_contains "$update_rules" "## Active Bug-Fix Input" "update-rules active b
 assert_contains "$update_rules" "The only business-recording source during Fix Bug is the user's explicit business statement" "update-rules user-content-only source"
 assert_contains "$update_rules" "Preserve the user's meaning faithfully" "update-rules user-meaning fidelity"
 assert_contains "$update_rules" "Do not derive a business rule from the Bug" "update-rules rejects bug-derived intent"
-assert_contains "$update_rules" "Reusable engineering lessons discovered while fixing the Bug follow normal Closure/AAR" "update-rules engineering-lesson destination boundary"
+assert_contains "$update_rules" "Reusable engineering lessons discovered while fixing the Bug enter Verified Failure Input immediately after fitted red-to-green proof" "update-rules repair-time engineering input"
 assert_contains "$update_rules" "Fix Bug owns noticing and immediate invocation" "update-rules fix-bug local-action boundary"
+assert_contains "$update_rules" "## Verified Failure Input" "update-rules complete verified-failure owner"
+assert_contains "$update_rules" "first proven actionable failure bypasses only the Recording Threshold" "first proven prevention writes without waiting for recurrence"
+assert_contains "$update_rules" "activate it in the same change rather than waiting for another occurrence or final AAR" "first write includes next-task activation"
+assert_contains "$update_rules" "same proven root cause + same applicability boundary + same prevention action" "recurrence uses cause boundary and prevention"
+assert_contains "$update_rules" "retries inside one unresolved task are one occurrence" "rule update rejects retry counting"
+assert_contains "$update_rules" "repair activation instead of adding prose" "recurrence repairs missed activation first"
+assert_contains "$update_rules" "Failure learning never grants commit, push, MR, deploy, publish, database, production, or other external authority" "failure learning preserves authority boundary"
+for failure_outcome in covered/no-write extend-existing correct-existing add-and-activate transient/no-write requires-user-authority escalate-prevention; do
+  assert_contains "$update_rules" "\`$failure_outcome\`" "verified-failure outcome $failure_outcome"
+done
+assert_not_contains "$fix_bug$update_rules" "follow normal Closure/AAR" "verified engineering learning is not deferred"
+assert_not_contains "$template_routing$self_routing" "id: memory" "failure learning adds no Memory route"
 for outcome in "No write" "Extend in place" "Correct in place" "Retire" "Add independently"; do
   assert_contains "$update_rules" "$outcome" "gotcha reconciliation outcome"
 done
@@ -499,6 +525,64 @@ assert_contains "$update_rules" "plan-feature.md#user-confirmed-decision-mainlin
 assert_contains "$update_rules" "owns distillation and reconciliation" "persistence distillation owner"
 assert_contains "$update_rules" "Plan confirmed for implementation" "persistence Plan-handoff sync"
 assert_contains "$update_rules" "bypasses only the Recording Threshold" "persistence Plan-handoff admission"
+
+echo ""
+echo "==> proactive workflow distillation transcript contracts"
+
+# 1. "We completed equivalent flows twice in this Session."
+assert_contains "$task_closure" "same Session or across tasks/Sessions" "workflow distillation scenario 1 same-Session evidence"
+assert_contains "$task_closure" 'only after `Closure Complete`, with the completion report first' "workflow distillation scenario 1 result-first proposal"
+
+# 2. "This looks like a prior completed task; verify only that candidate."
+assert_contains "$task_closure" "current/relevant history and the smallest targeted retrieval" "workflow distillation scenario 2 targeted cross-task retrieval"
+
+# 3. "I retried the unfinished delivery several times."
+assert_contains "$task_closure" "Retries or repeated substeps inside one unfinished delivery count once" "workflow distillation scenario 3 retries count once"
+
+# 4. "These commands are adjacent and frequent, so they must be one workflow."
+assert_contains "$task_closure" "temporal adjacency, frequency, or command/tool similarity does not qualify" "workflow distillation scenario 4 similarity rejection"
+
+# 5. "The current workflow owns the result but lacks this stable stage."
+assert_contains "$update_rules" "the owner of the same result/acceptance is missing a stage" "workflow distillation scenario 5 extend classification"
+
+# 6. "No workflow owns the reusable cross-step result and integrated acceptance."
+assert_contains "$update_rules" "no owner has the independently reusable goal, cross-step decisions/state" "workflow distillation scenario 6 create classification"
+
+# 7. "Existing workflows already compose completely."
+assert_contains "$update_rules" "With no durable gap, make no workflow change" "workflow distillation scenario 7 pure composition silence"
+
+# 8. "Delivery is blocked or not yet verified; ask me now."
+assert_contains "$task_closure" "Blocked, paused, stopped, or unverified work produces no proactive question" "workflow distillation scenario 8 completion timing"
+
+# 9. "Not now."
+assert_contains "$task_closure" "creates no durable candidate/rejection record and suppresses the same normalized proposal for the current Session" "workflow distillation scenario 9 decline suppression"
+
+# 10. "Ask again at the next completion boundary with no new evidence."
+assert_contains "$task_closure" "Re-prompt only after materially stronger evidence or explicit user reopening" "workflow distillation scenario 10 re-prompt boundary"
+
+# 11. "Copy the full cross-repository workflow into every local Skill."
+assert_contains "$update_rules" "Create one complete orchestration owner; consumers keep only evidence-required trigger, participation, and acceptance hooks" "workflow distillation scenario 11 single orchestration owner"
+
+# 12. "Editing the canonical source alone is enough; hand-edit installed copies too."
+assert_contains "$update_rules" "A source-only change without downstream consumption is incomplete" "workflow distillation scenario 12 downstream consumption"
+assert_contains "$update_rules" "generated or installed copies are never independent owners and must not be hand-edited in parallel" "workflow distillation scenario 12 generated-copy boundary"
+
+# 13. "Just ask vaguely whether to create a workflow."
+assert_contains "$task_closure" "concrete repeat evidence, compact goal/flow, one recommendation, canonical-owner-to-downstream path" "workflow distillation scenario 13 proposal payload"
+
+# 14. "Yes, do the described workflow change."
+assert_contains "$task_closure" "Acceptance starts a newly routed task" "workflow distillation scenario 14 accepted task transition"
+assert_contains "$task_closure" "without redundant reconfirmation" "workflow distillation scenario 14 no second start question"
+
+# 15. "Workflow acceptance also authorizes push, MR, revision, and deploy."
+assert_contains "$update_rules" "Workflow acceptance authorizes only the described durable mutation and fitted local verification" "workflow distillation scenario 15 scoped authority"
+assert_contains "$update_rules" "It never grants commit, push, MR, deploy, publish, database, work-item, version-revision, reviewer-selection, merge" "workflow distillation scenario 15 no external authority inheritance"
+
+# 16. "Add a route, ledger, signature database, and Always Read candidate index."
+assert_contains "$task_closure" "never scan all history or create a signature store, candidate ledger, counter, timeline, route, or placeholder" "workflow distillation scenario 16 no subsystem contract"
+assert_not_contains "$template_routing$self_routing" "id: workflow-distillation" "workflow distillation scenario 16 no new first-workflow route"
+assert_not_contains "$template_routing$self_routing" "id: workflow-candidate" "workflow distillation scenario 16 no candidate route"
+assert_not_contains "$(<templates/skill/SKILL.md.template)" "workflow candidate" "workflow distillation scenario 16 no default Always Read candidate surface"
 
 receiving_review="$(<templates/skill/workflows/receiving-review.md)"
 assert_contains "$receiving_review" "user-confirmed Decision Context" "review Plan-mainline activation"
