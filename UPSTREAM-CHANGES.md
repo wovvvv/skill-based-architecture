@@ -48,6 +48,17 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-08-06 - Runtime context kernels and canonical task routing
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/task-execution.md` is now the continuity kernel. Composite Plan execution and User Decision Drift move to independently triggered protocol owners under `protocol-blocks/`; the kernel keeps only their activation, immediate boundary, and returned outcome. Task Anchor, Native Plan, checkpoints, recovery, evidence handling, schema gating, Verified Failure handoff, new-message handling, and Closure exit remain in the kernel.
+  - `workflows/task-closure.md` remains the sole readiness/completion owner while Plan/Knowledge reconciliation, external artifact verification, and post-completion workflow proposal logic move to three conditional protocol owners. Ordinary local Closure no longer loads Composite/business-leaf reconciliation, delivery retry semantics, or workflow-distillation evidence unless their triggers exist.
+  - `routing.yaml` is the sole owner of exact task route ids, labels, trigger examples, workflow paths, fallback, notes, and route metadata. Generated `SKILL.md` Common Tasks is now one manifest-read/select/fallback action hook; thin shells retain the independent bootstrap. Sync, smoke, conformance, fixtures, and reference docs validate the structured manifest rather than a duplicate Markdown route catalog.
+  - Self-scenarios add a local preflight that rejects unescaped Markdown backticks inside double-quoted assertion operands before Bash can execute them as command substitution.
+- Why it matters: high-frequency project workflows were repeatedly loading route data twice and carrying low-frequency Composite, decision-drift, delivery, and distillation definitions through ordinary tasks. The new owners preserve one execution mainline and one Closure state while moving only independently triggered semantics off unrelated paths.
+- Downstream refresh guidance: adapt the kernels and conditional owners into the downstream's existing Task Execution and Closure surfaces; add every new protocol block to its canonical vendor/assembly manifest and fitted conformance. Make `routing.yaml` the only exact task-route catalog, regenerate the Common Tasks action hook and shells, and move route-count/path/trigger assertions to YAML. Preserve project-specific root entries, read-only routes, business leaves, testing/permission/database gates, delivery mechanics, canonical-source provenance, and assembly commands. Do not copy generic files over project owners wholesale, add a second runtime state, create another completion owner, remove terminal read-only behavior, or infer commit/push/MR/deploy/database authority.
+
 ## 2026-08-05 - Rule Update progressive disclosure owners
 
 - Upstream commit: pending in this working tree

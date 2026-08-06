@@ -24,13 +24,13 @@ Use these labels in the output. Do not blur them together.
 2. **Collect user language** — record the exact phrases users actually say in every language they use. These feed `description`, but only at domain / intent-cluster level.
 3. **Map domains** — list modules, subsystems, packages, apps, CLIs, services, data layers, or template areas that behave differently.
 4. **Detect business-model pressure (product projects only)** — identify modules with stable types, macro flows, states, boundaries, or invariants that are repeatedly needed and not obvious from code. Present candidates; do not create files until the user chooses "now". "Later" creates nothing. Adopt `profile-business-model.md.example` only for real candidates.
-5. **Find recurring work** — identify common task types from scripts, tests, docs, issue language, or user examples. These feed Common Tasks, not the frontmatter description.
+5. **Find recurring work** — identify common task types from scripts, tests, docs, issue language, or user examples. These feed canonical `routing.yaml` task routes, not the frontmatter description.
 6. **Find always-read candidates** — choose only 2-3 files whose rules apply to almost every task. Domain-specific and business-model files stay task-routed.
 7. **Choose structure tier** — classify the documentation shape as Single-file, Folder-light, or Full. Default to the lightest tier unless concrete line, recurrence, procedure, harness-sharing, or lesson-capture pressure exists.
 8. **Choose execution mode** — classify the skill as Rule-only, Assisted-executable, or Executable. Upgrade only when evidence shows external APIs/CLIs, side effects, repeated script logic, local config, or stable output contracts.
 9. **Choose domain topology** — decide whether this is Single-skill or a Multi-skill candidate. Split only when trigger language and rule sets genuinely diverge.
 10. **Draft activation** — write a coarse `description` with real trigger phrases and activation conditions; do not enumerate every workflow.
-11. **Draft routing** — propose Common Tasks rows with exact required reads and workflows.
+11. **Draft routing** — propose `routing.yaml` rows with labels, trigger examples, exactly one first workflow, and an `other` fallback. Task routes do not carry required-read bundles.
 12. **Draft validation** — list the commands or manual checks that prove ordinary changes are safe. For executable or high-risk routes, include contract/scenario-test candidates.
 13. **Mark unknowns** — keep unresolved facts visible instead of converting them into rules.
 
@@ -45,7 +45,7 @@ Produce a compact project profile with these sections:
 - Structure tier: Single-file / Folder-light / Full
 - Execution mode: Rule-only / Assisted-executable / Executable
 - Domain topology: Single-skill / Multi-skill candidate
-- Common Tasks draft
+- `routing.yaml` task-route draft
 - Always Read proposal
 - Split / no-split recommendation
 - Validation commands
@@ -59,7 +59,7 @@ Each non-obvious claim must carry one evidence label. Only `Confirmed from code/
 
 - [ ] User language captured as real phrases, not translated guesses
 - [ ] Description draft is coarse activation — not a workflow keyword list, and not a step-summary the agent would run instead of opening the workflow
-- [ ] Common Tasks draft covers recurring work without exceeding 8-10 rows
+- [ ] `routing.yaml` draft covers recurring work without exceeding 8-10 task routes
 - [ ] Always Read defaults to empty; every proposed entry is proven necessary before workflow selection for every real task
 - [ ] Structure tier defaults to the lightest tier with evidence-backed upgrade pressure
 - [ ] Execution mode names concrete APIs, CLIs, side effects, scripts, local config, or output contracts when present

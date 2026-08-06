@@ -352,7 +352,11 @@ domain_overlays:
 YAML
 
   (cd "$root" && bash "$script" "$skill" --workspace-root "$root") >/dev/null
-  grep -q 'Run / 执行 (`run`) -> workflow `workflows/run.md`' "$skill/SKILL.md"
+  grep -qF 'For each new task, read `routing.yaml`, match exactly one route' "$skill/SKILL.md"
+  if grep -qF 'Run / 执行 (`run`) -> workflow `workflows/run.md`' "$skill/SKILL.md"; then
+    echo "generated SKILL.md duplicated canonical task-route rows" >&2
+    return 1
+  fi
   if grep -q 'billing-consumer\|domain_overlay_ids\|merged_required_reads' "$skill/SKILL.md"; then
     echo "generated task summary eagerly exposed domain-routing content" >&2
     return 1

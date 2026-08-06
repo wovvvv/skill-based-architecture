@@ -206,7 +206,7 @@ Rule of thumb:
 
 - `references/` stores the explanation
 - `workflows/` prevents omission at task closure
-- `routing.yaml`-generated `SKILL.md` Common Tasks and thin-shell bootstraps select the workflow; the workflow owns later evidence-based activation
+- canonical `routing.yaml` selects the workflow; generated `SKILL.md` Common Tasks and thin-shell blocks only preserve the action/bootstrap that reads it; the workflow owns later evidence-based activation
 
 If a future agent could still miss the lesson while following the normal task path, the knowledge is stored but not yet activated.
 
@@ -230,9 +230,9 @@ Re-read the `description` block aloud after editing frontmatter. Listen for over
 
 ### Routing Coverage Check
 
-Verify that `SKILL.md` Common Tasks covers the project's actual task distribution:
+Verify that canonical `routing.yaml` covers the project's actual task distribution:
 
 1. List the 5–10 most common task types in the project
 2. For each, confirm `routing.yaml` has a matching entry with correct file routing
 3. If a common task is missing, add it — uncovered tasks fall through to the generic "Other" route and may miss important rules/references
-4. Run `scripts/sync-routing.sh --check` so generated `SKILL.md` Always Read / Common Tasks and thin-shell blocks cannot drift
+4. Run `scripts/sync-routing.sh --check` so generated `SKILL.md` Always Read / Common Tasks action hook and thin-shell blocks cannot drift

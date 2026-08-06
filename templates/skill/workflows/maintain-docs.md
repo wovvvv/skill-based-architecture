@@ -200,7 +200,7 @@ bash skills/{{NAME}}/scripts/route-health.sh {{NAME}}
 
 For a two-root skill, run the last two structural checks once from each root with `--namespace skill|code --routing <skill-root>/routing.yaml`; namespace identity is part of reachability.
 
-- [ ] All links in SKILL.md's Always Read and generated Common Tasks are valid
+- [ ] All links in generated SKILL.md Always Read and the Common Tasks action hook are valid; exact route paths validate from `routing.yaml`
 - [ ] All `workflows/*.md` "Read First" sections reference existing files
 - [ ] Cross-references between rules/references files point to valid targets
 - [ ] Thin shells still point to the current `skills/{{NAME}}/SKILL.md` or documented multi-skill router, and generated bootstraps match `routing.yaml`

@@ -23,7 +23,6 @@ required_sections:
 
   - file: workflows/task-execution.md
     must_contain:
-      - "## Task Classifier"
       - "## Task Anchor"
       - "## Workflow Boundary"
       - "## Recitation Loop"
@@ -31,30 +30,18 @@ required_sections:
       - "## New Message Gate"
       - "## Exit To Closure"
       - "Simple tasks skip this protocol"
-      - "After any needed alignment, proceed without waiting unless"
       - "harness's native Plan/Task surface"
-      - "runtime state, not a fixed chat template"
-      - "natural-language alignment"
       - "do not repeat its steps in chat"
       - "## Presentation Gate"
-      - "Evaluate **Structured Brief first**"
-      - "Compact Alignment is allowed only when all Structured conditions are false"
-      - "first user-facing task-start message MUST begin with separate Goal"
-      - "Steps must be numbered"
-      - "do not collapse the brief into prose"
+      - "states separate Goal, Done When, material Boundaries, and numbered Steps"
       - "Before each main Plan step"
       - "Never silently overwrite a load-bearing conclusion"
       - "business owner's confirmation"
       - "every governing Plan path"
       - "only business-bearing decisions require a routed business rule"
       - "## User Decision Drift Gate"
-      - "canonical owner of the gate's trigger"
-      - "Code may expose constraints, cost, and risk"
-      - "Pause the affected implementation path immediately"
-      - "Independent work may continue only when it cannot prejudge the decision"
-      - "Mark every alternative `proposed`"
-      - "mark the prior decision `superseded`"
-      - "do not wait for review or Closure"
+      - "pause the affected path immediately"
+      - "user-decision-drift.md"
       - "bind the material risk, fitted evidence, and stop/escalation condition"
       - "the evidence that could resolve or falsify it"
       - "receiving a successful exit code"
@@ -72,6 +59,26 @@ required_sections:
       - "task_plan.md"
       - "cross-tool state sync"
       - "Plan: <concise task-specific steps"
+
+  - file: protocol-blocks/composite-plan-execution.md
+    must_contain:
+      - "# Composite Plan Execution"
+      - "one truthful Integrating owner"
+      - "`done` is frozen"
+      - "missing, `abandoned`, replaced, or unauthorized inputs block"
+      - "Component meaning, invariant, boundary, accepted interface"
+      - "one Integrating Task Anchor and one Native Plan"
+      - "Session-only composition creates no durable graph artifact"
+
+  - file: protocol-blocks/user-decision-drift.md
+    must_contain:
+      - "# User Decision Drift"
+      - "Code may expose constraints, cost, and risk"
+      - "Keep the affected path paused"
+      - "Mark every alternative `proposed`"
+      - "mark the prior decision `superseded`"
+      - "Reconcile any routed business rule"
+      - "A late disclosure in review or Closure never substitutes"
 
   - file: workflows/plan-feature.md
     must_contain:
@@ -208,47 +215,60 @@ required_sections:
       - "### Red Flags"
       - "## After-Action Review"
       - "Test count is not evidence quality"
-      - "Replay the user-confirmed mainline"
-      - "desired business truth"
-      - "current implementation fact"
-      - "If Closure first surfaces material drift"
-      - "task-execution.md#user-decision-drift-gate"
-      - "for business-bearing decisions, also read the routed business rule"
+      - "plan-knowledge-closure.md"
       - "durable knowledge migrated/deleted/superseded"
       - "rather than creating a mandatory ledger"
       - "Ready for Delivery"
       - "is a checkpoint, not task completion"
       - "Closure never grants commit, push, MR, deploy, publish"
-      - "leaves Closure open"
-      - "without rerunning unrelated local checks"
+      - "external-delivery-verification.md"
       - "Closure Complete"
       - "The command exited 0, so the stage is complete"
       - "proves only the command's own contract"
       - "treating that exit code as sufficient completion evidence by itself"
-      - "Reconcile Component owners first"
-      - "enumerate `consumes` and read current truth from each Component owner rather than a mirror"
-      - "no required Component may remain `draft` or `executing`"
-      - "Abandoning the Integrating Plan leaves independent Component states unchanged"
       - "database-structure change"
       - "SQL-file existence alone is neither schema readiness nor DB delivery"
-      - "authoritative schema/data readback"
       - "Account for verified failures"
       - "rule-update/verified-failure.md` § Verified Failure Input"
       - "Closure does not diagnose root cause or postpone the first write"
       - "Do not re-record an already-reconciled verified failure"
       - "verified failure that lacks a completed learning outcome"
       - "### Post-Completion Workflow Distillation"
-      - "proposal presentation may happen only after `Closure Complete`, with the completion report first"
-      - "at least two independently completed instances"
-      - "same Session or across tasks/Sessions"
-      - "temporal adjacency, frequency, or command/tool similarity does not qualify"
-      - "Pure composition produces no proposal"
-      - "creates no durable candidate/rejection record"
-      - "Re-prompt only after materially stronger evidence or explicit user reopening"
-      - "rule-update/workflow-distillation.md#accepted-workflow-distillation-input"
-      - "without redundant reconfirmation"
+      - "workflow-distillation-proposal.md"
     must_not_contain:
       - "## Accepted Workflow-Distillation Input"
+
+  - file: protocol-blocks/plan-knowledge-closure.md
+    must_contain:
+      - "# Plan And Knowledge Closure"
+      - "read every Component from its canonical owner"
+      - "Replay each relevant user-confirmed Decision Context"
+      - "desired business truth"
+      - "current implementation fact"
+      - "Run Plan Leaf Reconciliation"
+      - "Run Knowledge Reciprocity"
+      - "Calibrate `distilled_to:`"
+      - "cannot declare readiness or completion"
+
+  - file: protocol-blocks/external-delivery-verification.md
+    must_contain:
+      - "# External Delivery Verification"
+      - "never grants it or declares task completion"
+      - "Verify the real artifact rather than a precursor"
+      - "authoritative schema/data readback"
+      - "Retry only the external boundary"
+      - "`verified`, `blocked`, `stale`, or `premise-changed`"
+
+  - file: protocol-blocks/workflow-distillation-proposal.md
+    must_contain:
+      - "# Workflow Distillation Proposal"
+      - "only after `Closure Complete`"
+      - "two independently completed instances"
+      - "frequency, adjacency, and command similarity do not qualify"
+      - "`compose`"
+      - "present no proposal"
+      - "Decline/defer creates no durable record"
+      - "Accepted Workflow-Distillation Input"
 
   - file: workflows/update-rules.md
     must_contain:
@@ -486,17 +506,14 @@ required_sections:
       - "diagnostic evidence, never correctness gates"
       - "material Boundaries such as scope, non-goals"
       - "harness's native Plan"
-      - "present only useful alignment"
+      - "Present only useful alignment"
       - "do not repeat its steps in chat"
       - "Before each main Plan step"
       - "cross-cutting modifier, never a first-workflow route"
       - "task size or duration alone does not activate it"
       - "## Composite Plan Handoff"
-      - "exactly one Integrating Task Anchor and Native Plan"
-      - "they do not create competing anchors, live step stores, or semantic `Current Task` entries"
-      - "A missing, `abandoned`, or replaced Component cannot drive mutation"
-      - "active Components use an explicit Decision Delta"
-      - "frozen Components require a successor"
+      - "composite-plan-execution.md"
+      - "Components never create competing runtime anchors"
       - "## Database-Structure Mutation Gate"
       - "dedicated Plan-local SQL sibling"
       - "never permission to bypass the project migration workflow or write a database"
@@ -560,7 +577,7 @@ required_sections:
       - "conformance.yaml"
       - "Vendor: only paths explicitly listed"
       - "Project-owned: every non-vendor source file"
-      - "Generated: Always Read, Common Tasks"
+      - "Generated: Always Read, Common Tasks action hook"
       - "Runtime-data: hook state, caches, secrets"
 
   - file: workflows/change-managed.md
@@ -676,3 +693,8 @@ required_files:
   - path: workflows/rule-update/workflow-distillation.md
   - path: protocol-blocks/source-localization.md
   - path: protocol-blocks/change-contract.md
+  - path: protocol-blocks/composite-plan-execution.md
+  - path: protocol-blocks/user-decision-drift.md
+  - path: protocol-blocks/plan-knowledge-closure.md
+  - path: protocol-blocks/external-delivery-verification.md
+  - path: protocol-blocks/workflow-distillation-proposal.md

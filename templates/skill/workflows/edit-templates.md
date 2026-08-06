@@ -8,7 +8,7 @@ Use this when changing reusable templates, scaffolds, shell files, hooks, protoc
 
 ## Read First
 
-1. Re-open `SKILL.md` → match this change to a Common Tasks route
+1. Re-open `SKILL.md`, then match this change to exactly one canonical `routing.yaml` route
 2. Read `rules/change-discipline.md`; read project/coding rules only when the planned template change reaches their scope
 3. Read the project template guide if present (for this meta-skill: `templates/README.md`)
 4. Read the anti-template/admission rules if present (for this meta-skill: `templates/ANTI-TEMPLATES.md`)

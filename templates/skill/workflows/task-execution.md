@@ -1,14 +1,6 @@
 # Task Execution Protocol
 
-Use this after matching the task route when the task is not one clear action with one direct check. It controls this task's goal and progress; the matched Domain Workflow remains authoritative for task-specific procedure and mandatory gates. Simple tasks skip this protocol. Classify by whether an explicit goal changes execution, not by tool-call or file count.
-
-## Task Classifier
-
-| Class | Signal | Action |
-|---|---|---|
-| Simple | one clear action, one direct check, little room to drift | execute directly; do not display an Anchor or Plan |
-| Managed | dependent steps, meaningful boundaries, repeated verification, or material drift risk | establish a Task Anchor, use a concise Native Plan, and present only useful alignment |
-| Design | unresolved product/architecture choice, materially different interpretations, or irreversible decision | use `plan-feature.md`; after approval, convert its result into a Managed task |
+Use this after matching the task route when the task is not one clear action with one direct check. It controls this task's continuity; the matched Domain Workflow remains authoritative for task-specific procedure and mandatory gates. Simple tasks skip this protocol. Dependent steps, meaningful boundaries, repeated verification, or material drift risk make the task Managed; unresolved product/architecture meaning returns to `plan-feature.md` before execution.
 
 ## Evidence and Knowledge Gate
 
@@ -27,23 +19,11 @@ For Design-derived work, retain every governing Plan path and relevant user-conf
 
 ### Composite Plan Handoff
 
-When one outcome consumes multiple independently authoritative Plans, identify one Integrating owner before mutation and derive exactly one Integrating Task Anchor and Native Plan. Component Plans provide their decisions, boundaries, interfaces, and local acceptance; they do not create competing anchors, live step stores, or semantic `Current Task` entries. Session-only composition does not require another file, and durable graph metadata never mirrors runtime progress.
-
-Check each consumed interface from its owner: `done` is a frozen input; unfinished `executing` work is absorbed into the Integrating Native Plan; an included `draft` Component must close its load-bearing interface and enter execution during handoff. Exclude an unauthorized `draft` Component or keep the integration in design. A missing, `abandoned`, or replaced Component cannot drive mutation; resolve its valid owner or replan first.
-
-If composition changes only order, a legal adapter, integrated proof, or delivery, return to the Integrating owner. If it changes a Component's meaning, invariant, boundary, accepted interface, or local acceptance, pause only the affected path and return to that Component's owning Design Slice. Apply the User Decision Drift Gate when user-confirmed meaning is involved; active Components use an explicit Decision Delta, while frozen Components require a successor that the Integrating owner then consumes. The Task Anchor remains runtime state, not a fixed chat template.
+When one outcome consumes multiple independently authoritative Plans, read [`composite-plan-execution.md`](../protocol-blocks/composite-plan-execution.md) before mutation. It validates Component inputs and returns either one Integrating owner, Task Anchor, and Native Plan or a precise block/return owner. This kernel retains the invariant that Components never create competing runtime anchors, step stores, or semantic `Current Task` entries.
 
 ### Presentation Gate
 
-- **Structured Brief**: Evaluate **Structured Brief first**; if any condition matches, it wins and Compact Alignment is allowed only when all Structured conditions are false. Trigger when the task is long, complex, scope-sensitive, confirmation-dependent, or lacks a visible native Plan surface. The first user-facing task-start message MUST begin with separate Goal, Done When, material Boundaries, and Steps sections in the user's language. Steps must be numbered; do not collapse the brief into prose or render empty headings:
-
-Required shape: `<localized Goal>: <observable outcome>`; `<localized Done When>: <goal-level evidence>`; optional `<localized Boundaries>: <material limits>`; `<localized Steps>: 1. ... 2. ...`.
-
-- **Compact Alignment**: only when no Structured condition matches, use natural-language alignment if it helps the user verify direction, usually one short sentence covering the outcome, completion proof, and any material boundary. If the native Plan/Task surface is visible, do not repeat its steps in chat.
-
-Do not expose protocol labels merely to prove an Anchor exists. After any needed alignment, proceed without waiting unless a blocking design choice, authority boundary, shared/irreversible action, or scope expansion requires user input.
-
-Use the harness's native Plan/Task surface to hold step state. If none exists, keep a concise checklist in the current session. This protocol does not create durable planning files or recover task state across Sessions.
+Present only useful alignment for the user to verify direction. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work states separate Goal, Done When, material Boundaries, and numbered Steps in the user's language; otherwise use one compact natural-language alignment when useful. Use the harness's native Plan/Task surface or a concise Session checklist for step state; do not repeat its steps in chat. This protocol does not create durable planning files or recover task state across Sessions. Proceed unless a real decision, authority boundary, scope expansion, or shared/irreversible action blocks.
 
 ## Workflow Boundary
 
@@ -82,18 +62,7 @@ Independent Subagents may work concurrently, but the main task keeps one integra
 
 ## User Decision Drift Gate
 
-This section is the canonical owner of the gate's trigger, pause/resume behavior, required evidence, and decision transition. Domain workflows may repeat a task-specific trigger, immediate pause, or acceptance check for local actionability, but they link here instead of copying the complete gate.
-
-Code may expose constraints, cost, and risk, but it has no authority to modify a user-confirmed business mainline. Trigger this gate when current or in-progress implementation conflicts with a confirmed product meaning, business rule, scope, flow, state, boundary, invariant, acceptance condition, or user-visible behavior. Ordinary implementation choices that preserve those decisions do not trigger it.
-
-On trigger:
-
-1. Pause the affected implementation path immediately; do not wait for review or Closure. Independent work may continue only when it cannot prejudge the decision.
-2. Preserve the existing `Authority: user-confirmed` Decision Delta. State the confirmed mainline, `current implementation fact`, exact gap, constraint/cost/risk, and materially different options.
-3. Mark every alternative `proposed`. Ask the user one decision-bearing question and do not mutate the affected path until the answer is clear.
-4. Record the answer in the Plan Decision Context. If it changes the mainline, mark the prior decision `superseded`, reconcile any routed business rule, then update the Task Anchor and resume.
-
-Never silently compromise to fit current code, and never treat a late disclosure in review/Closure as satisfying this gate.
+When code, tests, runtime evidence, review, or a proposed implementation conflicts with user-confirmed meaning, pause the affected path immediately and read [`user-decision-drift.md`](../protocol-blocks/user-decision-drift.md) before choosing or resuming. Independent work may continue only when it cannot prejudge the decision. Domain workflows may repeat this trigger and immediate pause, but the protocol block owns evidence, user consultation, Decision Delta transition, synchronization, and resume conditions.
 
 ## New Message Gate
 
@@ -101,4 +70,4 @@ For each later user message: a refinement/correction updates the current Anchor 
 
 ## Exit To Closure
 
-Enter `task-closure.md` only when every non-delivery Plan step is verified, local acceptance evidence is present, Boundaries were respected, no stale Plan/Component branch remains, every triggered User Decision Drift Gate has an explicit resolution reflected in its owner and, for business-bearing decisions, its active rule, and every verified failure has a Rule Update learning outcome. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure performs Component-first reconciliation, decides `Ready for Delivery`, remains open across authorized delivery, verifies the requested artifact, and makes the final completion decision; it does not finish implementation work, diagnose root cause, or grant delivery authority.
+Enter `task-closure.md` only when every non-delivery Plan step is verified, local acceptance evidence is present, Boundaries were respected, each triggered conditional protocol returned a resolved outcome, and every verified failure has a Rule Update learning outcome. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure decides readiness/completion and conditionally loads specialized proof owners; it does not finish implementation work, diagnose root cause, or grant delivery authority.

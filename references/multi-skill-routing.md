@@ -6,13 +6,13 @@ When a repo owns **multiple skills** in `skills/` (not just one), the routing, t
 
 A single project skill is enough when the whole project shares one set of rules and one routing manifest. Split into multiple skills when **any** of these is true:
 
-- Two subsystems have **non-overlapping trigger phrases** (a user asking about "billing" and "onboarding" should land on different Common Tasks)
+- Two subsystems have **non-overlapping trigger phrases** (a user asking about "billing" and "onboarding" should activate different skills or different canonical task routes)
 - Two subsystems have **contradicting rules** (frontend rules say "prefer Web Components", backend rules say irrelevant) — forcing them into one skill loads conflicting constraints on every task
 - One subsystem is a **standalone reusable library** that could be extracted later — giving it its own skill is a low-cost pre-split
 
 One skill with multiple domains (`rules/frontend-rules.md` + `rules/backend-rules.md`) is NOT multi-skill — it's one skill covering several domains. Multi-skill means separate `skills/<name>/` directories each with their own SKILL.md + rules + workflows.
 
-**Default shape:** one `primary: true` project skill with workflow routing inside `SKILL.md`. Do **not** create separate skills for ordinary workflow verbs like `fix-bug`, `add-feature`, `review`, or `update-docs`; those are usually `workflows/*.md` under the same project skill because they share project rules, gotchas, validation commands, and Task Closure Protocol.
+**Default shape:** one `primary: true` project skill with workflow routing in its `routing.yaml`. Do **not** create separate skills for ordinary workflow verbs like `fix-bug`, `add-feature`, `review`, or `update-docs`; those are usually `workflows/*.md` under the same project skill because they share project rules, gotchas, validation commands, and Task Closure Protocol.
 
 Split only when the trigger language and rule set form a separate domain: for example `skills/app`, `skills/deploy`, `skills/data-migration`, or `skills/template-builder`. If the proposed child skill still reads the same Always Read files and only differs by procedure, keep it as a workflow.
 
@@ -116,15 +116,15 @@ Fission mechanics:
 
 - **Domains independent?** — Subdomains (e.g. frontend vs. backend) have rules that don't affect each other.
 - **Description too broad?** — Agent frequently matches the skill for tasks that only touch one subdomain.
-- **Common Tasks overloaded?** — Routing table exceeds 10 entries, most tasks only use one subdomain's files.
+- **Task routing overloaded?** — `routing.yaml` exceeds 10 entries, most tasks only use one subdomain's files.
 
 All three Yes → split into separate skills under `skills/`. Move shared rules to `skills/shared/`.
 
 **When to rebuild a skill from scratch instead of splitting.** Sometimes a skill has drifted so far that patching it costs more than starting over. Evaluate rebuild when 2+ of these are true:
 
 1. **> 30% of rules outdated or contradictory** — rules conflict with each other or describe removed features
-2. **Common Tasks routing is fictional** — 3+ routes point to workflows/files that no longer match real project work
-3. **Thin shells and SKILL.md have drifted apart** — generated Always Read, Common Tasks, and shell bootstraps disagree with `routing.yaml`, or manual re-alignment keeps failing
+2. **Canonical task routing is fictional** — 3+ `routing.yaml` routes point to workflows/files that no longer match real project work
+3. **Generated routing hooks have drifted** — generated Always Read, the Common Tasks action hook, or shell bootstraps disagree with `routing.yaml`, or manual re-alignment keeps failing
 4. **Repeated agent errors trace back to "confusing rules"** — the last 5+ agent mistakes were caused by the rules themselves being unclear, not by missing rules
 
 Rebuild path: `cp -R templates/skill/. skills/<name>/` to get a fresh skeleton, then manually migrate only the rules and gotchas that are still valid. Do not copy-paste the old structure — re-evaluate each piece through the recording threshold before including it.

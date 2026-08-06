@@ -17,7 +17,7 @@ description: >
 # <Project Name> (Cursor Entry)
 
 Formal skill content lives at `skills/<name>/SKILL.md`.
-**Read that file immediately, then follow its Always Read list and Common Tasks routing.**
+**Read that file immediately, then follow its Always Read list and Common Tasks action hook; select the exact route from `routing.yaml`.**
 
 ## Quick Routing (survives context truncation)
 
@@ -185,16 +185,16 @@ The wrong diagnosis wastes hours. Check #1 first.
 **If the shell file is missing from the loaded list**: discovery failure. Check case-sensitive filename, harness config (e.g. `.gemini/settings.json` `context.fileName`), then restart the session.
 
 **If the shell file is loaded but the agent still ignores it**: compliance failure. Don't /clear immediately — it erases diagnostic value. First try:
-1. *"Read `SKILL.md` and list the Common Tasks routes you see."* — forces the agent to show its routing view.
-2. *"This task maps to `<route>`. Re-read the required files listed there, then proceed."* — steers without resetting.
+1. *"Read `routing.yaml`, name the exact route and workflow selected for this task."* — forces the agent to show its canonical routing view.
+2. *"This task maps to `<route>`. Re-read that route's workflow, then proceed."* — steers without resetting.
 3. If the skill relies on XML-tag injection, check whether the literal strings `<always-applicable>` / `<task-routing>` still appear in the context inspector — if summarization stripped them, the tags lost their load-bearing role and `/clear` + SessionStart hook reload is the only fix.
 
 ### Manual nudges when the agent routes wrong
 
 Drop-in phrases for when the agent picks the wrong workflow, invents a file, or skips re-reading:
 
-- **"Re-read `SKILL.md` and follow the route for `<task type>`."** — resets the router without a full /clear.
-- **"Before continuing, confirm which Common Tasks row this maps to, and list the required reads."** — forces the agent to announce routing before acting.
+- **"Re-read `routing.yaml` and follow the route for `<task type>`."** — resets the router without a full /clear.
+- **"Before continuing, confirm the selected route id and workflow from `routing.yaml`."** — forces the agent to announce canonical routing before acting.
 - **"You read those files earlier. Context may have compressed — re-read `<file>` before this step."** — explicit permission for re-reads, matching the Session Discipline principle in `SKILL.md`.
 - **"Stop. This is a `<Lite|Folder-light|Full>` scope — don't expand beyond it."** — when the agent starts adding structure you didn't ask for (see Progressive Rigor in `SKILL.md`).
 

@@ -230,14 +230,13 @@ required_sections:
       - "smallest source/runtime slice"
       - "diagnostic evidence, never correctness gates"
       - "one clear action with one direct check"
-      - "only explicit delivery-dependent evidence remains"
-      - "Ready for Delivery"
-      - "verifies the requested artifact"
+      - "remaining Done When evidence must be explicitly delivery-dependent"
+      - "Closure decides readiness/completion"
       - "cross-cutting modifier, never a first-workflow route"
       - "task size or duration alone does not activate it"
       - "## Composite Plan Handoff"
-      - "exactly one Integrating Task Anchor and Native Plan"
-      - "semantic `Current Task` entries"
+      - "composite-plan-execution.md"
+      - "Components never create competing runtime anchors"
       - "## Database-Structure Mutation Gate"
       - "dedicated Plan-local SQL sibling"
       - "never permission to bypass the project migration workflow or write a database"
@@ -253,6 +252,21 @@ required_sections:
       - "component_status"
       - "integration_status"
       - "plan_role"
+
+  - file: templates/skill/protocol-blocks/composite-plan-execution.md
+    must_contain:
+      - "# Composite Plan Execution"
+      - "one truthful Integrating owner"
+      - "one Integrating Task Anchor and one Native Plan"
+      - "Session-only composition creates no durable graph artifact"
+
+  - file: templates/skill/protocol-blocks/user-decision-drift.md
+    must_contain:
+      - "# User Decision Drift"
+      - "Keep the affected path paused"
+      - "Mark every alternative `proposed`"
+      - "mark the prior decision `superseded`"
+      - "A late disclosure in review or Closure never substitutes"
 
   - file: templates/skill/workflows/plan-feature.md
     must_contain:
@@ -388,12 +402,32 @@ required_sections:
       - "Closure does not diagnose root cause or postpone the first write"
       - "Do not re-record an already-reconciled verified failure"
       - "### Post-Completion Workflow Distillation"
-      - "proposal presentation may happen only after `Closure Complete`, with the completion report first"
-      - "Pure composition produces no proposal"
-      - "creates no durable candidate/rejection record"
-      - "rule-update/workflow-distillation.md#accepted-workflow-distillation-input"
+      - "workflow-distillation-proposal.md"
+      - "plan-knowledge-closure.md"
+      - "external-delivery-verification.md"
     must_not_contain:
       - "## Accepted Workflow-Distillation Input"
+
+  - file: templates/skill/protocol-blocks/plan-knowledge-closure.md
+    must_contain:
+      - "# Plan And Knowledge Closure"
+      - "Replay each relevant user-confirmed Decision Context"
+      - "Run Plan Leaf Reconciliation"
+      - "Run Knowledge Reciprocity"
+      - "Calibrate `distilled_to:`"
+
+  - file: templates/skill/protocol-blocks/external-delivery-verification.md
+    must_contain:
+      - "# External Delivery Verification"
+      - "Verify the real artifact rather than a precursor"
+      - "`verified`, `blocked`, `stale`, or `premise-changed`"
+
+  - file: templates/skill/protocol-blocks/workflow-distillation-proposal.md
+    must_contain:
+      - "# Workflow Distillation Proposal"
+      - "only after `Closure Complete`"
+      - "two independently completed instances"
+      - "Decline/defer creates no durable record"
 
   - file: docs/plans/README.md
     must_contain:
@@ -528,6 +562,11 @@ required_files:
   - path: references/business-global-model.md
   - path: references/permission-model.md
   - path: references/tests-as-spec.md
+  - path: templates/skill/protocol-blocks/composite-plan-execution.md
+  - path: templates/skill/protocol-blocks/user-decision-drift.md
+  - path: templates/skill/protocol-blocks/plan-knowledge-closure.md
+  - path: templates/skill/protocol-blocks/external-delivery-verification.md
+  - path: templates/skill/protocol-blocks/workflow-distillation-proposal.md
   - path: templates/skill/conformance.yaml
   - path: templates/skill/scripts/check-version-conformance.sh
   - path: templates/skill/workflows/task-execution.md

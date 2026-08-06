@@ -1,7 +1,7 @@
 ---
 name: {{NAME}}
 description: >
-  <!-- FILL: Domain-level activation only — ≥ 2 quoted phrases in the user's real language(s) + concrete activation conditions. Do NOT list every workflow; Common Tasks routes after activation. Copy byte-for-byte into .cursor/skills/{{NAME}}/SKILL.md. -->
+  <!-- FILL: Domain-level activation only — ≥ 2 quoted phrases in the user's real language(s) + concrete activation conditions. Do NOT list workflows; routing.yaml selects one after activation. Copy byte-for-byte into .cursor/skills/{{NAME}}/SKILL.md. -->
   This skill should be used when the user asks to "<trigger phrase 1>",
   "<trigger phrase 2>", or "<trigger phrase 3 / 中文触发短语>".
   Activate when <condition 1> or <condition 2>.
@@ -10,7 +10,7 @@ description: >
 # {{NAME}} (Cursor Entry)
 
 Formal skill content lives at `skills/{{NAME}}/SKILL.md`.
-**Read that file immediately, then follow its Always Read list and Common Tasks routing.**
+**Read that file immediately, then follow its Always Read list and Common Tasks action hook; select the exact route from `routing.yaml`.**
 
 Conflicts between loaded project instructions → formal docs in `skills/{{NAME}}/` win. This does not override harness-native skill name precedence.
 

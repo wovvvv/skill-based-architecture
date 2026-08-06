@@ -4,7 +4,7 @@
 # Example: bash smoke-test.sh my-project
 #          bash smoke-test.sh my-project --phase 4   # run only Phase 4 subset
 #
-# Zero manual input required. Checks routing.yaml-generated blocks plus SKILL.md Common Tasks.
+# Zero manual input required. Checks canonical routing.yaml plus generated action/bootstrap blocks.
 # Supports both English and Chinese (中文) section names.
 # Exit code: 0 = all pass, 1 = failures found.
 #
@@ -18,7 +18,7 @@
 #                                   optional domain manifest reported separately, shells ≤ 60 lines,
 #                                   gotchas/pitfall ≤ $GOTCHAS_MAX_LINES (default 400),
 #                                   no duplicate ## headings in gotchas/pitfall files,
-#                                   Common Tasks ≤ $COMMON_TASKS_MAX_ROWS rows
+#                                   task routes ≤ $TASK_ROUTES_MAX rows
 #                                   (default 10) — both env-overridable
 #   3. Placeholder Residue        — no {{NAME}} / {{SUMMARY}} leftover;
 #                                   no unreplaced <!-- FILL: --> markers
@@ -26,9 +26,8 @@
 #                                   ≥ 2 quoted trigger phrases in real user
 #                                   language(s), not keyword-stuffed (WARN if
 #                                   > $DESCRIPTION_MAX_TRIGGERS quoted phrases),
-#                                   Common Tasks + Known Gotchas sections exist
-#   5. Routing Completeness       — routing.yaml generated summary/bootstraps match;
-#                                   every file referenced in Common Tasks exists
+#                                   Common Tasks action hook + Known Gotchas sections exist
+#   5. Routing Completeness       — routing.yaml structure/paths and generated blocks match
 #   6. Description Consistency    — SKILL.md and .cursor/skills/<name>/SKILL.md
 #                                   descriptions match byte-for-byte
 #   7. Shell Routing Consistency  — AGENTS / CLAUDE / CODEX / GEMINI shells
@@ -55,9 +54,9 @@
 # Defaults are opinionated but adjustable per-project via env. Raise only with
 # a principled reason; these caps exist to force fission/pruning rather than
 # unbounded growth. Example override:
-#     GOTCHAS_MAX_LINES=600 COMMON_TASKS_MAX_ROWS=12 bash smoke-test.sh my-skill
+#     GOTCHAS_MAX_LINES=600 TASK_ROUTES_MAX=12 bash smoke-test.sh my-skill
 GOTCHAS_MAX_LINES="${GOTCHAS_MAX_LINES:-400}"
-COMMON_TASKS_MAX_ROWS="${COMMON_TASKS_MAX_ROWS:-10}"
+TASK_ROUTES_MAX="${TASK_ROUTES_MAX:-${COMMON_TASKS_MAX_ROWS:-10}}"
 DESCRIPTION_MIN_WORDS="${DESCRIPTION_MIN_WORDS:-20}"
 DESCRIPTION_MIN_CJK_CHARS="${DESCRIPTION_MIN_CJK_CHARS:-40}"
 # Description is a coarse activation gate, not a workflow index. More than this
@@ -340,7 +339,7 @@ if sub_runs "1c"; then
 
   # 1d. SessionStart re-injection hook (WARN-only — harness-dependent).
   # Pitfall #7: on /clear or /compact the harness summarizes context and the
-  # SKILL.md routing table drops out. A SessionStart hook re-injects it. Never
+  # The SKILL.md action hook and routing bootstrap can drop out. A SessionStart hook re-injects them. Never
   # fails — not every harness supports hooks. Only checked when .claude/ exists.
   # Skill-aware: in a multi-skill repo, having *a* hook is not enough — it must
   # re-inject THIS skill's router (skills/$NAME/), else $NAME stays unprotected.
@@ -353,7 +352,7 @@ if sub_runs "1c"; then
         warn "a SessionStart hook exists but does not reference skills/$NAME/ — in this multi-skill repo this skill's router may not be re-injected after /clear or /compact (Pitfall #7)"
       fi
     else
-      warn "no SessionStart hook in .claude/settings*.json — SKILL.md routing can silently drop after /clear or /compact (Pitfall #7); see templates/hooks/session-start"
+      warn "no SessionStart hook in .claude/settings*.json — the routing bootstrap can silently drop after /clear or /compact (Pitfall #7); see templates/hooks/session-start"
     fi
   fi
 fi
@@ -467,32 +466,20 @@ for gotcha_file in "$SKILL_DIR/references"/*gotcha*.md "$SKILL_DIR/references"/*
   fi
 done
 
-# 2b. Common Tasks row count — per-task routing efficiency, not disk size.
-# Each routing row imposes cognitive cost at task-match time. > $COMMON_TASKS_MAX_ROWS
-# means the skill is doing too many things; candidate for fission (see
-# references/layout.md § Multi-Skill Projects).
-if [[ -f "$SKILL_MD" ]]; then
-  CT_COUNTS=$(awk '
-    /^## (Common Tasks|常见任务)/ { in_ct=1; next }
-    in_ct && /^## / { exit }
-    in_ct && /^\|/ { table++ }
-    in_ct && /^[[:space:]]*[-*][[:space:]]+/ { bullet++ }
-    END { print table+0, bullet+0 }
-  ' "$SKILL_MD")
-  read -r TABLE_LINES BULLET_ROWS <<< "$CT_COUNTS"
-  # Prefer markdown table rows when present (subtract header + separator rows),
-  # otherwise support the bullet-list format used by templates/skill/SKILL.md.template.
-  if [[ "$TABLE_LINES" -gt 0 ]]; then
-    CT_ROWS=$((TABLE_LINES > 2 ? TABLE_LINES - 2 : 0))
+# 2b. Canonical task-route count — routing.yaml is the sole route-data owner.
+if [[ -f "$ROUTING_YAML" ]]; then
+  TASK_ROUTE_COUNT=$(awk '
+    /^tasks:/ { in_tasks=1; next }
+    in_tasks && /^[^[:space:]#]/ { exit }
+    in_tasks && /^  - id:/ { count++ }
+    END { print count+0 }
+  ' "$ROUTING_YAML")
+  if [[ "$TASK_ROUTE_COUNT" -eq 0 ]]; then
+    fail "routing.yaml has no task routes"
+  elif [[ "$TASK_ROUTE_COUNT" -le "$TASK_ROUTES_MAX" ]]; then
+    pass "routing.yaml: $TASK_ROUTE_COUNT task routes (≤ $TASK_ROUTES_MAX)"
   else
-    CT_ROWS="$BULLET_ROWS"
-  fi
-  if [[ "$CT_ROWS" -eq 0 ]]; then
-    warn "Common Tasks routing appears empty or non-standard format"
-  elif [[ "$CT_ROWS" -le "$COMMON_TASKS_MAX_ROWS" ]]; then
-    pass "Common Tasks: $CT_ROWS routes (≤ $COMMON_TASKS_MAX_ROWS)"
-  else
-    fail "Common Tasks: $CT_ROWS routes (exceeds $COMMON_TASKS_MAX_ROWS — evaluate fission or route consolidation)"
+    fail "routing.yaml: $TASK_ROUTE_COUNT task routes (exceeds $TASK_ROUTES_MAX — evaluate fission or route consolidation)"
   fi
 fi
 
@@ -570,12 +557,10 @@ if [[ -f "$SKILL_MD" ]]; then
     fail "description has only $TRIGGER_COUNT quoted trigger phrases (need ≥ 2)"
   fi
 
-  # 4c-stuffing. Too MANY quoted phrases = workflow-keyword stuffing (Pitfall #3 /
-  # Principle #7). The description is a coarse activation gate, not a workflow
-  # index; enumerating every task's keywords leaks which workflows exist and
-  # competes with Common Tasks routing. WARN-only — judgment call.
+  # 4c-stuffing. Too MANY quoted phrases = workflow-keyword stuffing. The
+  # description is a coarse activation gate; exact task phrases live in routing.yaml.
   if [[ "$TRIGGER_COUNT" -gt "$DESCRIPTION_MAX_TRIGGERS" ]]; then
-    warn "description has $TRIGGER_COUNT quoted phrases (> $DESCRIPTION_MAX_TRIGGERS) — likely workflow-keyword stuffing; keep it domain-level, move task keywords to Common Tasks (Pitfall #3)"
+    warn "description has $TRIGGER_COUNT quoted phrases (> $DESCRIPTION_MAX_TRIGGERS) — likely workflow-keyword stuffing; keep it domain-level, move task keywords to routing.yaml"
   fi
 
   # 4d. Has Always Read section (English or Chinese)
@@ -625,7 +610,7 @@ fi
 fi  # end section 4
 
 # ── 5. Routing Completeness ──────────────────────────────────────────
-if section 5 "Routing Completeness (auto-parsed from Common Tasks)"; then :
+if section 5 "Routing Completeness (canonical routing.yaml)"; then :
 
 if [[ -f "$SKILL_MD" ]]; then
   ROUTING_SYNC="$SKILL_DIR/scripts/sync-routing.sh"
@@ -635,110 +620,13 @@ if [[ -f "$SKILL_MD" ]]; then
   fi
   if [[ -f "$ROUTING_YAML" && -f "$ROUTING_SYNC" ]]; then
     if ROUTING_OUTPUT=$(bash "$ROUTING_SYNC" "$SKILL_DIR" --check 2>&1); then
-      pass "routing.yaml generated blocks are in sync"
+      pass "routing.yaml structure, paths, and generated blocks are valid"
     else
       fail "routing.yaml generated blocks drifted"
       printf '%s\n' "$ROUTING_OUTPUT" | sed 's/^/       /' | head -50
     fi
   fi
 
-  # Extract file references from Common Tasks / 常见任务 section
-  IN_COMMON_TASKS=false
-  REFERENCED_FILES=()
-  while IFS= read -r line; do
-    if [[ "$line" =~ ^##[[:space:]]+(Common[[:space:]]+Tasks|常见任务) ]]; then
-      IN_COMMON_TASKS=true
-      continue
-    fi
-    if $IN_COMMON_TASKS && [[ "$line" =~ ^## ]]; then
-      break
-    fi
-    if $IN_COMMON_TASKS; then
-      # Skip lines that are fully inside a multi-line HTML comment.
-      # FILL comments often contain example paths as documentation — those
-      # are not real references and should not trigger existence checks.
-      if [[ "${IN_COMMENT:-false}" == "true" ]]; then
-        if [[ "$line" == *"-->"* ]]; then
-          IN_COMMENT=false
-        fi
-        continue
-      fi
-
-      # Strip single-line HTML comments (<!-- ... --> on one line)
-      stripped_line=$(printf '%s' "$line" | sed -E 's/<!--([^-]|-[^-]|--[^>])*-->//g')
-
-      # Detect start of multi-line comment (opens without close on this line)
-      if [[ "$stripped_line" == *"<!--"* ]]; then
-        IN_COMMENT=true
-        stripped_line="${stripped_line%%<!--*}"
-      fi
-
-      # Extract backtick-quoted relative paths (rules/, workflows/, references/)
-      while [[ "$stripped_line" =~ \`((rules|workflows|references)/[^\`]+)\` ]]; do
-        ref="${BASH_REMATCH[1]}"
-        REFERENCED_FILES+=("$ref")
-        stripped_line="${stripped_line#*\`$ref\`}"
-      done
-    fi
-  done < "$SKILL_MD"
-
-  # Deduplicate (handle empty array gracefully)
-  if [[ ${#REFERENCED_FILES[@]} -eq 0 ]]; then
-    warn "No file references found in Common Tasks (section may be empty or use non-standard format)"
-  else
-    UNIQUE_FILES=($(printf '%s\n' "${REFERENCED_FILES[@]}" | sort -u))
-
-    echo "  Found ${#UNIQUE_FILES[@]} unique file references in Common Tasks:"
-    for ref in "${UNIQUE_FILES[@]}"; do
-      full_path="$SKILL_DIR/$ref"
-      # Skip wildcard patterns like rules/*.md
-      if [[ "$ref" == *'*'* ]]; then
-        pass "  $ref (wildcard pattern, skipping existence check)"
-        continue
-      fi
-      # Skip angle-bracket placeholders like rules/<x>.md — treat as template residue
-      if [[ "$ref" == *'<'* || "$ref" == *'>'* ]]; then
-        warn "  $ref looks like an unfilled template placeholder — replace with a real path"
-        continue
-      fi
-      if [[ -f "$full_path" ]]; then
-        pass "  $ref exists"
-      else
-        fail "  $ref referenced in Common Tasks but file missing at $full_path"
-      fi
-    done
-  fi
-
-  # Also check Always Read / 必读 references
-  echo ""
-  echo "  Always Read / 必读 references:"
-  IN_ALWAYS_READ=false
-  FOUND_ALWAYS_READ=false
-  while IFS= read -r line; do
-    if [[ "$line" =~ ^##[[:space:]]+(Always[[:space:]]+Read|必读) ]]; then
-      IN_ALWAYS_READ=true
-      continue
-    fi
-    if $IN_ALWAYS_READ && [[ "$line" =~ ^## ]]; then
-      break
-    fi
-    if $IN_ALWAYS_READ; then
-      while [[ "$line" =~ \`((rules|workflows|references)/[^\`]+)\` ]]; do
-        ref="${BASH_REMATCH[1]}"
-        FOUND_ALWAYS_READ=true
-        full_path="$SKILL_DIR/$ref"
-        if [[ -f "$full_path" ]]; then
-          pass "  $ref exists"
-        else
-          fail "  $ref in Always Read but file missing at $full_path"
-        fi
-        line="${line#*\`$ref\`}"
-      done
-    fi
-  done < "$SKILL_MD"
-  if ! $FOUND_ALWAYS_READ; then
-    warn "  No file references found in Always Read section"
-  fi
 fi
 
 fi  # end section 5
@@ -810,7 +698,7 @@ fi  # end section 7
 
 # ── 8. Broken Link Check ──────────────────────────────────────────────
 # Catches "path drift": agent renames or deletes a file but only updates SOME
-# of the references to it. Section 5 covers the generated Common Tasks summary only;
+# of the references to it. Section 5 covers canonical routing and generated blocks;
 # this section scans every relative markdown link [text](path) across all skill
 # .md files and verifies each target exists. Companion to audit-orphans.sh
 # (which finds *orphan* files — files no one links to). Together they cover

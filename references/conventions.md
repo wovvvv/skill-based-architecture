@@ -64,7 +64,7 @@ Some content describes a pitfall that is explanatory (describes a gotcha) but vi
 - **"You must do X"** (prescriptive) → Rule
 - **"Watch out for X"** (descriptive warning) → Reference (`references/gotchas.md`)
 
-Both are valuable. The key difference: rules are constraints agents must follow; references/gotchas are warnings agents should be aware of. If a gotcha is costly enough that it should never be missed, also surface it in the relevant workflow checklist or SKILL.md routing (see Activation over Storage principle).
+Both are valuable. The key difference: rules are constraints agents must follow; references/gotchas are warnings agents should be aware of. If a gotcha is costly enough that it should never be missed, activate it from the relevant workflow checkpoint; add or change a `routing.yaml` task route only when task-to-workflow selection itself changes (see Activation over Storage principle).
 
 ### Classify as Docs when
 
@@ -115,14 +115,14 @@ Common symptoms and their fixes:
 |---------|-------------|-----|
 | Skill never triggers | Description too vague, too short (< 20 words or < 40 CJK chars), or missing the language users ask in | Rewrite with ≥ 2 quoted trigger phrases in the user's actual language(s) + concrete activation conditions |
 | Agent forgets rules in long conversations | Thin shells lack `routing.yaml` bootstraps | Embed the route lookup protocol in every entry file — natural language instructions get lost in context summarization |
-| Agent keeps making the same mistake | Pitfall stored in `references/` but not in the task execution path | Surface the lesson in workflow checklist, SKILL.md routing, or a concise rule |
+| Agent keeps making the same mistake | Pitfall stored in `references/` but not in the task execution path | Surface the lesson in the owning workflow checkpoint or a concise rule; change `routing.yaml` only when task selection changes |
 | AAR never runs | Auto-Triggers require agent to judge "behavior-changing"; agent defaults to skipping | Use Task Closure Protocol: trigger on "any non-trivial task", not "behavior-changing tasks" |
 | Records are project-specific and unreadable outside context | No generalization check on recordings | Apply Generalization Rule: rewrite as reusable pattern before recording |
 | Rules grow endlessly, quality declines | Recording threshold not enforced | Re-check 2/3 criteria (repeatable + costly + not obvious); run Rule Deprecation |
 | Cursor can't see the skill | Missing `.cursor/skills/<name>/SKILL.md` registration entry | Create registration entry with matching description + inline routing |
 | Broken links after file changes | Renamed or deleted files without integrity check | Run maintain-docs Step 4 after any rename, merge, split, or deletion |
-| Common Tasks routing misses frequent tasks | `routing.yaml` doesn't reflect actual task distribution | List top 5–10 real tasks, confirm each has a `routing.yaml` entry, then run `scripts/sync-routing.sh` |
-| Agent reads too many files per task | Always Read contains conditional knowledge, or task routes precompute later reads | Default Always Read to empty; let Common Tasks select only a workflow, then load knowledge from evidence and lifecycle checkpoints |
+| Task routing misses frequent tasks | `routing.yaml` doesn't reflect actual task distribution | List top 5–10 real tasks, confirm each has a `routing.yaml` entry, then run `scripts/sync-routing.sh` |
+| Agent reads too many files per task | Always Read contains conditional knowledge, or task routes precompute later reads | Default Always Read to empty; let `routing.yaml` select only a workflow, then load knowledge from evidence and lifecycle checkpoints |
 
 ## File Size Guidelines
 

@@ -50,12 +50,7 @@ Modifying workflows load `rules/change-discipline.md` immediately before the fir
 
 ## Common Tasks
 
-Each task entry selects the first workflow. The workflow gathers the smallest evidence and pulls knowledge only when a current decision needs it:
-
-- Add feature X → follow `workflows/<task>.md`; load domain/rules/references only after its evidence gate
-- Add feature Y → follow `workflows/<task>.md`; read `references/<topic>.md` only when the workflow reaches that decision
-- Fix bug → follow `workflows/fix-bug.md`; load task-relevant rules before mutation and Gotchas only when diagnosis needs them
-- **Other / unlisted task** → select `workflows/task-execution.md`; do not synthesize an eager read bundle
+This section is only an action hook: read `routing.yaml`, match exactly one route by labels, trigger examples, and intent, fall back to `other`, then follow only that route's workflow. Exact route ids, labels, triggers, workflow paths, fallback, notes, and route metadata live only in `routing.yaml`; do not repeat rows here.
 
 ## Known Gotchas
 
@@ -102,8 +97,8 @@ Guidelines:
 - **Include quoted trigger phrases** — exact phrases the user would say for the skill's domain / intent cluster
 - **Third-person format** — "This skill should be used when…" not "I help with…"
 - **Include activation conditions** — describe the context, not just the action
-- **Do not enumerate workflows** — `fix-bug`, `release`, `maintain-docs`, etc. belong in Common Tasks unless they identify a separate domain skill
-- **Name near-miss anti-triggers** — list three similar user requests that should NOT activate this skill. If you cannot name them, the description is probably too broad; move workflow verbs into Common Tasks or split the domain.
+- **Do not enumerate workflows** — `fix-bug`, `release`, `maintain-docs`, etc. belong in `routing.yaml` task routes unless they identify a separate domain skill
+- **Name near-miss anti-triggers** — list three similar user requests that should NOT activate this skill. If you cannot name them, the description is probably too broad; move workflow verbs into `routing.yaml` or split the domain.
 
 #### Trap: a step-summary in the description suppresses reading the body
 
@@ -125,19 +120,19 @@ description: >
   "整理项目规则", or "migrate project rules to skills".
 ```
 
-**Check — applies at every summary→detail link, not just the description:** does the description, *or any Common Tasks row / `routing.yaml` label*, carry any HOW an agent could execute without opening the body or workflow file? If yes, the agent will do exactly that and skip the detail — strip it to WHEN + which-file; the steps live only in the body/workflow. (Same shortcut as Pitfall #8 "I already know the rules", generalized: any layer that leaks enough HOW gets the layer below it skipped.)
+**Check — applies at every summary→detail link, not just the description:** does the description or any `routing.yaml` label/trigger/metadata field carry HOW an agent could execute without opening the body or workflow file? If yes, the agent will do exactly that and skip the detail — strip it to WHEN + which-file; the steps live only in the body/workflow. (Same shortcut as Pitfall #8 "I already know the rules", generalized: any layer that leaks enough HOW gets the layer below it skipped.)
 
 Re-read the `description` block aloud after changing frontmatter. Listen for over-broad scope, workflow keyword stuffing, near-misses you cannot exclude, and (in multi-skill repos) duplicate trigger phrases between skills. No script substitutes for this judgment.
 
 The template above uses evidence-separated stages:
 
 - **Always Read** — empty by default; add only a file every real task needs before workflow selection
-- **Common Tasks** — each generated row selects exactly one first workflow and carries no knowledge bundle
+- **Common Tasks** — one generated action hook points to canonical `routing.yaml`; it contains no route rows or knowledge bundle
 - **Domain selection** — optional `domain-routing.yaml`, evaluated by the workflow only after an explicit business-rule request, known owner, or decision-relevant evidence requires business semantics
 
 **Keep routing in sync:** When task-to-workflow selection or Always Read changes, update `routing.yaml`. When a business owner is first added or changed, update `domain-routing.yaml` atomically. Run `scripts/sync-routing.sh` for both cases; it validates the optional domain manifest without copying it into startup summaries.
 
-**Common Tasks sizing:** Keep entries to 8–10 task procedures maximum. Beyond that, agents waste tokens scanning unrelated entries. Merge low-frequency procedures into a real fallback workflow; do not encode business domains into the task table.
+**Task-route sizing:** Keep `routing.yaml` to 8–10 task procedures maximum. Beyond that, route selection itself becomes noisy. Merge low-frequency procedures into a real fallback workflow; do not encode business domains into the task table.
 
 **"Other / unlisted task" matching:** The fallback entry still selects one real workflow, normally the generic task-execution workflow. It must not hide executable search instructions inside the `workflow` field.
 
@@ -170,7 +165,7 @@ Agent reliability lives on three layers. This skill is **not** a silver bullet �
 | Layer | Question it answers | What this skill provides |
 |---|---|---|
 | **Prompt Engineering** | How do I phrase the task so the model understands? | Indirect — via the `description` frontmatter as a trigger condition, and via the writing style guidance for rules / workflows |
-| **Context Engineering** | How do I deliver the right information to the model? | **Primary focus** — two-layer routing (Always Read + Common Tasks), thin shells with inline routing, registration entry, progressive disclosure |
+| **Context Engineering** | How do I deliver the right information to the model? | **Primary focus** — empty-by-default Always Read + canonical manifest routing, thin-shell bootstraps, registration entry, progressive disclosure |
 | **Harness Engineering** | How does the surrounding system keep execution stable when the model alone is not enough? | **Partial** — Session Discipline + Rationalizations Table + SessionStart hook = a minimal harness for *context re-injection across long sessions* |
 
 ### The Four-Primitive Audit

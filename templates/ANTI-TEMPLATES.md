@@ -49,9 +49,9 @@ When the candidate is **borrowed from an external skill, project, or benchmark**
 - **Why rejected:** copying a Tests-as-Spec, permission/operation model, or similar opt-in doctrine into every downstream makes stored content look adopted even when no route, baseline, or project table activates it.
 - **Where it should go:** an upstream adoption guide under `references/`; materialize a project file only after real pressure, then add its task path and concrete project decisions in the same change.
 
-### Pre-populated "Common Tasks" entries in SKILL.md
-- **Why rejected:** the whole value of Common Tasks routing is that it reflects *this project's* actual recurring tasks. A generic list ("Add feature", "Fix bug", "Refactor") teaches agents to route generically.
-- **Where it should go:** `routing.yaml` with `<!-- FILL: -->` markers, then generate `SKILL.md` Common Tasks and thin-shell blocks via `scripts/sync-routing.sh`.
+### Pre-populated generic task routes or duplicated route rows in SKILL.md
+- **Why rejected:** task routing must reflect *this project's* actual recurring work, and exact route data needs one owner. A generic list ("Add feature", "Fix bug", "Refactor") teaches agents to route generically; copying real rows into `SKILL.md` creates a second catalog.
+- **Where it should go:** `routing.yaml` with project-specific entries, then generate only the `SKILL.md` Common Tasks action hook and thin-shell blocks via `scripts/sync-routing.sh`.
 
 ### Default product-knowledge taxonomy or empty business-model placeholders
 - **Why rejected:** business-bearing projects disagree on module boundaries and on which macro facts are stable. Pre-creating product-context/use-case/domain/state/sequence trees, an empty `references/business/`, empty module files, or a placeholder index creates false completeness and invites volatile details to fill the space.
@@ -118,7 +118,7 @@ YYYY-MM-DD — Go CLI (proj-a) vs Next.js site (proj-b)
   ✅ Skeleton: identical (shells, hooks, protocol-blocks) — expected
   ⚠️  rules/coding-standards.md: 3 lines identical → those 3 lines might be too generic, review
   ✅ gotchas.md: empty in both — correct
-  ✅ SKILL.md Common Tasks: fully different — correct
+  ✅ routing.yaml task routes: fully different — correct
 ```
 
 <!-- FILL: add drift log entries as they are run. The log is the main evidence that B.5/B.6 is working. -->

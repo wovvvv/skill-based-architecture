@@ -45,6 +45,39 @@ assert_not_contains() {
   fi
 }
 
+unsafe_backtick_assertions="$(
+  awk '
+    /assert_(not_)?contains/ {
+      in_double = 0
+      escaped = 0
+      for (i = 1; i <= length($0); i++) {
+        char = substr($0, i, 1)
+        if (escaped) {
+          escaped = 0
+          continue
+        }
+        if (char == "\\") {
+          escaped = 1
+          continue
+        }
+        if (char == "\"") {
+          in_double = !in_double
+          continue
+        }
+        if (char == "`" && in_double) {
+          print NR ":" $0
+          break
+        }
+      }
+    }
+  ' "$0"
+)"
+if [[ -n "$unsafe_backtick_assertions" ]]; then
+  echo "Unsafe assertion quoting: literal backticks inside double quotes execute command substitution." >&2
+  echo "$unsafe_backtick_assertions" >&2
+  exit 1
+fi
+
 check_scenario() {
   local name="$1" manifest="$2" prompt="$3" route="$4" workflow="$5"
   local block
@@ -208,6 +241,8 @@ for shell in \
 done
 
 task_execution="$(<templates/skill/workflows/task-execution.md)"
+composite_execution="$(<templates/skill/protocol-blocks/composite-plan-execution.md)"
+user_decision_drift="$(<templates/skill/protocol-blocks/user-decision-drift.md)"
 template_routing="$(<templates/skill/routing.yaml)"
 self_routing="$(<references/self-hosting-routing.yaml)"
 templates_shells="$(<templates/shells/AGENTS.md)$(<templates/shells/CLAUDE.md)$(<templates/shells/CODEX.md)$(<templates/shells/GEMINI.md)"
@@ -219,17 +254,13 @@ assert_not_contains "$templates_shells" "explicit business request" "generated s
 assert_contains "$templates_shells" "explicit business-rule request" "generated shells keep business-rule activation boundary"
 assert_not_contains "$templates_shells" "Skip closure only" "generated shells defer skip policy to Closure owner"
 assert_contains "$task_execution" "Simple tasks skip this protocol" "task execution Simple no-ceremony boundary"
-assert_contains "$task_execution" "After any needed alignment, proceed without waiting unless" "task execution auto-start default"
+assert_contains "$task_execution" "Proceed unless a real decision, authority boundary" "task execution auto-start default"
 assert_contains "$task_execution" "harness's native Plan/Task surface" "task execution native plan preference"
-assert_contains "$task_execution" "runtime state, not a fixed chat template" "task execution state-presentation boundary"
 assert_contains "$task_execution" "natural-language alignment" "task execution default natural presentation"
 assert_contains "$task_execution" "do not repeat its steps in chat" "task execution no native-plan duplication"
 assert_contains "$task_execution" "## Presentation Gate" "task execution presentation selection gate"
-assert_contains "$task_execution" "Evaluate **Structured Brief first**" "task execution structured-first precedence"
-assert_contains "$task_execution" "Compact Alignment is allowed only when all Structured conditions are false" "task execution compact fallback boundary"
-assert_contains "$task_execution" "first user-facing task-start message MUST begin with separate Goal" "task execution full brief escalation"
-assert_contains "$task_execution" "Steps must be numbered" "task execution full brief numbered plan"
-assert_contains "$task_execution" "do not collapse the brief into prose" "task execution full brief remains scannable"
+assert_contains "$task_execution" "states separate Goal, Done When, material Boundaries, and numbered Steps" "task execution full brief escalation"
+assert_contains "$task_execution" "does not create durable planning files or recover task state across Sessions" "task execution state-presentation boundary"
 assert_contains "$task_execution" "## Recitation Loop" "task execution recitation section"
 assert_contains "$task_execution" "Before each main Plan step" "task execution per-step Anchor checkpoint"
 assert_contains "$task_execution" "cross-cutting modifier, never a first-workflow route" "task execution modifier-only long-run activation"
@@ -242,12 +273,12 @@ assert_contains "$task_execution" "receiving a successful exit code" "task execu
 assert_contains "$task_execution" "If it contradicts the premise" "task execution evidence return path"
 assert_contains "$task_execution" "if it is inconclusive" "task execution inconclusive evidence stays open"
 assert_contains "$task_execution" "## User Decision Drift Gate" "task execution immediate user-drift gate"
-assert_contains "$task_execution" "canonical owner of the gate's trigger" "task execution canonical drift owner"
-assert_contains "$task_execution" "Pause the affected implementation path immediately" "task execution drift pauses affected path"
-assert_contains "$task_execution" "Independent work may continue only when it cannot prejudge the decision" "task execution affected-path concurrency boundary"
-assert_contains "$task_execution" 'Mark every alternative `proposed`' "task execution proposed-alternative transition"
-assert_contains "$task_execution" 'mark the prior decision `superseded`' "task execution superseded-mainline transition"
-assert_contains "$task_execution" "never treat a late disclosure in review/Closure" "task execution rejects deferred drift disclosure"
+assert_contains "$task_execution" "user-decision-drift.md" "task execution conditional drift owner link"
+assert_contains "$task_execution" "pause the affected path immediately" "task execution drift pauses affected path"
+assert_contains "$user_decision_drift" "Keep the affected path paused" "decision drift affected-path concurrency boundary"
+assert_contains "$user_decision_drift" 'Mark every alternative `proposed`' "decision drift proposed-alternative transition"
+assert_contains "$user_decision_drift" 'mark the prior decision `superseded`' "decision drift superseded-mainline transition"
+assert_contains "$user_decision_drift" "A late disclosure in review or Closure never substitutes" "decision drift rejects deferred disclosure"
 assert_contains "$task_execution" "do not narrate it before every tool call" "task execution no per-tool narration"
 assert_contains "$task_execution" "does not create durable planning files or recover task state across Sessions" "task execution session-only boundary"
 assert_contains "$task_execution" "a new independent outcome re-matches the route and replaces them" "task execution new-task reset"
@@ -275,40 +306,43 @@ assert_contains "$change_discipline" "project-rules.md" "mutation-time project-r
 assert_contains "$change_discipline" "coding-standards.md" "mutation-time coding-rule activation"
 
 assert_contains "$task_execution" "one clear action with one direct check" "task execution Simple direct path"
-assert_contains "$task_execution" "present only useful alignment" "task execution proportional Anchor presentation"
+assert_contains "$task_execution" "Present only useful alignment" "task execution proportional Anchor presentation"
 assert_contains "$task_execution" "do not repeat its steps in chat" "task execution native Plan deduplication"
 assert_contains "$task_execution" "Before each main Plan step" "task execution Anchor checkpoint activation"
 
 task_closure="$(<templates/skill/workflows/task-closure.md)"
+plan_knowledge_closure="$(<templates/skill/protocol-blocks/plan-knowledge-closure.md)"
+external_delivery="$(<templates/skill/protocol-blocks/external-delivery-verification.md)"
+workflow_proposal="$(<templates/skill/protocol-blocks/workflow-distillation-proposal.md)"
 assert_contains "$task_closure" "### Entry Gate" "closure execution entry gate"
 assert_contains "$task_closure" 'return to [`task-execution.md`](task-execution.md)' "closure cannot finish execution"
 assert_contains "$task_closure" "final Anchor Checkpoint" "closure final Anchor checkpoint"
-assert_contains "$task_closure" "Replay the user-confirmed mainline" "closure decision-mainline replay"
-assert_contains "$task_closure" "Reconcile Component owners first" "closure reconciliation owner"
-assert_contains "$task_closure" "If Closure first surfaces material drift" "closure rejects first drift disclosure"
-assert_contains "$task_closure" "for business-bearing decisions, also read the routed business rule" "closure optional business-leaf boundary"
-assert_contains "$task_closure" "task-execution.md#user-decision-drift-gate" "closure drift-owner link"
+assert_contains "$task_closure" "plan-knowledge-closure.md" "closure conditional Plan/Knowledge owner link"
+assert_contains "$plan_knowledge_closure" "Replay each relevant user-confirmed Decision Context" "Plan/Knowledge decision-mainline replay"
+assert_contains "$plan_knowledge_closure" "read every Component from its canonical owner" "Plan/Knowledge reconciliation owner"
+assert_contains "$plan_knowledge_closure" "Material drift returns to [" "Plan/Knowledge rejects first drift disclosure"
+assert_contains "$plan_knowledge_closure" "read the routed business rule" "Plan/Knowledge optional business-leaf boundary"
 assert_contains "$task_closure" "Ready for Delivery" "closure distinguishes readiness from completion"
 assert_contains "$task_closure" "Closure never grants commit, push, MR, deploy, publish" "closure preserves delivery authority boundary"
-assert_contains "$task_closure" "leaves Closure open" "closure stays open on delivery failure"
-assert_contains "$task_closure" "without rerunning unrelated local checks" "closure scopes unchanged external retries"
+assert_contains "$task_closure" "external-delivery-verification.md" "closure conditional external-delivery owner link"
+assert_contains "$external_delivery" 'Return `blocked`' "external delivery stays open on failure"
+assert_contains "$external_delivery" "Retry only the external boundary" "external delivery scopes unchanged retries"
 assert_contains "$task_closure" "Closure Complete" "closure verifies delivery before completion"
 assert_contains "$task_closure" "The command exited 0, so the stage is complete" "closure build-success false-completion scenario"
 assert_contains "$task_closure" "proves only the command's own contract" "closure exit-code evidence boundary"
 assert_contains "$task_closure" "treating that exit code as sufficient completion evidence by itself" "closure red-flags exit-code sufficiency"
 assert_contains "$task_closure" 'final expanded [`Change Contract`](../protocol-blocks/change-contract.md)' "closure bound-contract reconciliation"
 assert_contains "$task_closure" "does not define Semantic Intent or source-localization stages" "closure stays a consumer"
-assert_contains "$task_closure" "Reconcile Component owners first" "closure reconciles Component owners before integration"
-assert_contains "$task_closure" 'enumerate `consumes` and read current truth from each Component owner rather than a mirror' "closure reads Component truth at its owner"
-assert_contains "$task_closure" 'no required Component may remain `draft` or `executing`' "closure blocks unfinished Components"
-assert_contains "$task_closure" 'Reject missing, `abandoned`, unresolved-Delta, or superseded-but-still-consumed inputs' "closure blocks stale Component inputs"
-assert_contains "$task_closure" "Abandoning the Integrating Plan leaves independent Component states unchanged" "integration abandonment preserves Component lifecycle"
+assert_contains "$plan_knowledge_closure" "read every Component from its canonical owner" "closure reads Component truth at its owner"
+assert_contains "$plan_knowledge_closure" "unfinished required inputs" "closure blocks unfinished Components"
+assert_contains "$plan_knowledge_closure" 'missing, `abandoned`, unresolved-Delta, superseded-but-consumed' "closure blocks stale Component inputs"
+assert_contains "$plan_knowledge_closure" "Abandoning an Integrating Plan never changes independent Component state" "integration abandonment preserves Component lifecycle"
 assert_contains "$task_closure" "SQL-file existence alone is neither schema readiness nor DB delivery" "closure separates SQL review from DB delivery"
-assert_contains "$task_closure" "authoritative schema/data readback" "closure requires authoritative DB delivery proof"
+assert_contains "$external_delivery" "authoritative schema/data readback" "closure requires authoritative DB delivery proof"
 assert_contains "$task_closure" "Account for verified failures" "closure accounts for repair-time learning"
 assert_contains "$task_closure" 'rule-update/verified-failure.md` § Verified Failure Input' "closure requires one outcome per verified failure"
 assert_contains "$task_closure" 'rule-update/knowledge-reconciliation.md' "ordinary AAR enters Knowledge Reconciliation directly"
-assert_contains "$task_closure" 'rule-update/workflow-distillation.md#accepted-workflow-distillation-input' "accepted workflow enters Workflow Distillation directly"
+assert_contains "$task_closure" 'workflow-distillation-proposal.md' "closure activates post-completion proposal owner"
 assert_contains "$task_closure" "Closure does not diagnose root cause or postpone the first write" "closure stays accounting-only"
 assert_contains "$task_closure" "Do not re-record an already-reconciled verified failure" "closure does not duplicate repair-time learning"
 assert_contains "$task_closure" "verified failure that lacks a completed learning outcome" "closure rejects missing learning outcome"
@@ -379,11 +413,12 @@ done
 
 task_execution="$(<templates/skill/workflows/task-execution.md)"
 assert_contains "$task_execution" "## Composite Plan Handoff" "execution activates composite handoff"
-assert_contains "$task_execution" "exactly one Integrating Task Anchor and Native Plan" "composite execution has one Native Plan mainline"
-assert_contains "$task_execution" 'they do not create competing anchors, live step stores, or semantic `Current Task` entries' "Components do not become parallel runtime plans"
-assert_contains "$task_execution" 'A missing, `abandoned`, or replaced Component cannot drive mutation' "invalid Component blocks execution"
-assert_contains "$task_execution" "active Components use an explicit Decision Delta" "active Component conflict returns to its owner"
-assert_contains "$task_execution" "frozen Components require a successor" "frozen Component conflict creates a successor"
+assert_contains "$task_execution" "composite-plan-execution.md" "execution conditional composite owner link"
+assert_contains "$composite_execution" "one Integrating Task Anchor and one Native Plan" "composite execution has one Native Plan mainline"
+assert_contains "$composite_execution" "Components never create competing runtime anchors" "Components do not become parallel runtime plans"
+assert_contains "$composite_execution" 'missing, `abandoned`, replaced, or unauthorized inputs block' "invalid Component blocks execution"
+assert_contains "$composite_execution" "Component meaning, invariant, boundary, accepted interface" "Component conflict returns to its owner"
+assert_contains "$composite_execution" "a frozen Component changes only through a successor" "frozen Component conflict creates a successor"
 assert_contains "$task_execution" "## Database-Structure Mutation Gate" "execution gates schema mutation"
 assert_contains "$task_execution" "dedicated Plan-local SQL sibling" "execution requires implementation-ready SQL"
 assert_contains "$task_execution" "never permission to bypass the project migration workflow or write a database" "execution preserves DB authorization"
@@ -555,17 +590,18 @@ echo ""
 echo "==> proactive workflow distillation transcript contracts"
 
 # 1. "We completed equivalent flows twice in this Session."
-assert_contains "$task_closure" "same Session or across tasks/Sessions" "workflow distillation scenario 1 same-Session evidence"
-assert_contains "$task_closure" 'only after `Closure Complete`, with the completion report first' "workflow distillation scenario 1 result-first proposal"
+assert_contains "$workflow_proposal" "same Session or across tasks/Sessions" "workflow distillation scenario 1 same-Session evidence"
+assert_contains "$workflow_proposal" 'after `Closure Complete`' "workflow distillation scenario 1 completion boundary"
+assert_contains "$workflow_proposal" "present the completion report first" "workflow distillation scenario 1 result-first proposal"
 
 # 2. "This looks like a prior completed task; verify only that candidate."
-assert_contains "$task_closure" "current/relevant history and the smallest targeted retrieval" "workflow distillation scenario 2 targeted cross-task retrieval"
+assert_contains "$workflow_proposal" "current/relevant history and the smallest targeted retrieval" "workflow distillation scenario 2 targeted cross-task retrieval"
 
 # 3. "I retried the unfinished delivery several times."
-assert_contains "$task_closure" "Retries or repeated substeps inside one unfinished delivery count once" "workflow distillation scenario 3 retries count once"
+assert_contains "$workflow_proposal" "Retries or repeated substeps inside one unfinished result count once" "workflow distillation scenario 3 retries count once"
 
 # 4. "These commands are adjacent and frequent, so they must be one workflow."
-assert_contains "$task_closure" "temporal adjacency, frequency, or command/tool similarity does not qualify" "workflow distillation scenario 4 similarity rejection"
+assert_contains "$workflow_proposal" "frequency, adjacency, and command similarity do not qualify" "workflow distillation scenario 4 similarity rejection"
 
 # 5. "The current workflow owns the result but lacks this stable stage."
 assert_contains "$workflow_distillation" "the owner of the same result/acceptance lacks a stage" "workflow distillation scenario 5 extend classification"
@@ -577,13 +613,13 @@ assert_contains "$workflow_distillation" "no owner has the independently reusabl
 assert_contains "$workflow_distillation" "With no durable route, hook, state, authorization, or integrated-acceptance gap, make no workflow change" "workflow distillation scenario 7 pure composition silence"
 
 # 8. "Delivery is blocked or not yet verified; ask me now."
-assert_contains "$task_closure" "Blocked, paused, stopped, or unverified work produces no proactive question" "workflow distillation scenario 8 completion timing"
+assert_contains "$workflow_proposal" "blocked, paused, stopped, or unverified work produces no proactive proposal" "workflow distillation scenario 8 completion timing"
 
 # 9. "Not now."
-assert_contains "$task_closure" "creates no durable candidate/rejection record and suppresses the same normalized proposal for the current Session" "workflow distillation scenario 9 decline suppression"
+assert_contains "$workflow_proposal" "Decline/defer creates no durable record and suppresses the same proposal for the Session" "workflow distillation scenario 9 decline suppression"
 
 # 10. "Ask again at the next completion boundary with no new evidence."
-assert_contains "$task_closure" "Re-prompt only after materially stronger evidence or explicit user reopening" "workflow distillation scenario 10 re-prompt boundary"
+assert_contains "$workflow_proposal" "until stronger evidence or explicit reopening" "workflow distillation scenario 10 re-prompt boundary"
 
 # 11. "Copy the full cross-repository workflow into every local Skill."
 assert_contains "$workflow_distillation" "Create one complete orchestration owner; consumers retain only evidence-required trigger, participation, and acceptance hooks" "workflow distillation scenario 11 single orchestration owner"
@@ -593,17 +629,17 @@ assert_contains "$workflow_distillation" "A source-only change without required 
 assert_contains "$workflow_distillation" "generated or installed copies are never independent owners" "workflow distillation scenario 12 generated-copy boundary"
 
 # 13. "Just ask vaguely whether to create a workflow."
-assert_contains "$task_closure" "concrete repeat evidence, compact goal/flow, one recommendation, canonical-owner-to-downstream path" "workflow distillation scenario 13 proposal payload"
+assert_contains "$workflow_proposal" "concrete repeat evidence, compact goal/flow, one recommendation, canonical-owner-to-downstream path" "workflow distillation scenario 13 proposal payload"
 
 # 14. "Yes, do the described workflow change."
-assert_contains "$task_closure" "Acceptance starts a newly routed task" "workflow distillation scenario 14 accepted task transition"
-assert_contains "$task_closure" "without redundant reconfirmation" "workflow distillation scenario 14 no second start question"
+assert_contains "$workflow_proposal" "Acceptance starts a newly routed task" "workflow distillation scenario 14 accepted task transition"
+assert_contains "$workflow_proposal" "without redundant reconfirmation" "workflow distillation scenario 14 no second start question"
 
 # 15. "Workflow acceptance also authorizes push, MR, revision, and deploy."
 assert_contains "$workflow_distillation" "Workflow acceptance never grants commit, push, MR, deploy, publish, database, work-item, version-revision" "workflow distillation scenario 15 no external authority inheritance"
 
 # 16. "Add a route, ledger, signature database, and Always Read candidate index."
-assert_contains "$task_closure" "never scan all history or create a signature store, candidate ledger, counter, timeline, route, or placeholder" "workflow distillation scenario 16 no subsystem contract"
+assert_contains "$workflow_proposal" "create no signature store, ledger, counter, timeline, route, or placeholder" "workflow distillation scenario 16 no subsystem contract"
 assert_not_contains "$template_routing$self_routing" "id: workflow-distillation" "workflow distillation scenario 16 no new first-workflow route"
 assert_not_contains "$template_routing$self_routing" "id: workflow-candidate" "workflow distillation scenario 16 no candidate route"
 assert_not_contains "$(<templates/skill/SKILL.md.template)" "workflow candidate" "workflow distillation scenario 16 no default Always Read candidate surface"
@@ -622,13 +658,14 @@ assert_contains "$maintain_docs" "independently delivered or independently used"
 assert_contains "$maintain_docs" "## Step 2: Independent Load-Reason Audit" "independent load-reason audit"
 assert_contains "$maintain_docs" "## Step 5: Semantic Before/After Reconciliation" "semantic before-after audit"
 
-# Affected-path change simulation: task-execution owns the complete transition;
-# every runtime consumer links to it and must not become another full owner.
+# Affected-path change simulation: task-execution owns the runtime trigger and
+# direct consumers link to it without becoming another full owner. Closure
+# routes through its conditional Plan/Knowledge owner, which returns drift to
+# the same canonical protocol.
 for consumer_file in \
   templates/skill/workflows/change-managed.md \
   templates/skill/workflows/fix-bug.md \
   templates/skill/workflows/receiving-review.md \
-  templates/skill/workflows/task-closure.md \
   templates/skill/workflows/profile-business-model.md.example \
   references/business-global-model.md \
   references/protocols.md \
@@ -638,6 +675,9 @@ for consumer_file in \
   assert_not_contains "$consumer_content" 'Mark every alternative `proposed`' "$consumer_file does not copy proposed transition"
   assert_not_contains "$consumer_content" 'mark the prior decision `superseded`' "$consumer_file does not copy superseded transition"
 done
+assert_contains "$task_closure" "plan-knowledge-closure.md" "task closure routes decision replay through Plan/Knowledge owner"
+assert_contains "$plan_knowledge_closure" "user-decision-drift.md" "Plan/Knowledge owner returns material drift to canonical protocol"
+assert_not_contains "$task_closure" "task-execution.md#user-decision-drift-gate" "task closure does not bypass conditional Plan/Knowledge owner"
 
 plan_large="$(<templates/skill/workflows/plan-large.md)"
 assert_contains "$plan_large" "Read this file only after" "large-plan conditional read"

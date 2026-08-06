@@ -19,8 +19,8 @@ A workflow in your project skill explicitly reads and follows another skill mid-
 ```markdown
 ## Step 2 — Build the plan
 
-1. Read `skills/superpowers/SKILL.md` to load its Common Tasks.
-2. Match the current task against its "Plan a feature" route.
+1. Read `skills/superpowers/SKILL.md` to confirm the skill contract, then read `skills/superpowers/routing.yaml`.
+2. Match the current task against its "Plan a feature" route in the manifest.
 3. Follow `skills/superpowers/workflows/plan-a-feature.md` end-to-end; produce the plan artifact it prescribes.
 4. Return to this workflow (Step 3) with the plan in hand.
 ```
@@ -31,14 +31,17 @@ See the copy-paste starter in [`templates/skill/workflows/invoke-skill.md.exampl
 
 ### Pattern B — Serial chain (route handoff)
 
-Your project skill's `SKILL.md` Common Tasks routes certain task types *directly* to another skill's workflow — no intermediate workflow in your project.
+Your project skill's `routing.yaml` routes certain task types *directly* to another skill's workflow — no intermediate workflow in your project.
 
 **When to use:** the other skill already does the whole task correctly; your project skill doesn't add project-specific steps.
 
-**How to write it** (in `SKILL.md` Common Tasks):
+**How to write it** (in `routing.yaml`):
 
-```markdown
-- Security-review code → follow `skills/security-review/workflows/review.md` directly (no project-specific wrapper needed)
+```yaml
+- id: security-review
+  labels: { en: Security review, zh: 安全评审 }
+  workflow: skills/security-review/workflows/review.md
+  trigger_examples: [review this code for security, 安全评审这段代码]
 ```
 
 **Key property:** routing delegates the full task. Your skill stays lean; you haven't written a wrapper workflow just to forward.

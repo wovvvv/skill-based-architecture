@@ -27,6 +27,8 @@ One-line summary.
 - Other → use the guidance above and keep edits minimal
 ```
 
+This inline task list is only for the Single-file tier, where no separate routing manifest exists. When the skill upgrades to Folder-light or Full, move exact task rows to `routing.yaml` and leave only the generated Common Tasks action hook in `SKILL.md`.
+
 Start here when:
 
 - the skill is still short and self-contained

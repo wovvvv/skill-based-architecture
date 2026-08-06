@@ -1,11 +1,11 @@
 # Canonical Routing Manifest
 #
-# Source of truth for optional Always Read entries, task-to-workflow routing,
-# and shell bootstraps. Domain selection is a later evidence-gated phase owned
+# Sole source of exact task-route data plus optional Always Read entries and
+# shell bootstraps. Domain selection is a later evidence-gated phase owned
 # by domain-routing.yaml when the first real domain is admitted.
 # Edit this file first, then run `bash scripts/sync-routing.sh`.
 # Downstream from repo root: `bash skills/<name>/scripts/sync-routing.sh <name>`.
-# Do not hand-edit generated Always Read lists, route summaries, bootstrap blocks,
+# Do not hand-edit generated Always Read lists, the Common Tasks action hook, bootstrap blocks,
 # or shell behavior blocks (auto-triggers + red flags). Edit the behavior block in
 # scripts/sync-routing.sh, then re-run sync.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sync-routing.sh — Generate Always Read, Common Tasks, shell bootstraps (from
+# sync-routing.sh — Generate Always Read, the Common Tasks action hook, shell bootstraps (from
 # routing.yaml), and the shared behavior block (auto-triggers + red flags) into shells.
 # Usage:
 #   bash scripts/sync-routing.sh [skill-name|skill-root] [--check] [--workspace-root <path>]
@@ -323,6 +323,8 @@ def validate_schema(always_read, tasks, overlays, owner_roots):
             errors.append("task missing id")
         if not task.get("labels"):
             errors.append(f"{task_id}: missing labels")
+        if not task.get("trigger_examples"):
+            errors.append(f"{task_id}: missing trigger_examples")
         workflow = task.get("workflow", "")
         if not workflow:
             errors.append(f"{task_id}: missing workflow")
@@ -379,17 +381,6 @@ if schema_errors:
         print(f"FAIL: {err}")
     raise SystemExit(1)
 
-def label_for(task):
-    labels = task.get("labels", {})
-    en = labels.get("en", "").strip()
-    zh = labels.get("zh", "").strip()
-    task_id = task.get("id", "").strip()
-    if en and zh and en != zh:
-        return f"{en} / {zh} (`{task_id}`)"
-    if en or zh:
-        return f"{en or zh} (`{task_id}`)"
-    return task_id
-
 def format_always_skill(reads):
     if not reads:
         return "None by default; workflows load knowledge at evidence and phase boundaries."
@@ -400,25 +391,7 @@ def format_always_shell(reads):
         return "- None by default; workflows load knowledge at evidence and phase boundaries."
     return "\n".join(f"- `skills/{name}/{item}`" for item in reads)
 
-def format_triggers(examples):
-    real = [ex for ex in examples if ex and "FILL:" not in ex]
-    if not real:
-        return ""
-    return "; triggers: " + ", ".join(f'"{ex}"' for ex in real[:3])
-
-def format_workflow(value):
-    if not value:
-        return "none"
-    if normalize_path(value).startswith("workflows/"):
-        return f"`{value}`"
-    return value
-
-task_summary = "\n".join(
-    f"- {label_for(task)} -> workflow {format_workflow(task.get('workflow', ''))}"
-    f"{format_triggers(task.get('trigger_examples', []))}"
-    for task in tasks
-)
-summary_block = task_summary
+summary_block = "- For each new task, read `routing.yaml`, match exactly one route by `labels`, `trigger_examples`, and task intent, fall back to `other`, and follow only that route's `workflow`. A task route does not preload knowledge."
 always_skill_block = format_always_skill(always_read)
 always_shell_block = format_always_shell(always_read)
 
@@ -436,7 +409,7 @@ For every new task:
 # Edit here once, re-run sync-routing.sh → all shells update together.
 behavior_block = f"""## Auto-Triggers
 
-- **New task in same session** → always re-match the route (Common Tasks / `routing.yaml`). After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence. Then execute one clear action/check directly, otherwise follow `skills/{name}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read the current workflow.
+- **New task in same session** → always re-match the route from canonical `routing.yaml`. After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence. Then execute one clear action/check directly, otherwise follow `skills/{name}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read the current workflow.
 - Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter Task Closure Protocol (see `skills/{name}/workflows/task-closure.md`); `Ready for Delivery` is not completion
 - When user asks to "record/save/remember" something → project-level knowledge goes to `skills/{name}/` docs; personal preferences go to agent memory
 
@@ -622,5 +595,5 @@ if mode == "check":
     if not verification_open:
         print("Routing manifest check passed.")
 elif not changed:
-    print("Routing summary and bootstraps already up to date.")
+    print("Routing action hook and bootstraps already up to date.")
 PY

@@ -21,7 +21,7 @@ templates/
 │   ├── protocol-blocks/       → internal Task Closure / routing reinforcement blocks
 │   └── scripts/              → automated verification (lives inside the skill)
 │       ├── smoke-test.sh                (fully automated structural + routing checks)
-│       ├── sync-routing.sh              (generate/check routing summary + shell bootstraps from routing.yaml)
+│       ├── sync-routing.sh              (generate/check routing action hook + shell bootstraps from routing.yaml)
 │       ├── sync-vendor.sh               (mechanical vendor-file sync from an upstream clone; base = synced_sha)
 │       ├── upstream-status.sh           (am-I-behind reporter + wrong-checkout guard; reads .upstream-sync)
 │       ├── route-health.sh              (static routing-quality lint; advisory)

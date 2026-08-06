@@ -12,8 +12,13 @@
 vendor:
   - sync-manifest.yaml
   - protocol-blocks/ambiguous-request-gate.md
+  - protocol-blocks/composite-plan-execution.md
+  - protocol-blocks/external-delivery-verification.md
+  - protocol-blocks/plan-knowledge-closure.md
   - protocol-blocks/reboot-check.md
   - protocol-blocks/subagent-contract.md
+  - protocol-blocks/user-decision-drift.md
+  - protocol-blocks/workflow-distillation-proposal.md
   - scripts/audit-orphans.sh
   - scripts/check-version-conformance.sh
   - scripts/route-health.sh

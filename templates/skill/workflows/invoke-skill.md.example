@@ -8,7 +8,7 @@ This example scenario: the user asks to "plan a new feature". Your project has f
 
 ## When this workflow fires
 
-- Route entry in `SKILL.md` Common Tasks matches ("plan a new feature", "write a PRD", etc.)
+- A canonical `routing.yaml` route matches ("plan a new feature", "write a PRD", etc.)
 - User has not already produced a plan; if they have, skip to execution
 
 ## Prerequisites
@@ -35,7 +35,7 @@ Output: 3–6 bullets of project context the planner needs.
 
 ### Step 2 — Invoke the planning skill
 
-1. Read `skills/superpowers/SKILL.md` and match "plan a feature" to its Common Tasks route.
+1. Read `skills/superpowers/SKILL.md`, then match "plan a feature" in `skills/superpowers/routing.yaml`.
 2. Follow `skills/superpowers/workflows/plan-a-feature.md` (or whichever workflow its route points to) **with the Step 1 bullets as input context**.
 3. Let it run its full planning procedure — PRD, user stories, tasks, verification — without cutting steps.
 4. When it completes, the output artifact (e.g., `plans/<feature>.md`) is what we return from Step 2 with.

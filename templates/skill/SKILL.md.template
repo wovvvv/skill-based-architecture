@@ -1,7 +1,7 @@
 ---
 name: {{NAME}}
 description: >
-  <!-- FILL: Domain-level activation only — ≥ 2 quoted phrases in the user's real language(s) + concrete activation conditions. Do NOT list every workflow; Common Tasks routes after activation. Copy byte-for-byte into .cursor/skills/{{NAME}}/SKILL.md. -->
+  <!-- FILL: Domain-level activation only — ≥ 2 quoted phrases in the user's real language(s) + concrete activation conditions. Do NOT list workflows; routing.yaml selects one after activation. Copy byte-for-byte into .cursor/skills/{{NAME}}/SKILL.md. -->
   This skill should be used when the user asks to "<trigger phrase 1>",
   "<trigger phrase 2>", or "<trigger phrase 3 / 中文触发短语>".
   Activate when <condition 1> or <condition 2>.
@@ -27,9 +27,9 @@ None by default; workflows load knowledge at evidence and phase boundaries.
 
 ## Session Discipline
 
-**Every new task — even the second or third in the same session — must re-match the route below before acting.** Re-matching is cheap and catches the most common error: a new task that belongs to a different route than the last one.
+**Every new task — even the second or third in the same session — must read `routing.yaml` and re-match one route before acting.** Re-matching is cheap and catches the most common error: a new task that belongs to a different route than the last one.
 
-- **Re-match the route every task** (scan Common Tasks / `routing.yaml`). Never assume the new task uses the last route.
+- **Re-match the route every task** from canonical `routing.yaml`. Never assume the new task uses the last route.
 - **Re-read only what changed or was lost** — after a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence.
 - **Use evidence-driven context** — start with the selected workflow and the smallest source slice that can decide the next action. One clear action/check stays Simple; otherwise load `workflows/task-execution.md`.
 - **Bind domains late** — explicit business-rule requests or source Plans that already declare the applicable business-domain owner may read `domain-routing.yaml` after workflow selection. Ambiguous work inspects evidence first; keywords identify candidates only. A source Plan is read directly by its workflow and does not by itself activate a domain. Clearly technical work never reads the domain manifest. A domain appends knowledge and cannot replace the workflow; load one owner by default and expand only on cross-domain evidence.
@@ -45,19 +45,11 @@ None by default; workflows load knowledge at evidence and phase boundaries.
 
 ## Common Tasks
 
-Each entry selects the first workflow. The workflow gathers evidence and pulls later knowledge:
+This section is an action hook, not a route catalog. Exact route data lives only in `routing.yaml`:
 
-<!-- FILL: edit routing.yaml, then run scripts/sync-routing.sh. Keep 3–8 real recurring task types and an Other fallback. -->
+<!-- FILL: edit routing.yaml, then run scripts/sync-routing.sh. Keep 3–8 real recurring task types and an Other fallback in the manifest. -->
 <!-- ROUTING_SUMMARY_START -->
-- Fix bug / 修复 bug / 排查异常 (`fix-bug`) -> workflow `workflows/fix-bug.md`; triggers: "这个接口报错了", "测试挂了", "fix this failing test"
-- Add / refactor / optimize non-bug behavior / 新增 / 重构 / 优化非 bug 行为 (`change-managed`) -> workflow `workflows/change-managed.md`; triggers: "优化这个模块", "帮我加一个功能", "refactor this flow"
-- Refactor across many usage points (rename / change signature / migrate) / 跨多处的同型重构(改名 / 改签名 / 迁移) (`refactor-fanout`) -> workflow `workflows/refactor-fanout.md`; triggers: "把这个函数改名,所有地方都跟着改", "rename X across the codebase", "extract this interface, update all implementers"
-- Plan a feature or design decision / 规划功能 / 设计决策 (`plan-feature`) -> workflow `workflows/plan-feature.md`; triggers: "先帮我把这个需求问清楚", "这个功能比较大,先规划一下", "plan this feature before coding"
-- Profile / refresh project understanding / 梳理 / 刷新项目理解 (`profile-project`) -> workflow `workflows/profile-project.md`; triggers: "帮我理解这个项目", "重新梳理项目规则", "refresh the project profile"
-- Update from skill-based-architecture upstream / 从上游 skill-based-architecture 更新 (`update-upstream`) -> workflow `workflows/update-upstream.md`; triggers: "上游项目更新了,帮我更新一下", "更新 skill-based-architecture 模板", "refresh from upstream"
-- Update skill rules or record lessons / 更新 skill 规则 / 记录经验 (`update-rules`) -> workflow `workflows/update-rules.md`; triggers: "记录这个规则", "把这次踩坑记下来", "update the project skill rules"
-- Act on code review feedback / 处理代码评审意见 (`receiving-review`) -> workflow `workflows/receiving-review.md`; triggers: "帮我看看这些评审意见", "reviewer 提了几个问题,处理一下", "address this PR review feedback"
-- Other / unlisted task / 其他 / 未列出的任务 (`other`) -> workflow `workflows/task-execution.md`; triggers: "其他没有明确路由的任务"
+- For each new task, read `routing.yaml`, match exactly one route by `labels`, `trigger_examples`, and task intent, fall back to `other`, and follow only that route's `workflow`. A task route does not preload knowledge.
 <!-- ROUTING_SUMMARY_END -->
 
 </task-routing>
