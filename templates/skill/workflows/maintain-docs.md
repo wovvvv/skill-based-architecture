@@ -18,11 +18,11 @@ Judge a repeated block from the real task path:
 
 Prefer one owner plus local action hooks inside one Skill. A complete repeated rule or workflow is exceptional: task/PR evidence must show that full repetition costs less than navigation, loading, or generation after drift risk is included. Generated copies have one source, are not hand-edited, and require deterministic equality/drift validation. Use judgment rather than a sentence quota, score, marker, or file-count target.
 
-For business leaf / Gotcha pairs, apply [`update-rules.md` § Business Leaf and Gotcha Ownership](update-rules.md#business-leaf-and-gotcha-ownership) before ordinary dedup or split decisions. Flag three forms of owner drift: the same complete business rule appears in both files; stable business truth exists only inside a Gotcha; or volatile classes, fields, endpoints, storage details, and repair recipes have entered the leaf. Reconcile the complete normative meaning into the leaf, keep the implementation failure in the Gotcha, and leave only the smallest cross-link needed for local action.
+For business leaf / Gotcha pairs, apply [`workflows/rule-update/business-truth.md` § Business Leaf and Gotcha Ownership](rule-update/business-truth.md#business-leaf-and-gotcha-ownership) before ordinary dedup or split decisions. Flag three forms of owner drift: the same complete business rule appears in both files; stable business truth exists only inside a Gotcha; or volatile classes, fields, endpoints, storage details, and repair recipes have entered the leaf. Reconcile the complete normative meaning into the leaf, keep the implementation failure in the Gotcha, and leave only the smallest cross-link needed for local action.
 
 ## When to Run
 
-- After completing the `update-rules.md` workflow, quickly check modified file line counts
+- After a Rule Update owner changes a durable file, quickly check the modified file line counts
 - Proactive maintenance: when files feel "hard to navigate" or "too long to want to read"
 - **Not required** after every small change
 
@@ -49,7 +49,7 @@ Accumulation rot is not limited to gotchas, but the cost of detecting it is not 
 | Tier | When it runs | Who runs it | Cost |
 |---|---|---|---|
 | **0 — bash gate** | Every `smoke-test.sh` run (every commit if wired into a hook) | `smoke-test.sh § 2a` — `grep "^## " <file> | sort | uniq -d` | ~0 tokens (bash) |
-| **1 — AAR similarity scan** | Whenever the agent is about to append a new entry via `update-rules.md § Search Before Record` | The same agent that just ran the task — context is already loaded | ~few hundred tokens (targeted scan of 3–5 candidates, not the whole file) |
+| **1 — AAR similarity scan** | Whenever the Agent is about to add or extend an entry through `workflows/update-rules.md` § Reconciliation Gate | The same Agent that just ran the task - context is already loaded | ~few hundred tokens (targeted scan of 3-5 candidates, not the whole file) |
 | **2 — full reorganization pass** | Only when a Tier-2 trigger fires (see below) | Agent reads the full file and restructures | ~thousands of tokens |
 
 **Tier 2 triggers** — any one of these is enough; do not run Tier 2 just because it has been a while:
@@ -110,7 +110,7 @@ If you find yourself running Tier 2 more than once a quarter on the same file, t
 
 A gotchas file that's too long to scan quickly defeats its purpose — the whole point is "brief, scannable list." The same applies to any file that agents read as part of task routing.
 
-> **Note (2026-05-19):** an earlier draft of this workflow added a "Step 1c: External Fact Freshness" requiring authors to hand-mark each vendor/tool/runtime fact with `<!-- external-fact: verified=YYYY-MM-DD source=... -->` and run `check-external-facts.sh`. That section was removed along with the script — no project ever enforced the marker, so the script ran empty. If you need to flag a fact as volatile, prefer the AAR's "Outdated/obsolete rule" question (`update-rules.md`) on the next task that touches the same file: human re-read at the right moment beats a marker no one writes.
+> **Note (2026-05-19):** an earlier draft of this workflow added a "Step 1c: External Fact Freshness" requiring authors to hand-mark each vendor/tool/runtime fact with `<!-- external-fact: verified=YYYY-MM-DD source=... -->` and run `check-external-facts.sh`. That section was removed along with the script - no project ever enforced the marker, so the script ran empty. If a fact is stale, let the next task that touches it use `workflows/rule-update/knowledge-reconciliation.md` to correct or retire it: human re-read at the right moment beats a marker no one writes.
 
 ## Step 2: Independent Load-Reason Audit
 

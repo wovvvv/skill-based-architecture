@@ -48,8 +48,20 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-08-05 - Rule Update progressive disclosure owners
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `workflows/update-rules.md` is now the compact shared durable-write contract and ambiguous-request dispatcher. It keeps classification, source/authority fidelity, targeted reconciliation, action-changing activation, placement/generalization, synchronization, verification, and unchanged authority, but no longer embeds every typed procedure.
+  - `workflows/rule-update/` adds four independently loaded owners: `business-truth.md`, `verified-failure.md`, `knowledge-reconciliation.md`, and `workflow-distillation.md`. Known callers enter the applicable owner directly; only an input such as `记录一下` whose type is still unknown enters the dispatcher first.
+  - Plan handoff, standalone business modeling, Fix Bug, Task Execution, Task Closure, documentation maintenance, Gotcha guidance, and protocol summaries now link to the typed owner at the lifecycle boundary where its evidence exists.
+  - Template and self-hosting conformance plus self-scenarios assert complete branch semantics, direct links, negative cross-branch loading, the shared activation/authority contract, and the nested workflow paths. No second index, routing manifest, Memory store, candidate ledger, mode, or user-visible configuration was added.
+- Why it matters: the previous 23 KB owner forced a proven JDK/Mockito failure to load business modeling and workflow-distillation rules, while a business Plan handoff loaded recurrence and enforcement semantics. The new shape preserves the same decisions and authority while each normal journey loads only the shared contract plus its one typed owner.
+- Downstream refresh guidance: adapt from the downstream's current Rule Update owner rather than replacing it wholesale. Preserve project-specific business leaves, Plan reconciliation, code-root ownership, cross-app paths, promotion boundaries, canonical-source provenance, assembly commands, and fitted verification. Add only the typed owners the project actually admits; update known callers to direct links; keep ambiguous explicit recording on `update-rules.md`; generate/install through the canonical owner and verify real consumers instead of hand-editing installed copies.
+
 ## 2026-08-04 - Post-completion proactive workflow distillation
 
+- Status: superseded by 2026-08-05 - Rule Update progressive disclosure owners
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `task-closure.md` may normalize repeated-procedure evidence during execution but presents at most one optional proposal only after `Closure Complete` and the completion report. Two independently completed semantic instances are required; retries, adjacency, frequency, and command similarity do not qualify. Pure composition is silent, decline/defer is Session-only, and no candidate store or exhaustive history scan is created.
@@ -60,6 +72,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-08-04 - First proven failure writes to active prevention
 
+- Status: superseded by 2026-08-05 - Rule Update progressive disclosure owners
 - Upstream commit: pending in this working tree
 - Changed areas:
   - `task-execution.md` keeps failed commands, tests, runtime checks, delivery actions, and premise changes as one Session-only candidate until root cause and red-to-green proof exist; nontrivial diagnosis reclassifies Simple work to Managed, and every proven failure hands off to Rule Update before Closure.

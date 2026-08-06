@@ -1,6 +1,6 @@
 # Task Closure Protocol
 
-This is the completion-time gate between finished local execution and verified delivery for behavior, rule, routing, script, and structure changes. It owns readiness and completion states; recording mechanics live in [`update-rules.md`](update-rules.md), file-boundary and path-integrity mechanics live in [`maintain-docs.md`](maintain-docs.md), and task-specific delivery mechanics remain with the matched workflow and user authorization.
+This is the completion-time gate between finished local execution and verified delivery for behavior, rule, routing, script, and structure changes. It owns readiness and completion states; the shared durable-write contract lives in [`workflows/update-rules.md`](update-rules.md), typed recording procedures live under `workflows/rule-update/`, file-boundary and path-integrity mechanics live in [`maintain-docs.md`](maintain-docs.md), and task-specific delivery mechanics remain with the matched workflow and user authorization.
 
 ## Task Closure Protocol
 
@@ -34,8 +34,8 @@ If implementation work or non-delivery evidence is missing, return to [`task-exe
    - runtime/service/browser evidence only for wiring, config, permissions, serialization, data state, or UI behavior;
    - packaged/release/deploy evidence only when that chain changed or the user requires it.
    Stop when the bound evidence proves the contract; escalate only when a check fails, the risk crosses another boundary, or a stated uncertainty remains. Test count is not evidence quality. A fresh command against a stale artifact is not fresh evidence.
-5. **Account for verified failures** — enumerate every command, test, runtime, delivery, or premise failure whose root cause was proven during the task. Each must already have one completed [`update-rules.md` § Verified Failure Input](update-rules.md#verified-failure-input) learning outcome and, for a durable write, an action-changing activation path. If diagnosis, repair proof, outcome, or activation is missing, return to Task Execution or Rule Update; Closure does not diagnose root cause or postpone the first write. Re-run affected verification when learning changed a deliverable.
-6. **Run the AAR below.** Any yes enters `update-rules.md`; all no stops additional recording. Do not re-record an already-reconciled verified failure. If recording changes any deliverable, return to the affected verification and integrity checks before declaring readiness.
+5. **Account for verified failures** — enumerate every command, test, runtime, delivery, or premise failure whose root cause was proven during the task. Each must already have one completed [`workflows/rule-update/verified-failure.md` § Verified Failure Input](rule-update/verified-failure.md#verified-failure-input) learning outcome and, for a durable write, an action-changing activation path. If diagnosis, repair proof, outcome, or activation is missing, return to Task Execution or Verified Failure; Closure does not diagnose root cause or postpone the first write. Re-run affected verification when learning changed a deliverable.
+6. **Run the AAR below.** Any yes enters [`workflows/rule-update/knowledge-reconciliation.md`](rule-update/knowledge-reconciliation.md); all no stops additional recording. Do not re-record an already-reconciled verified failure. If recording changes any deliverable, return to the affected verification and integrity checks before declaring readiness.
 7. **Run conditional integrity work**:
    - routing/shell/generated-block or structure/path changes → follow `maintain-docs.md` Step 6 and the repository's sync/smoke commands;
    - rule/reference meaning changes → search workflows for repeated invariants and reconcile them in the same change;
@@ -62,7 +62,7 @@ Require at least two independently completed instances with the same reusable go
 
 Inspect existing owners and choose one conclusion: `extend` when an owner of the same result is incomplete; pure `compose` when complete owners need no durable route, hook, state, authorization, or integrated-acceptance owner; `create` only for an independently reusable cross-step contract with no owner. Pure composition produces no proposal. Otherwise present only the concrete repeat evidence, compact goal/flow, one recommendation, canonical-owner-to-downstream path, material parameters/branches/authority boundaries, and one consent question.
 
-A decline or defer creates no durable candidate/rejection record and suppresses the same normalized proposal for the current Session. Re-prompt only after materially stronger evidence or explicit user reopening. Acceptance starts a newly routed task through [`update-rules.md` § Accepted Workflow-Distillation Input](update-rules.md#accepted-workflow-distillation-input) without redundant reconfirmation; it does not grant commit, push, MR, deploy, publish, database, work-item, version-revision, reviewer-selection, merge, or other external authority.
+A decline or defer creates no durable candidate/rejection record and suppresses the same normalized proposal for the current Session. Re-prompt only after materially stronger evidence or explicit user reopening. Acceptance starts a newly routed task through [`workflows/rule-update/workflow-distillation.md` § Accepted Workflow-Distillation Input](rule-update/workflow-distillation.md#accepted-workflow-distillation-input) without redundant reconfirmation; it does not grant commit, push, MR, deploy, publish, database, work-item, version-revision, reviewer-selection, merge, or other external authority.
 
 ### Rationalizations to Reject
 
@@ -97,4 +97,4 @@ Ask only after Trigger Policy admits the task:
 3. Did an existing rule become inaccurate, obsolete, duplicated, or inert?
 4. Did an external fact materially affect the decision and need scoped re-verification guidance?
 
-Any yes → apply `update-rules.md` threshold, fidelity, reconciliation, activation, and durability gates. Verified failures were already handled through their earlier input and are not counted again. Otherwise do not create a record.
+Any yes -> apply [`workflows/rule-update/knowledge-reconciliation.md`](rule-update/knowledge-reconciliation.md), which consumes the shared fidelity, reconciliation, activation, and durability contract. Verified failures were already handled through their earlier input and are not counted again. Otherwise do not create a record.

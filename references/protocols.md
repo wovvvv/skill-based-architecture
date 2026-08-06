@@ -20,7 +20,8 @@ The canonical workflow templates live under `templates/skill/workflows/`. Every 
 
 - [`task-execution.md`](../templates/skill/workflows/task-execution.md) — cross-cutting task-start and progress contract: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
 - [`task-closure.md`](../templates/skill/workflows/task-closure.md) — cross-cutting closure gate (verified-failure outcome accounting, Task Closure Protocol, AAR, post-completion workflow proposal, Rationalizations, Red Flags); referenced by every behavior-changing workflow at closure.
-- [`update-rules.md`](../templates/skill/workflows/update-rules.md) — complete durable owner for verified failures, accepted workflow candidates, and ordinary recording: first proven actionable prevention, workflow ownership/provenance/downstream consumption, lifecycle outcomes, recurrence/authority, threshold, fidelity, reconciliation, activation, destination durability, sync, and retirement.
+- [`update-rules.md`](../templates/skill/workflows/update-rules.md) - compact shared durable-write contract and ambiguous-request dispatcher: input/destination classification, fidelity, reconciliation, activation, placement, synchronization, verification, and unchanged authority.
+- [`rule-update/business-truth.md`](../templates/skill/workflows/rule-update/business-truth.md), [`verified-failure.md`](../templates/skill/workflows/rule-update/verified-failure.md), [`knowledge-reconciliation.md`](../templates/skill/workflows/rule-update/knowledge-reconciliation.md), and [`workflow-distillation.md`](../templates/skill/workflows/rule-update/workflow-distillation.md) - independently loaded execution owners for user-confirmed business meaning, proven engineering prevention, ordinary knowledge correction/retirement, and accepted repeated workflows.
 - [`maintain-docs.md`](../templates/skill/workflows/maintain-docs.md) — independent-load-reason audit, semantic before/after reconciliation, file health, split/merge/index decisions, and reference integrity.
 
 For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES-GUIDE.md`](../TEMPLATES-GUIDE.md).
@@ -101,7 +102,7 @@ Do not maintain a second question list here.
 
 ## Verified Failure Learning
 
-Canonical semantics: [`templates/skill/workflows/update-rules.md` § Verified Failure Input](../templates/skill/workflows/update-rules.md#verified-failure-input). Task Execution owns the Session-only candidate and proof handoff; Fix Bug triggers the handoff immediately after red-to-green; Rule Update owns durable meaning and authority; Closure checks that every verified failure has one completed outcome.
+Canonical semantics: [`templates/skill/workflows/rule-update/verified-failure.md` § Verified Failure Input](../templates/skill/workflows/rule-update/verified-failure.md#verified-failure-input). Task Execution owns the Session-only candidate and proof handoff; Fix Bug triggers the handoff immediately after red-to-green; Verified Failure owns durable meaning and authority; Closure checks that every proven failure has one completed outcome.
 
 Do not persist a raw message or first hypothesis. Once the root cause, repair, fitted proof, and stable future action are proven, write or reconcile that prevention directly in its nearest canonical rule, Gotcha, workflow, reference, or existing executable owner and activate it before the next mistake-prone action. The first proven actionable occurrence does not wait for a second occurrence, ordinary Recording Threshold, or final AAR. A transient failure with no stable future action receives no durable write and creates no candidate ledger, counter, chronology, Memory route, or database.
 
@@ -109,7 +110,7 @@ Recurrence identity is the same proven root cause, applicability boundary, and p
 
 ## Proactive Workflow Distillation
 
-Canonical timing and proposal semantics: [`task-closure.md` § Post-Completion Workflow Distillation](../templates/skill/workflows/task-closure.md#post-completion-workflow-distillation). Canonical accepted-mutation semantics: [`update-rules.md` § Accepted Workflow-Distillation Input](../templates/skill/workflows/update-rules.md#accepted-workflow-distillation-input).
+Canonical timing and proposal semantics: [`task-closure.md` § Post-Completion Workflow Distillation](../templates/skill/workflows/task-closure.md#post-completion-workflow-distillation). Canonical accepted-mutation semantics: [`rule-update/workflow-distillation.md` § Accepted Workflow-Distillation Input](../templates/skill/workflows/rule-update/workflow-distillation.md#accepted-workflow-distillation-input).
 
 Two independently completed semantic instances may justify one optional result-first question after `Closure Complete`; retries inside unfinished work do not. Match goal, ordered relations, inputs/outputs, integrated acceptance, and authority rather than commands. Inspect existing owners and stay silent for pure composition; otherwise recommend one `extend` or `create`. Decline/defer creates no candidate record and suppresses the same Session proposal.
 
@@ -117,7 +118,7 @@ Acceptance starts a newly routed maintenance task, not automatic workflow genera
 
 ## Recording Threshold
 
-Ordinary AAR, user-requested, or Agent-observed candidates record only when at least 2 of these 3 are true. Verified Failure Input and confirmed Plan/business-model handoffs bypass only this admission threshold and still pass fidelity, reconciliation, activation, generalization, durability, and authority gates:
+Ordinary AAR, user-requested non-business, or Agent-observed candidates use [`rule-update/knowledge-reconciliation.md` § Ordinary Recording Threshold](../templates/skill/workflows/rule-update/knowledge-reconciliation.md#ordinary-recording-threshold) and record only when at least 2 of these 3 are true. Verified Failure and confirmed Plan/business-model handoffs use their typed admission contracts and still pass shared fidelity, reconciliation, activation, generalization, durability, and authority gates:
 
 1. **Repeatable** — likely to recur in future work
 2. **Costly** — missing it wastes meaningful time or causes real regressions
@@ -137,11 +138,11 @@ Skip recording:
 - facts already obvious from existing code
 - content already well covered by official docs and not project-specific
 
-Passing the threshold is only admission. Before writing, follow the three canonical gates in [`update-rules.md`](../templates/skill/workflows/update-rules.md): preserve decision-bearing meaning (**fidelity**), integrate/correct/retire existing knowledge before adding (**reconciliation**), and prove an action-changing task path (**activation**).
+Passing the threshold is only admission. Before writing, follow the shared canonical gates in [`update-rules.md`](../templates/skill/workflows/update-rules.md): preserve decision-bearing meaning (**fidelity**), integrate/correct/retire existing knowledge before adding (**reconciliation**), and prove an action-changing task path (**activation**).
 
 ## Where To Record
 
-*Operating summary — canonical: [`update-rules.md`](../templates/skill/workflows/update-rules.md) § Where To Record. Keep the two in sync when destinations change.*
+*Operating summary - canonical: [`update-rules.md` § Input and Destination Classification](../templates/skill/workflows/update-rules.md#input-and-destination-classification). Keep the two in sync when destinations change.*
 
 Use the lightest useful destination:
 
@@ -160,7 +161,7 @@ Prefer integrating into the closest existing entry/section over creating a paral
 
 ## Recording Destination Guide
 
-*Operating summary — canonical: [`update-rules.md`](../templates/skill/workflows/update-rules.md) § Recording Destination. Keep in sync.*
+*Operating summary - canonical: [`update-rules.md` § Input and Destination Classification](../templates/skill/workflows/update-rules.md#input-and-destination-classification). Keep in sync.*
 
 When the user explicitly asks to "record this", "remember this", or "save this for later", the agent must decide where to store the knowledge. Many AI tools (Claude Code, Gemini CLI) have their own memory systems (e.g., `~/.claude/projects/.../memory/`) that auto-load each session. These compete with the skill's documentation structure.
 
@@ -173,7 +174,7 @@ When the user explicitly asks to "record this", "remember this", or "save this f
 
 **Default to skill docs.** In practice, most "record this" requests during development are technical and project-scoped. The agent's own memory should only be used for content that is truly personal and would not help another contributor.
 
-Apply the same threshold plus fidelity/reconciliation/activation gates as AAR-initiated recordings. If the user says a business-model candidate is for “later”, keep it only in the current session; do not create a memory entry, file, directory, index, or placeholder route.
+Apply `rule-update/knowledge-reconciliation.md` plus the shared fidelity/reconciliation/activation contract for non-business records. User-confirmed business meaning goes to `rule-update/business-truth.md`; proven failures and accepted workflows go to their typed owners. If the user says a business-model candidate is for "later", keep it only in the current Session; do not create a memory entry, file, directory, index, or placeholder route.
 
 ## Generalization Rule
 
@@ -184,7 +185,7 @@ Use the durability test that matches the destination:
 
 Do not erase legitimate business names merely to satisfy cross-project reuse, and do not admit code names/fields/paths into a business model merely because they are project-specific.
 
-For worked examples of good vs bad records, see [`templates/skill/workflows/update-rules.md`](../templates/skill/workflows/update-rules.md) (the canonical Generalization Rule section).
+For the canonical durability test, see [`templates/skill/workflows/update-rules.md` § Placement and Generalization](../templates/skill/workflows/update-rules.md#placement-and-generalization).
 
 ## When References Alone Are Not Enough
 

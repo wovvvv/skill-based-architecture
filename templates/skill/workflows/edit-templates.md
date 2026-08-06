@@ -25,7 +25,7 @@ Before editing, answer these out loud in your working notes:
 
 If any answer blocks the change, stop and propose the correct destination instead of weakening the template boundary.
 
-For external-project absorbs, benchmark/eval lessons, default scaffold changes, or new reusable mechanisms, first follow `update-rules.md` § Plan-Only Gate for Skill Upgrades: list absorb candidates, rejected items, impact, activation path, net benefit, and validation; stop until the user approves that plan.
+For external-project absorbs, benchmark/eval lessons, default scaffold changes, or new reusable mechanisms, first follow [`workflows/rule-update/knowledge-reconciliation.md` § Upgrade Plan Gate](rule-update/knowledge-reconciliation.md#upgrade-plan-gate): list candidates, rejected items, impact, activation path, net benefit, and validation; stop until the user approves that Plan.
 
 ## Steps
 

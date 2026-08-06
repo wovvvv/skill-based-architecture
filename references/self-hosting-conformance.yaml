@@ -244,7 +244,7 @@ required_sections:
       - "## Verified Failure Handoff"
       - "Session-only failure candidate"
       - "Retries inside the same unresolved task remain one occurrence"
-      - "update-rules.md#verified-failure-input"
+      - "rule-update/verified-failure.md#verified-failure-input"
       - "every verified failure has a Rule Update learning outcome"
     must_not_contain:
       - "locally_done"
@@ -309,42 +309,89 @@ required_sections:
       - "Implementation-Fact Question Gate"
       - "Never ask the user to choose a current implementation fact"
       - "If the user says the answer is in code"
-      - "update-rules.md#verified-failure-input"
+      - "rule-update/verified-failure.md#verified-failure-input"
       - "For each verified engineering failure, run Verified Failure Input now"
       - "does not defer the verified-failure write"
 
   - file: templates/skill/workflows/update-rules.md
     must_contain:
+      - "compact shared durable-write contract plus the ambiguous-request dispatcher"
+      - "## Shared Durable-Write Contract"
+      - "### Input and Destination Classification"
+      - "rule-update/business-truth.md"
+      - "rule-update/verified-failure.md"
+      - "rule-update/knowledge-reconciliation.md"
+      - "rule-update/workflow-distillation.md"
+      - "### Source, Authority, and Fidelity"
+      - "### Reconciliation Gate"
+      - "### Activation Check"
+      - "### Placement and Generalization"
+      - "### Synchronization and Verification"
+      - "## Ambiguous Request Dispatcher"
+      - "Select exactly one execution owner"
+    must_not_contain:
       - "## Business Leaf and Gotcha Ownership"
-      - "Never copy the complete definition into both destinations"
-      - "## Standalone Business-Model Input"
-      - "Do not require a feature Plan"
-      - "create or reuse one draft gap dossier"
       - "## Verified Failure Input"
-      - "first proven actionable failure bypasses only the Recording Threshold"
-      - "activate it in the same change rather than waiting for another occurrence or final AAR"
+      - "## Ordinary Recording Threshold"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: templates/skill/workflows/rule-update/business-truth.md
+    must_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "## Plan Decision Source"
+      - "## Standalone Business-Model Input"
+      - "## Active Bug-Fix Input"
+      - "Do not derive `desired business truth` from Bug symptoms"
+      - "## Business-Specific Completion"
+    must_not_contain:
+      - "`covered/no-write`"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: templates/skill/workflows/rule-update/verified-failure.md
+    must_contain:
+      - "## Verified Failure Input"
+      - "first proven actionable failure bypasses only the ordinary Recording Threshold"
       - "same proven root cause + same applicability boundary + same prevention action"
       - "Failure learning never grants commit, push, MR, deploy, publish, database, production, or other external authority"
-      - "## Accepted Workflow-Distillation Input"
-      - "approved upgrade plan for the described workflow mutation"
-      - "Create one complete orchestration owner"
-      - "A source-only change without downstream consumption is incomplete"
-      - "generated or installed copies are never independent owners"
-      - "Workflow acceptance authorizes only the described durable mutation"
+      - "## Failure-Specific Completion"
     must_not_contain:
-      - "### Post-Completion Workflow Distillation"
+      - "## Business Leaf and Gotcha Ownership"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: templates/skill/workflows/rule-update/knowledge-reconciliation.md
+    must_contain:
+      - "## Ordinary Recording Threshold"
+      - "## Upgrade Plan Gate"
+      - "## When Not to Record"
+      - "## Learn, Correct, Retire"
+      - "repair activation/prominence instead of duplicating it"
+    must_not_contain:
+      - "## Verified Failure Input"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: templates/skill/workflows/rule-update/workflow-distillation.md
+    must_contain:
+      - "## Accepted Workflow-Distillation Input"
+      - "at least two independently completed semantic instances"
+      - "Create one complete orchestration owner"
+      - "source-only change without required downstream consumption is incomplete"
+      - "generated or installed copies are never independent owners"
+      - "Workflow acceptance never grants commit, push, MR, deploy, publish, database"
+    must_not_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "## Verified Failure Input"
 
   - file: templates/skill/workflows/task-closure.md
     must_contain:
       - "Account for verified failures"
-      - "completed [`update-rules.md` § Verified Failure Input]"
+      - "rule-update/verified-failure.md` § Verified Failure Input"
       - "Closure does not diagnose root cause or postpone the first write"
       - "Do not re-record an already-reconciled verified failure"
       - "### Post-Completion Workflow Distillation"
       - "proposal presentation may happen only after `Closure Complete`, with the completion report first"
       - "Pure composition produces no proposal"
       - "creates no durable candidate/rejection record"
-      - "update-rules.md#accepted-workflow-distillation-input"
+      - "rule-update/workflow-distillation.md#accepted-workflow-distillation-input"
     must_not_contain:
       - "## Accepted Workflow-Distillation Input"
 
@@ -484,6 +531,11 @@ required_files:
   - path: templates/skill/conformance.yaml
   - path: templates/skill/scripts/check-version-conformance.sh
   - path: templates/skill/workflows/task-execution.md
+  - path: templates/skill/workflows/update-rules.md
+  - path: templates/skill/workflows/rule-update/business-truth.md
+  - path: templates/skill/workflows/rule-update/verified-failure.md
+  - path: templates/skill/workflows/rule-update/knowledge-reconciliation.md
+  - path: templates/skill/workflows/rule-update/workflow-distillation.md
   - path: templates/skill/protocol-blocks/source-localization.md
   - path: templates/skill/protocol-blocks/change-contract.md
   - path: docs/task-anchor-native-plan.md

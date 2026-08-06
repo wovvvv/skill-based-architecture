@@ -65,8 +65,8 @@ required_sections:
       - "## Verified Failure Handoff"
       - "Session-only failure candidate"
       - "Retries inside the same unresolved task remain one occurrence"
-      - "update-rules.md#verified-failure-input"
-      - "Rule Update owns durable reconciliation"
+      - "rule-update/verified-failure.md#verified-failure-input"
+      - "Verified Failure owns durable reconciliation"
       - "every verified failure has a Rule Update learning outcome"
     must_not_contain:
       - "task_plan.md"
@@ -233,7 +233,7 @@ required_sections:
       - "SQL-file existence alone is neither schema readiness nor DB delivery"
       - "authoritative schema/data readback"
       - "Account for verified failures"
-      - "completed [`update-rules.md` § Verified Failure Input]"
+      - "rule-update/verified-failure.md` § Verified Failure Input"
       - "Closure does not diagnose root cause or postpone the first write"
       - "Do not re-record an already-reconciled verified failure"
       - "verified failure that lacks a completed learning outcome"
@@ -245,30 +245,58 @@ required_sections:
       - "Pure composition produces no proposal"
       - "creates no durable candidate/rejection record"
       - "Re-prompt only after materially stronger evidence or explicit user reopening"
-      - "update-rules.md#accepted-workflow-distillation-input"
+      - "rule-update/workflow-distillation.md#accepted-workflow-distillation-input"
       - "without redundant reconfirmation"
     must_not_contain:
       - "## Accepted Workflow-Distillation Input"
 
   - file: workflows/update-rules.md
     must_contain:
+      - "compact shared durable-write contract plus the ambiguous-request dispatcher"
+      - "## Shared Durable-Write Contract"
+      - "### Input and Destination Classification"
+      - "rule-update/business-truth.md"
+      - "rule-update/verified-failure.md"
+      - "rule-update/knowledge-reconciliation.md"
+      - "rule-update/workflow-distillation.md"
+      - "### Source, Authority, and Fidelity"
+      - "### Reconciliation Gate"
+      - "### Activation Check"
+      - "### Placement and Generalization"
+      - "### Synchronization and Verification"
+      - "## Ambiguous Request Dispatcher"
+      - "Select exactly one execution owner"
+      - "No authority expanded"
+    must_not_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "## Verified Failure Input"
+      - "## Ordinary Recording Threshold"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: workflows/rule-update/business-truth.md
+    must_contain:
+      - "Shared Durable-Write Contract"
       - "## Business Leaf and Gotcha Ownership"
       - "A Gotcha is not a general implementation reference or a second business-model owner"
-      - "Never copy the complete definition into both destinations"
+      - "## Plan Decision Source"
+      - "plan-feature.md#user-confirmed-decision-mainline"
       - "## Standalone Business-Model Input"
-      - "Stable, clear, user-confirmed, cross-implementation business meaning is written directly into the unique routed leaf"
-      - "Do not require a feature Plan"
-      - "Confirmed implementation gap intake"
       - "create or reuse one draft gap dossier"
       - "## Active Bug-Fix Input"
-      - "The only business-recording source during Fix Bug is the user's explicit business statement"
-      - "Preserve the user's meaning faithfully"
-      - "Do not derive a business rule from the Bug"
-      - "Reusable engineering lessons discovered while fixing the Bug enter Verified Failure Input immediately after fitted red-to-green proof"
-      - "Fix Bug owns noticing and immediate invocation"
+      - "only possible business source is the user's explicit correction"
+      - "Do not derive `desired business truth` from Bug symptoms"
+      - "current implementation fact"
+      - "## Business-Specific Completion"
+    must_not_contain:
+      - "`covered/no-write`"
+      - "## Ordinary Recording Threshold"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: workflows/rule-update/verified-failure.md
+    must_contain:
+      - "Shared Durable-Write Contract"
       - "## Verified Failure Input"
-      - "first proven actionable failure bypasses only the Recording Threshold"
-      - "activate it in the same change rather than waiting for another occurrence or final AAR"
+      - "first proven actionable failure bypasses only the ordinary Recording Threshold"
       - "`covered/no-write`"
       - "`extend-existing`"
       - "`correct-existing`"
@@ -277,32 +305,49 @@ required_sections:
       - "`requires-user-authority`"
       - "`escalate-prevention`"
       - "same proven root cause + same applicability boundary + same prevention action"
-      - "retries inside one unresolved task are one occurrence"
+      - "repair activation instead of adding prose"
       - "Failure learning never grants commit, push, MR, deploy, publish, database, production, or other external authority"
-      - "### Recording Threshold"
-      - "### Fidelity Gate"
-      - "### Reconciliation Gate"
-      - "### Activation Check"
-      - "### Generalization Rule"
-      - "## Plan Decision Source"
-      - "plan-feature.md#user-confirmed-decision-mainline"
-      - "owns distillation and reconciliation"
-      - "Plan confirmed for implementation"
-      - "bypasses only the Recording Threshold"
-      - "Desired business truth and current implementation fact remain distinct"
-      - "do not create a fixed ledger solely to satisfy the gate"
+      - "## Failure-Specific Completion"
+    must_not_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "## Ordinary Recording Threshold"
       - "## Accepted Workflow-Distillation Input"
-      - "approved upgrade plan for the described workflow mutation"
+
+  - file: workflows/rule-update/knowledge-reconciliation.md
+    must_contain:
+      - "Shared Durable-Write Contract"
+      - "## Ordinary Recording Threshold"
+      - "at least two must pass"
+      - "## Upgrade Plan Gate"
+      - "## When Not to Record"
+      - "## Learn, Correct, Retire"
+      - "correct in place and check consumers"
+      - "repair activation/prominence instead of duplicating it"
+      - "maintain-docs.md"
+      - "## Knowledge-Specific Completion"
+    must_not_contain:
+      - "## Business Leaf and Gotcha Ownership"
+      - "`covered/no-write`"
+      - "## Accepted Workflow-Distillation Input"
+
+  - file: workflows/rule-update/workflow-distillation.md
+    must_contain:
+      - "Shared Durable-Write Contract"
+      - "## Accepted Workflow-Distillation Input"
+      - "at least two independently completed semantic instances"
       - "**`extend`**"
       - "**`compose`**"
       - "**`create`**"
       - "Create one complete orchestration owner"
-      - "A source-only change without downstream consumption is incomplete"
+      - "source-only change without required downstream consumption is incomplete"
       - "generated or installed copies are never independent owners"
       - "return `requires-user-authority` without mutation"
-      - "Workflow acceptance authorizes only the described durable mutation"
+      - "Workflow acceptance never grants commit, push, MR, deploy, publish, database"
+      - "## Workflow-Specific Completion"
     must_not_contain:
-      - "### Post-Completion Workflow Distillation"
+      - "## Business Leaf and Gotcha Ownership"
+      - "`covered/no-write`"
+      - "## Ordinary Recording Threshold"
 
   - file: workflows/profile-business-model.md.example
     must_contain:
@@ -397,15 +442,15 @@ required_sections:
       - "continue without another question"
       - "ask only a remaining normative ambiguity that could change repair classification or expected behavior"
       - "Never ask the user to choose a current implementation fact, request exhaustive detail, or define an abstract concept from scratch"
-      - "update-rules.md#active-bug-fix-input"
+      - "rule-update/business-truth.md#active-bug-fix-input"
       - "instead of waiting for Task Closure"
       - "the only source eligible for a `references/business/<module>.md` record is the user's explicit business statement"
       - "Bug symptoms, root cause, repaired behavior, code, tests, runtime evidence, and Agent summaries are not `desired business truth`"
-      - "update-rules.md#verified-failure-input"
+      - "rule-update/verified-failure.md#verified-failure-input"
       - "After Step 8 proves an engineering failure and repair"
       - "For each verified engineering failure, run Verified Failure Input now"
       - "does not defer the verified-failure write"
-      - "every verified engineering failure received an immediate technical learning outcome after red-to-green proof"
+      - "every verified engineering failure received an immediate technical learning outcome through `workflows/rule-update/verified-failure.md` after red-to-green proof"
       - "No Bug-derived or Agent-derived content entered the business model"
       - "User Decision Drift Gate"
       - "task-execution.md#user-decision-drift-gate"
@@ -624,5 +669,10 @@ required_sections:
 required_files:
   - path: routing.yaml
   - path: workflows/task-execution.md
+  - path: workflows/update-rules.md
+  - path: workflows/rule-update/business-truth.md
+  - path: workflows/rule-update/verified-failure.md
+  - path: workflows/rule-update/knowledge-reconciliation.md
+  - path: workflows/rule-update/workflow-distillation.md
   - path: protocol-blocks/source-localization.md
   - path: protocol-blocks/change-contract.md

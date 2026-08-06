@@ -67,7 +67,7 @@ If the Goal or Done When can no longer be stated accurately from the current Ses
 
 When a command, test, runtime check, delivery action, or implementation premise fails, keep one Session-only failure candidate with the affected boundary and current evidence. Retries inside the same unresolved task remain one occurrence. Do not persist the raw message or first hypothesis. If diagnosis, repeated repair, or cross-step verification makes a Simple task nontrivial, reclassify it as Managed and preserve the candidate in the Task Anchor.
 
-After evidence proves the root cause, the current repair, and fitted red-to-green behavior, invoke [`update-rules.md` § Verified Failure Input](update-rules.md#verified-failure-input) before the candidate can disappear or the task enters Closure. Rule Update owns durable reconciliation and returns one learning outcome; Task Execution owns only the Session candidate, reclassification, and proof handoff.
+After evidence proves the root cause, the current repair, and fitted red-to-green behavior, invoke [`workflows/rule-update/verified-failure.md` § Verified Failure Input](rule-update/verified-failure.md#verified-failure-input) before the candidate can disappear or the task enters Closure. Verified Failure owns durable reconciliation and returns one learning outcome; Task Execution owns only the Session candidate, reclassification, and proof handoff.
 
 ## Execution Loop
 

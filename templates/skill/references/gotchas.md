@@ -14,9 +14,11 @@ Tag reference:
   [topic]  — short reusable noun for dedup clustering (e.g. [lifecycle], [auth], [styling])
            — reuse existing topics; same topic in one file = check for duplicates
 
-Before writing, follow `workflows/update-rules.md`: pass threshold and fidelity,
-then choose no-write / extend / correct / retire / independent-add. Same root
-cause means one entry with multiple symptoms, never chronological append.
+Before writing, use `workflows/rule-update/verified-failure.md` for a proven
+engineering failure or `workflows/rule-update/knowledge-reconciliation.md` for
+an ordinary AAR record. Both consume `workflows/update-rules.md`: preserve
+fidelity, reconcile in place, and activate the result. Same root cause means
+one entry with multiple symptoms, never chronological append.
 
 Organization, categorization, split/merge, and optional selecting-index rules
 live in `workflows/maintain-docs.md`; they are maintenance-time content and do
