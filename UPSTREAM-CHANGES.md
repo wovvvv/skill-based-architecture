@@ -61,7 +61,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-08-07 - Semantic fidelity and lifecycle audit corrections
 
-- Upstream commit: pending in this working tree
+- Upstream commit: 6805893 fix: preserve user source semantics across workflows
 - Changed areas:
   - `task-execution.md` now preserves the full Simple/Managed/Design classifier, freezes a risk-sized Done Contract before the first Managed step, binds every bounded read to a next-decision and stop boundary, treats truncated/Top-N output as incomplete evidence, and gives Structured Brief precedence without forcing ceremony onto Simple work.
   - `user-decision-drift.md`, `plan-feature.md`, `maintain-docs.md`, Task Execution, and Closure now preserve user brainstorm source authority. Source capture precedes synthesis: already-clear wording stays verbatim; optional readability editing is limited to punctuation, obvious typo, grammar, or word order; speech act/force, ownership, timing/commitment, uncertainty/emphasis, definitions, conditions, boundaries, negations, reasons, authority, scope, and status remain reconstructable. Any Agent summary is explicitly derived and cannot replace the source as the sole normative record.
