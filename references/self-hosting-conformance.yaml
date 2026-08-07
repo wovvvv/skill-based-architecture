@@ -245,6 +245,9 @@ required_sections:
       - "Retries inside the same unresolved task remain one occurrence"
       - "rule-update/verified-failure.md#verified-failure-input"
       - "every verified failure has a Rule Update learning outcome"
+      - "preserve the source before changing runtime state"
+      - "already-clear wording stays verbatim"
+      - "an Agent-derived summary cannot be the only normative record"
     must_not_contain:
       - "locally_done"
       - "ready_for_parent"
@@ -265,6 +268,11 @@ required_sections:
       - "# User Decision Drift"
       - "Keep the affected path paused"
       - "Mark every alternative `proposed`"
+      - "Source-Preserving User Input"
+      - "keep clear wording verbatim"
+      - "label any Agent-derived summary as subordinate"
+      - "speech act/force, actor/ownership, timing/commitment, uncertainty/emphasis"
+      - "Record that source-faithful answer in the governing Plan Decision Context"
       - "mark the prior decision `superseded`"
       - "A late disclosure in review or Closure never substitutes"
 
@@ -278,6 +286,10 @@ required_sections:
       - "## Artifact Pressure Gate"
       - "select the highest-impact unresolved decision first"
       - "Complexity changes analysis depth, never file creation"
+      - "Capture source before synthesis"
+      - "keep it verbatim as `User source`"
+      - "`Agent-derived interpretation` is optional"
+      - "cannot replace the source as the only normative record"
       - "Do not inventory every possible consumer before the first decision"
       - "Never pre-create a Plan, directory, `design.md`, or a taxonomy of empty files from complexity alone"
       - "A Plan is `subplan_of` and physically nested only when it cannot independently complete, freeze, and be directly consumed without its parent"
@@ -483,6 +495,10 @@ required_sections:
       - "smallest task-specific trigger, immediate action, and current-task acceptance responsibility"
       - "A complete repeated rule or workflow is exceptional"
       - "independently delivered or independently used"
+      - "### Source-Preserving User Input"
+      - "user wording is source evidence, not draft prose"
+      - "If the wording is already clear, keep it unchanged"
+      - "must never become the sole normative record"
 
   - file: REFERENCE.md
     must_contain:
@@ -498,6 +514,9 @@ required_sections:
       - "文件、类、搜索词、当前 owner 等 Agent 能从仓库获得的技术事实不得转交用户"
       - "PRD、Figma、关键词、任务大小或固定流程"
       - "直接复用并走快路径"
+      - "用户原话先于 Agent 提炼"
+      - "已经清楚的原话应直接保留"
+      - "不得让提炼稿成为唯一的规范记录"
 
   - file: templates/skill/protocol-blocks/source-localization.md
     must_contain:
@@ -549,7 +568,7 @@ required_sections:
   - file: templates/skill/workflows/task-closure.md
     must_contain:
       - "final expanded [`Change Contract`](../protocol-blocks/change-contract.md)"
-      - "does not define Semantic Intent or source-localization stages"
+      - "does not redefine Semantic Intent, source-localization stages, read breadth, or validation depth after green"
 
 # Files required to exist (presence-only check). Drift here means a
 # self-hosting structural piece was deleted without updating routing.

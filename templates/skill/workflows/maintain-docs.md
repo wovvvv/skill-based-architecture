@@ -184,6 +184,12 @@ After deduplication, categorization, compression, split, or merge, compare the d
 4. verify symptoms sharing one root cause remain integrated rather than becoming parallel entries;
 5. verify each resulting file still has the independent load reason recorded in Step 2.
 
+### Source-Preserving User Input
+
+For user-brainstorm input, user wording is source evidence, not draft prose that the Agent is expected to improve. Before any synthesis, preserve the original question/options and every decision-bearing user clause. If the wording is already clear, keep it unchanged. Readability editing is optional and limited to punctuation, obvious typo repair, grammar, or word order; it must not add, delete, merge, generalize, soften, or strengthen a clause. Preserve the speech act and force, actor/ownership, timing/commitment, uncertainty, emphasis, definition, applicability, boundary, negation/rejected direction, rationale/consequence, authority, scope, and `proposed | confirmed | superseded` or evidence-needed status. A stop request, responsibility handoff, deadline/promise, confidence limit, or repeated emphasis is semantic content, not disposable tone.
+
+An Agent synthesis may follow only as a clearly labeled derived interpretation; it must never become the sole normative record. Keep a concise or high-risk user statement verbatim next to that interpretation. For longer input, retain every decision-bearing original clause before any compact derived summary. Each source clause must then be preserved verbatim, minimally normalized under the rule above, moved to an exact `owner#section`, or explicitly deleted because its premise is invalid. A move or summary is equivalent only when meaning, applicability/authority, pragmatic force, and normal activation timing are all equivalent; if a fresh Agent could make a different decision, retain the source wording or return for user clarification.
+
 This is a judgment gate, not a request for a semantic-lint script. Save the compact before/after load matrix and meaning inventory in the task/PR evidence when the reorganization is substantial.
 
 ## Step 6: Reference Integrity Check

@@ -1,6 +1,14 @@
 # Task Execution Protocol
 
-Use this after matching the task route when the task is not one clear action with one direct check. It controls this task's continuity; the matched Domain Workflow remains authoritative for task-specific procedure and mandatory gates. Simple tasks skip this protocol. Dependent steps, meaningful boundaries, repeated verification, or material drift risk make the task Managed; unresolved product/architecture meaning returns to `plan-feature.md` before execution.
+Use this after matching the task route when the task is not one clear action with one direct check. It controls this task's continuity; the matched Domain Workflow remains authoritative for task-specific procedure and mandatory gates. Classify by whether an explicit goal changes execution, not by tool-call or file count.
+
+## Task Classifier
+
+| Class | Signal | Action |
+|---|---|---|
+| Simple | one clear action, one direct check, little room to drift | execute directly; do not display an Anchor or Plan |
+| Managed | dependent steps, meaningful boundaries, repeated verification, or material drift risk | establish a Task Anchor, use a concise Native Plan, and present only useful alignment |
+| Design | unresolved product/architecture choice, materially different interpretations, or irreversible decision | use `plan-feature.md`; after approval, convert its result into a Managed task |
 
 ## Evidence and Knowledge Gate
 
@@ -9,11 +17,14 @@ Use this after matching the task route when the task is not one clear action wit
 - A domain route appends knowledge and never replaces the selected workflow. Load one owner by default; add another only with explicit cross-domain evidence.
 - Treat `subagent-driven.md` as a cross-cutting modifier, never a first-workflow route. Read it only after the primary workflow and Task Anchor expose at least three plausible independent workstreams with useful execution overlap; task size or duration alone does not activate it.
 - Before the first mutation, read `rules/change-discipline.md` and only the project/coding rules whose scope the planned change reaches. Load an adopted testing contract when constructing evidence, and load `task-closure.md` only after local execution is complete and either all goal evidence exists or only explicit delivery-dependent evidence remains.
+- For every bounded search/read, name the current question, the result that would select the next read, and the evidence boundary that would make the result complete enough for this decision. Ranked, sampled, truncated, or Top-N output is candidate evidence, not an exhaustive inventory; expose the cap and the uninspected remainder before making a completeness claim.
 - Treat read volume and elapsed time as diagnostic evidence, never correctness gates. Validate at the cheapest level that can falsify the material risk and stop when the declared evidence contract passes.
 
 ## Task Anchor
 
-Before mutation on a Managed task, establish current-Session state with one observable Goal, Done When evidence, and only material Boundaries such as scope, non-goals, preservation requirements, permission, or approval limits. Derive a concise Native Plan from the matched Domain Workflow. Before verification begins, bind the material risk, fitted evidence, and stop/escalation condition in the current Session; this is a decision aid, not another persistent artifact.
+Before the first Managed execution step, and always before mutation, freeze one risk-sized Done Contract in current-Session state: an observable Goal, Done When evidence, only material Boundaries such as scope, non-goals, preservation, and permission limits, the cheapest fitted validation set, and concrete escalation signals for wider reads or stronger proof. The frozen contract owns read breadth, validation depth, and the stop point. Re-anchor only when the user or evidence changes the frame; update the Task Anchor and remaining Native Plan before more mutation. Derive that Native Plan from the matched Domain Workflow. This is a decision aid, not another persistent artifact.
+
+Before verification begins, bind each material risk to the fitted evidence and its stop/escalation condition; the contract must state what result advances, returns, or widens the check.
 
 For Design-derived work, retain every governing Plan path and relevant user-confirmed Decision Context. Replay the governing mainline before deriving or changing the Task Anchor; do not lose a rule, boundary, rationale, or acceptance condition. Read only decisions governing the current step; only business-bearing decisions require a routed business rule.
 
@@ -23,7 +34,14 @@ When one outcome consumes multiple independently authoritative Plans, read [`com
 
 ### Presentation Gate
 
-Present only useful alignment for the user to verify direction. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work states separate Goal, Done When, material Boundaries, and numbered Steps in the user's language; otherwise use one compact natural-language alignment when useful. Use the harness's native Plan/Task surface or a concise Session checklist for step state; do not repeat its steps in chat. This protocol does not create durable planning files or recover task state across Sessions. Proceed unless a real decision, authority boundary, scope expansion, or shared/irreversible action blocks.
+Present only useful alignment for the user to verify direction; do not expose protocol labels or repeat a visible Native Plan merely to prove an Anchor exists.
+
+Evaluate **Structured Brief first**. If any Structured condition matches, it wins; Compact Alignment is allowed only when all Structured conditions are false.
+
+- **Structured Brief**: trigger when the task is long, complex, scope-sensitive, confirmation-dependent, or lacks a visible native Plan surface. The first user-facing task-start message MUST begin with separate Goal, Done When, material Boundaries, and Steps sections in the user's language. Steps must be numbered; do not collapse the brief into prose or render empty headings.
+- **Compact Alignment**: only when no Structured condition matches, use one compact natural-language alignment when useful. If the native Plan/Task surface is visible, do not repeat its steps in chat.
+
+Use the harness's native Plan/Task surface or a concise Session checklist for step state. This protocol does not create durable planning files or recover task state across Sessions. Proceed unless a real decision, authority boundary, scope expansion, or shared/irreversible action blocks.
 
 ## Workflow Boundary
 
@@ -62,11 +80,11 @@ Independent Subagents may work concurrently, but the main task keeps one integra
 
 ## User Decision Drift Gate
 
-When code, tests, runtime evidence, review, or a proposed implementation conflicts with user-confirmed meaning, pause the affected path immediately and read [`user-decision-drift.md`](../protocol-blocks/user-decision-drift.md) before choosing or resuming. Independent work may continue only when it cannot prejudge the decision. Domain workflows may repeat this trigger and immediate pause, but the protocol block owns evidence, user consultation, Decision Delta transition, synchronization, and resume conditions.
+When code, tests, runtime evidence, review, or a proposed implementation conflicts with user-confirmed product meaning, business rule, scope, flow, state, boundary, invariant, acceptance condition, or user-visible behavior, pause the affected path immediately and read [`user-decision-drift.md`](../protocol-blocks/user-decision-drift.md) before choosing or resuming. Ordinary implementation choices that preserve those decisions do not trigger this gate. Independent work may continue only when it cannot prejudge the decision. Domain workflows may repeat this trigger and immediate pause, but the protocol block owns evidence, user consultation, Decision Delta transition, synchronization, and resume conditions, including updating the Task Anchor and remaining Native Plan before more mutation. Never silently compromise a confirmed mainline to fit current code.
 
 ## New Message Gate
 
-For each later user message: a refinement/correction updates the current Anchor and remaining Plan; a new independent outcome re-matches the route and replaces them; a status question reports Goal/current step/verified results without changing state; pause/stop leaves unverified steps incomplete.
+For each later user message: a refinement/correction updates the current Anchor and remaining Plan; a new independent outcome re-matches the route and replaces them; a status question reports Goal/current step/verified results without changing state; pause/stop leaves unverified steps incomplete. When the update records or summarizes user meaning, preserve the source before changing runtime state: already-clear wording stays verbatim, optional grammar/word-order cleanup cannot delete a clause or change its force, ownership, timing, uncertainty, reason, boundary, or status, and an Agent-derived summary cannot be the only normative record. Durable Plan capture follows [`plan-feature.md` § User-Confirmed Decision Mainline](plan-feature.md#user-confirmed-decision-mainline).
 
 ## Exit To Closure
 

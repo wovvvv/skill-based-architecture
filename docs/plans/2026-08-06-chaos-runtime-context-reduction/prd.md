@@ -24,10 +24,15 @@ distilled_to:
   - /Users/shiqi/.ai-infra/chaos/apps/chaos/skills/chaos/workflows/task-execution.md
   - /Users/shiqi/.ai-infra/chaos/apps/chaos/skills/chaos/workflows/task-closure.md
   - /Users/shiqi/.ai-infra/chaos/apps/chaos/skills/chaos/protocol-blocks/
+  - /Users/shiqi/.ai-infra/chaos/apps/chaos/skills/chaos/workflows/skill-maintenance.md
   - /Users/shiqi/.ai-infra/chaos/apps/chaos_web/skills/chaos-web/SKILL.md
   - /Users/shiqi/.ai-infra/chaos/apps/chaos_web/skills/chaos-web/workflows/task-execution.md
   - /Users/shiqi/.ai-infra/chaos/apps/chaos_web/skills/chaos-web/workflows/task-closure.md
   - /Users/shiqi/.ai-infra/chaos/apps/chaos_web/skills/chaos-web/protocol-blocks/
+  - /Users/shiqi/ai-infra-workspace/aii/src/metalint.js
+  - /Users/shiqi/ai-infra-workspace/aii/test/metalint.test.js
+  - /Users/shiqi/ai-infra-workspace/aii/skills/aii-product-init/SKILL.md
+  - /Users/shiqi/ai-infra-workspace/aii/skills/aii-product-init/workflows/build-meta-repo.md
 ---
 
 # Plan: Chaos 高频路径上下文减负
@@ -116,7 +121,7 @@ Decision Context:
 
 ### D6 - Slice 1 changes only the canonical root `AGENTS.md`
 
-- `Status: confirmed; implementation deferred while later slices are discussed`
+- `Status: confirmed; implemented and revalidated after the post-delivery semantic review`
 - `Authority: user-confirmed in the current conversation`
 - Keep one generated root `AGENTS.md`, but make the canonical root source's guaranteed-read responsibility smaller: it owns product identity, true cross-application invariants, security, unknown-ownership triage, and pointers that activate the correct application/platform Skill.
 - Application routing algorithms, Plan/modeling procedures, lifecycle state machines, local-development commands, test selection, and Closure mechanics remain in their existing `chaos`, `chaos-web`, or platform workflow owners and load only after application/route/phase selection.
@@ -132,7 +137,7 @@ Decision Context:
 
 ### D7 - Long-task mainline is preserved by Task Anchor, not by context luck
 
-- `Status: confirmed; detailed Task Execution reduction shape remains a later Design Slice`
+- `Status: confirmed; implemented in the Task Execution continuity kernel and revalidated`
 - `Authority: user-confirmed in the current conversation`
 - In a long execution flow, the Agent must continue to remember the original outcome and user-confirmed mainline across source discovery, workflow reclassification, implementation, verification, failures, later user messages, subagent returns, and context compaction.
 - Task Anchor remains the current-task global owner of `Goal`, `Done When`, and material `Boundaries`; for Design-derived work it references the governing Plan and applicable user-confirmed decisions rather than duplicating their complete transcript.
@@ -220,13 +225,48 @@ Decision Context:
 - Load-bearing meaning: preserve domain discovery, exact route selection, rematch, and recovery as distinct responsibilities while removing route data that has no independent consumer or decision.
 - Evidence / Source: current conversation; backend/frontend generated summary measurements, current `sync-routing.sh`, thin-shell bootstrap, smoke-test parsing, and canonical routing contracts.
 
+### D12 - Root-entry reduction must preserve distinct decision layers
+
+- `Status: confirmed; supersedes the Slice 1 row that reduced the final product-baseline caveat to one invariant`
+- `Authority: user-confirmed post-delivery review`
+- The root product baseline must continue to state all three responsibilities carried by the original sentence: product goals are priors rather than evidence; concrete work still identifies the routed business domain and capability; and decisions distinguish business desired truth, proposed design/implementation shape, and current implementation fact.
+- A later two-way invariant such as `desired business truth` versus `current implementation fact` does not replace the missing design layer. Removing words is not a valid reduction when the removed clause changes how a proposal is classified before implementation.
+- For this line, restore the original complete sentence. Future root-entry trimming must use clause-level responsibility and activation analysis, not line-level size reduction.
+
+Decision Context:
+
+- Trigger/question: after reviewing the downstream diff, the user asked why the original product-baseline sentence was deleted and stated that the root `AGENTS.md` had been simplified too aggressively in several places.
+- Faithful answer: this first item should not have been deleted; restore it and review the remaining reductions one by one.
+- Load-bearing meaning: this review reopened Slice 1 at that point while preserving its responsibility boundary; each compression then had to prove that every removed clause was duplicated by an equally early active owner or truly non-semantic. The 2026-08-07 clause audit and reassembly below close that reopened state.
+- Evidence / Source: current conversation and the downstream MR diff screenshot.
+
+### D13 - User brainstorm meaning is the authority; Agent synthesis is subordinate
+
+- `Status: confirmed`
+- `Authority: user-confirmed`
+- In interactive brainstorming, the user's direct answers, corrections, selections, refusals, boundaries, and reasons are the primary authority for user-owned product and business meaning. The Agent may organize, deduplicate, classify, and faithfully summarize that input, but its synthesis is only a derived representation and cannot silently replace or weaken the source meaning.
+- Preserve the semantic status of each statement. A clear answer, correction, selection, or rejection may become `confirmed`; a question, speculation, unselected candidate, or implementation/factual claim that still needs evidence remains `proposed`, `open`, or evidence-needed. Default trust in user-owned normative meaning does not authorize turning every conversational sentence into active truth.
+- Before shortening user input, inventory the decision-changing semantic atoms: identity / definition, applicability and preconditions, boundary / counterexample, negation or rejected direction, rationale / consequence, authority, scope, and `proposed | confirmed | superseded` status. Synonyms such as `Chosen Approach` -> `result` are not automatically faithful merely because they sound adjacent.
+- Short answers must remain bound to the question or options that give them meaning and should be preserved verbatim. Long answers may be summarized only when the load-bearing meaning and exact high-risk wording remain reconstructable; where a faithful summary is uncertain, retain the source wording or ask the user rather than inventing a cleaner interpretation.
+- Source preservation precedes synthesis. Already-clear user wording remains unchanged; optional readability edits are limited to punctuation, obvious typo, grammar, or word order, with the original retained adjacent. The Agent may add a separately labeled derived interpretation only after the source, never as the sole normative record.
+- Preserve pragmatic force as well as propositional content: question/command/refusal, stop or ownership handoff, actor/responsibility, timing/commitment, uncertainty/confidence, emphasis, boundary, and rationale are semantic clauses. They cannot be discarded as tone merely because the remaining summary sounds cleaner.
+- The acceptance test is semantic reconstruction: a fresh Agent reading the Plan or active owner must reach the same decision, boundaries, rejected alternatives, and reasons that the user established. If it would make a materially different choice, the compression failed even when the document is shorter and all structural checks are green.
+
+Decision Context:
+
+- Trigger/question: during the post-delivery audit, the user identified that most useful brainstorming input is correct source truth, while Agent-authored integration and abbreviation occasionally removes the real meaning. A later screenshot made the failure concrete: an Agent paraphrase dropped the user's question/accusation, stop request, knowledge boundary, and same-day ownership commitment.
+- User source: “这个就是问题，Agent 在自己做的时候，会自己提炼话，然后把真正的系列漏完，这个是不可以的。用户说的话有的时候不需要修改，或者只需要简单优化语序就可以了。”
+- Faithful answer: preserve user-owned normative meaning as the authority and make Agent synthesis subordinate. Preserve source wording first; do not rewrite already-clear input, and limit any readability edit to minimal syntax/order cleanup. Distinguish confirmed answers from exploratory questions, hypotheses, and evidence-dependent factual claims rather than flattening all conversation into one status.
+- Load-bearing meaning: semantic fidelity must protect the user-to-Plan transition before it protects later Plan-to-document or document-to-owner transformations. A later reconciliation gate cannot recover meaning already lost in the first summary.
+- Evidence / Source: current conversation and the supplied paraphrase screenshot.
+
 ## Candidate Reduction Slices
 
-The sequence below is the current recommendation. Slice 1 through Slice 5 designs are confirmed with implementation deferred until explicit authorization.
+The sequence below records the confirmed design and its implemented/revalidated outcome. Slice 1 through Slice 5 are complete; no deferred implementation claim remains.
 
 ### Slice 1 - Guaranteed root-entry cost
 
-`Design status: confirmed; implementation not started.`
+`Design status: confirmed; implementation complete and revalidated 2026-08-07.`
 
 Current owners:
 
@@ -245,18 +285,18 @@ This is a trim/ownership reconciliation, not a physical split. Exact retained an
 
 | Current owner/section | Keep in guaranteed entry | Compress to activation hook | Existing destination / reason | Slice 1 action |
 |---|---|---|---|---|
-| root `AGENTS.md` lines 1-12: product identity and decision baseline | Product identity, backend/frontend composition, four product-level decision priorities | Tighten the final caveat to one invariant: product priors do not replace routed business/code/runtime evidence | Application domain owners and task workflows own concrete semantics and evidence | `keep + trim` |
+| root `AGENTS.md` lines 1-12: product identity and decision baseline | Product identity, backend/frontend composition, four product-level decision priorities, routed domain/capability identification, and the three-way distinction among business desired truth, proposed design shape, and current fact | Keep the original final caveat complete; a two-way desired-truth/current-fact rule does not replace its design layer | Application domain owners and task workflows own concrete procedures and evidence, while the root retains this cross-application decision classification | `keep` |
 | root line 15: simplified-Chinese output | Complete user-facing language requirement | None | No later owner can protect communication before routing | `keep` |
-| root line 16: complete routing/loading/session algorithm | Only the fact that the matching application Skill is the executable entry | Route selects the first workflow; domain/lifecycle knowledge loads only when evidence or phase requires it | Backend/frontend `SKILL.md` Path Resolution, Common Tasks/Session Discipline, and phase hooks already own the complete algorithm | `compress` |
+| root line 16: complete routing/loading/session algorithm | The matching application Skill is the executable entry, every new task reads its `routing.yaml`, and that manifest selects only the first workflow | Domain/lifecycle knowledge loads only when evidence or phase requires it | Backend/frontend `SKILL.md` Path Resolution, Common Tasks/Session Discipline, and phase hooks own the remaining algorithm | `keep bootstrap + compress detail` |
 | root lines 17-21: Decision Context, Plan, business modeling, leaf and implementation-gap procedures | One cross-application invariant: user-confirmed desired truth is distinct from code/runtime facts and cannot be silently overwritten by them | Activate the matching application Plan/modeling/knowledge-maintenance workflow when the request or evidence requires those semantics | `plan-feature.md`, `profile-business-model.md`, routed business owners, `rule-update/business-truth.md`, and `task-execution.md` own the complete action-changing procedures | `move existing ownership + remove duplicate` |
-| root line 22: unknown-ownership Bug triage | Symptom/evidence decides backend, frontend, or explicit cross-app handling | Remove detailed route mechanics | Application `fix-bug` workflows own diagnosis after product-level attribution | `keep + compress` |
-| root line 23: unknown-ownership feature triage | Align problem/outcome, then select backend, frontend, or explicit cross-app scope; platform actions use the installed DevOps Skill | Remove Plan path, domain-loading, leaf, legacy-bridge, and lifecycle details | Application `plan-feature.md`, business owners, and installed DevOps Skills own those procedures | `keep + compress` |
-| root line 24: session/document arbitration | Formal routed Skill owners outrank transient fragments when they conflict | Re-read only the decision-relevant owner when context freshness is uncertain | Application Skill/session rules own rematch and recovery mechanics | `compress` |
+| root line 22: unknown-ownership Bug triage | Restate the symptom, confirm reproduction entry and acceptance, classify frontend/backend evidence, and preserve one shared cross-app acceptance journey | Remove only post-attribution app workflow mechanics | Application `fix-bug` workflows own diagnosis after product-level attribution, not this earlier intake | `keep complete intake` |
+| root line 23: unknown-ownership feature triage | Align `Problem / Chosen Approach`, then select backend, frontend, or explicit cross-app scope; platform actions use the installed DevOps Skill | Remove Plan path, domain-loading, leaf, legacy-bridge, and lifecycle detail | Application `plan-feature.md`, business owners, and installed DevOps Skills own those later procedures | `keep semantic intake + compress mechanics` |
+| root line 24: context and workspace arbitration | Re-read only the decision-relevant routed owner when freshness is uncertain; before cross-app/repository/worktree work confirm concrete workspace, code root, and current Skill | Remove repeated app recovery algorithms | Application Skill/session rules own local rematch/recovery detail, but no later owner can replace the pre-action workspace guard | `keep both cross-app guards` |
 | root line 25: Managed/mutation/test/Closure phase definitions | None beyond the line-16 activation invariant | None | Backend/frontend `SKILL.md` already activates `task-execution`, `change-discipline`, `tests-as-spec`, and `task-closure` at their phases | `remove duplicate` |
-| root lines 28-31: credentials, log masking, CI security, non-shadowing | Complete constraints | None | These protect every application before route-specific work | `keep` |
+| root lines 28-31: locked marker, credentials, log masking, CI security, non-shadowing | Machine-extractable `<!-- locked -->` section plus complete constraints | None | These protect every application before route-specific work and pair with `.ai-infra.yaml constraints.locked` | `keep marker + constraints` |
 | root line 34: Docker Compose isolation | Retain one compact cross-application environment-safety recommendation for now | None | No current canonical app/platform owner was found; deletion would orphan the only statement. A later owner migration requires locating or changing the real DevOps package source and proving downstream activation | `keep temporarily; unresolved destination` |
-| root line 35: prefer `chaos/common` | None | None | Backend `SKILL.md` Common Boundaries already owns the actual DAL/DO/BO/Repo/Convert path; broader reuse must be justified by code evidence rather than a startup slogan | `remove duplicate` |
-| root line 36: complex-chain end-to-end contract tests | None | None | Backend/frontend `tests-as-spec.md` and task workflows choose JUnit/Jest/integration/contract/repeatable proof at the testing phase | `remove duplicate` |
+| root line 35: prefer `chaos/common` | Retain the general shared-layer recommendation and its coverable recommendation status | None | Backend Common Boundaries is adjacent but narrower; it does not replace the general cross-application recommendation at the same activation time | `keep` |
+| root line 36: complex-chain end-to-end contract tests | Retain the general complex-chain recommendation and its coverable recommendation status | None | Tests-as-Spec chooses fitted proof later but does not own the same early general recommendation | `keep` |
 | root lines 38-42: application/DevOps/SBA pointers | Backend, frontend, platform, and meta-skill selection pointers | Remove technology inventories and repeated source-layout detail that the selected Skill resolves | Corresponding Skill descriptions, Path Resolution, and boundaries own the detail | `keep + compress` |
 | backend `AGENTS.app.md` lines 3-16 | Not evaluated for mutation in this slice | None | It remains an unchanged assembly input; its duplication may be discussed only in a separately approved later slice | `no change; explicit scope exclusion` |
 | frontend `AGENTS.app.md` lines 3-18 | Not evaluated for mutation in this slice | None | It remains an unchanged assembly input; its duplication may be discussed only in a separately approved later slice | `no change; explicit scope exclusion` |
@@ -265,7 +305,7 @@ This is a trim/ownership reconciliation, not a physical split. Exact retained an
 
 The target is still one generated root file assembled from three canonical sources, but this slice mutates only the first source:
 
-1. Root `AGENTS.md`: product identity and decision baseline; Chinese output; desired-truth/current-fact invariant; compact unknown Bug/feature triage; security constraints; compact backend/frontend/DevOps/SBA pointers; the temporarily retained environment-isolation recommendation.
+1. Root `AGENTS.md`: product identity and decision baseline; Chinese output; desired-truth/current-fact invariant; explicit `routing.yaml` bootstrap and workspace guard; complete unknown-owner Bug intake; `Problem / Chosen Approach` feature intake; security constraints with the locked marker; backend/frontend/DevOps/SBA pointers; and the retained team recommendations.
 2. Backend `apps/chaos/AGENTS.app.md`: unchanged in this slice.
 3. Frontend `apps/chaos_web/AGENTS.app.md`: unchanged in this slice.
 
@@ -273,7 +313,7 @@ The changed root source does not restate route tables, `domain-routing` gates, P
 
 ### Slice 2 - Read-only code inspection path
 
-`Design status: confirmed; implementation not started.`
+`Design status: confirmed; implementation complete and revalidated 2026-08-07.`
 
 Current evidence: `routing.yaml` has no independent read-only owner. “查状态流转 / 看调用链 / 解释实现 / 分析原因但不改代码” can enter a mutation-oriented workflow.
 
@@ -302,7 +342,7 @@ Automatic `inspect-code -> changing workflow` transition is intentionally not pa
 
 ### Slice 3 - Long-task mainline and Task Execution fan-out
 
-`Design status: confirmed; implementation not started.`
+`Design status: confirmed; implementation complete and revalidated 2026-08-07.`
 
 Current installed `task-execution.md` is about 16.5 KB. It is already delayed until a task becomes Managed, but the complete owner includes ambiguity, drift, composite Plan, database, pause/resume, delegation, context recovery, and Closure entry semantics.
 
@@ -322,7 +362,7 @@ This is a trim plus two evidence-routed extractions, not a file-count target. Th
 
 ### Slice 4 - Task Closure progressive disclosure
 
-`Design status: confirmed; implementation not started.`
+`Design status: confirmed; implementation complete and revalidated 2026-08-07.`
 
 Current installed `task-closure.md` is about 19.9 KB and contains ordinary local verification/AAR, Plan and business reconciliation, verified-failure accounting, integrity work, database closure, external delivery completion, and post-completion workflow distillation.
 
@@ -340,7 +380,7 @@ All conditional protocols return reconciliation or proof to `task-closure.md`. N
 
 ### Slice 5 - `SKILL.md` and `routing.yaml` duplication
 
-`Design status: confirmed; implementation not started.`
+`Design status: confirmed; implementation complete and revalidated 2026-08-07.`
 
 Current installed backend `SKILL.md` is 84 lines / about 6.7 KB, its `routing.yaml` is 100 lines / about 3.8 KB, and the generated Common Tasks route catalog contributes 12 lines / about 2.4 KB inside `SKILL.md`. The frontend has the same ownership shape: about 6.6 KB in `SKILL.md`, including an 11-line / about 2.1 KB generated route catalog. The generic SBA template uses the same generator and validation contract.
 
@@ -375,6 +415,7 @@ After admitted slices are complete:
 - No candidate file is split because it is large. Every new owner needs an independently selected task, phase, consumer, authority boundary, or maintenance lifecycle.
 - Content universally loaded and changed together remains together unless generation/ownership proves another boundary.
 - Every deleted or moved statement has a unique destination, owner, normal activation path, and fitted non-regression proof.
+- User brainstorming input is preserved before synthesis: already-clear source wording remains verbatim; any optional normalization is syntax/order-only and keeps the source adjacent; decision-changing speech acts, ownership, timing, uncertainty, definitions, conditions, boundaries, negations, reasons, authority, scope, and status remain reconstructable, with short answers bound to their original question or options and Agent summaries explicitly subordinate.
 - True cross-application Always-On invariants remain in the single generated root entry; app-local complete procedures remain in application skill owners.
 - Simple pure Q&A/read-only journeys do not load mutation, testing, Managed execution, or Closure protocols.
 - Long or dependent read-only journeys may become Managed for drift control and then establish Task Anchor/Native Plan without activating mutation, testing, or Closure owners.
@@ -409,12 +450,16 @@ For each journey, record:
 
 ### T1 - Reconcile the single root entry
 
+`Status: complete; semantic audit repaired the lost clauses and downstream reassembly revalidated them.`
+
 - Files: canonical Chaos meta `AGENTS.md`, its assembly contract, and existing validation anchors. The two `apps/*/AGENTS.app.md` sources are preservation inputs and must not be edited.
 - Consumes: D1-D5 and Slice 1 user decision.
 - Produces: one smaller but complete canonical root source and assembled root entry, or an evidence-backed `no change` conclusion, with both app shell sources unchanged.
 - Acceptance: a responsibility map accounts for every current root statement; backend/frontend normal tasks retain activation and cross-app safety; assembled output and current behavior checks pass; both app shell files are byte-equal to their pre-change state.
 
 ### T2 - Establish the read-only journey owner
+
+`Status: complete; backend terminal inspect-code path validated in canonical and four installed consumers.`
 
 - Files: SBA routing/template owners only if generic evidence admits them; canonical Chaos backend `routing.yaml`, `SKILL.md`, selected workflow owner, conformance/scenario coverage, and generated consumers.
 - Consumes: completed T1 evidence and Slice 2 user decision.
@@ -423,12 +468,16 @@ For each journey, record:
 
 ### T3 - Preserve long-task mainline and reduce Task Execution fan-out
 
+`Status: complete; generic and Chaos kernels preserve Anchor/Native Plan continuity and conditional protocol ownership.`
+
 - Files: SBA and Chaos Task Execution owners/callers/conformance selected by the Slice 3 continuity-kernel and independent-load tests.
 - Consumes: completed prior slices and Slice 3 user decision.
 - Produces: one compact Managed-task continuity kernel plus conditionally loaded Composite Plan execution and User Decision Drift protocol owners.
 - Acceptance: long mutation and long read-only journeys retain original Goal/Done When/Boundaries and governing mainline across main steps, premise/workflow changes, later messages, failures, and compaction; ordinary Managed journeys do not load composite/drift bodies without their evidence trigger; schema and verified-failure protections still activate through their existing owners; Simple journeys do not pay Managed overhead.
 
 ### T4 - Reduce Task Closure fan-out
+
+`Status: complete; local, Plan/Knowledge, delivery, and post-Closure distillation timing revalidated.`
 
 - Files: SBA and Chaos Task Closure owners/callers/conformance only after the Slice 4 independent-load test passes.
 - Consumes: completed prior slices and Slice 4 user decision.
@@ -437,12 +486,16 @@ For each journey, record:
 
 ### T5 - Audit `SKILL.md` / routing duplication
 
+`Status: complete; canonical manifest ownership and generated-consumer equality revalidated.`
+
 - Files: generic SBA `SKILL.md` template, routing generation/sync owner, smoke/conformance/reference consumers, thin shells, canonical Chaos backend/frontend `SKILL.md` and routing owners, and generated consumers selected by Slice 5 evidence.
 - Consumes: completed prior slices and Slice 5 user decision.
 - Produces: one structured route-data owner plus compact `SKILL.md` and shell action hooks, with no generated per-route Markdown catalog.
 - Acceptance: Skill discovery remains domain-driven; every new task and compaction recovery reads canonical `routing.yaml`, selects exactly one route, falls back to `other`, and loads only the selected workflow; route count/path/fallback/trigger/reference checks derive directly from the manifest; template and canonical/assembled Chaos surfaces remain synchronized; representative entry bytes decrease without changing route outcomes.
 
 ### T6 - Assemble, validate, reconcile, and freeze
+
+`Status: complete; local closure is frozen below; external delivery remains outside authorization.`
 
 - Files: every implemented canonical owner, this Plan, true semantic destinations, and repository-owned generated consumers.
 - Consumes: T1-T5 completed/rejected outcomes.
@@ -472,28 +525,41 @@ Authorized on 2026-08-06 for local implementation in this SBA repository, canoni
 
 ## Final Reconciliation And Reverse Validation
 
-`Status: done; frozen after local Closure on 2026-08-06.`
+`Status: done; frozen after local Closure on 2026-08-07.`
 
 ### Execution order and canonical evidence
 
 The authorized order was followed: SBA first, canonical Chaos adaptation second, aii assembly into the named downstream third, downstream representative-journey audit fourth, and reverse validation back to SBA last.
 
 - SBA `bash scripts/check-all.sh --base HEAD` exited `0`: temporary downstream smoke `49 passed / 0 failed`, existing-project smoke `49 / 0`, self-scenario `501 / 0`, self-hosting conformance `415 / 0`, orphan/reachability checks green, and upstream maintenance checks green.
-- Canonical Chaos backend conformance was `805 / 0`, smoke `56 / 0` with only the existing fresh-migration `Known Gotchas` warnings, skill orphan `0 / 37`, skill reachability `0 / 38`, and route health `12 task routes + 11 domain overlays, no quality smells`.
-- Canonical Chaos frontend conformance was `759 / 0`, smoke `58 / 0` with the same existing fresh-migration warnings, skill orphan `0 / 38`, skill reachability `0 / 38`, and route health `10 task routes + 11 domain overlays, no quality smells`.
+- Canonical Chaos backend skill-root validation passed conformance `854 / 0`, smoke `40 / 0` with only the existing fresh-migration `Known Gotchas` warnings, skill orphan `0 / 38`, skill reachability `0 / 39`, and route health `12 task routes + 11 domain overlays, no quality smells`.
+- Canonical Chaos frontend skill-root validation passed conformance `793 / 0`, smoke `42 / 0` with the same existing fresh-migration warnings, skill orphan `0 / 38`, skill reachability `0 / 38`, and route health `10 task routes + 11 domain overlays, no quality smells`.
 - Canonical sync checks pass structurally. Code-root target checks are intentionally evaluated against the downstream workspace, because the canonical meta checkout does not contain the generated business code roots.
 
 ### Downstream assembly and preservation
 
-`aii update release-0.77_shiqi_bugfix --no-pull --no-self-upgrade` was run after the canonical correction and exited `0`. Recursive comparison proves canonical backend/frontend owners equal both `.codex` and `.claude` consumers; each Codex/Claude pair is also byte-equal. `aii status` ends with the target iteration `一致，无告警`; warnings printed for other iterations are not target failures.
+The canonical aii source CLI ran `aii update release-0.77_shiqi_bugfix --no-pull --no-self-upgrade` with exit `0` after the final root correction. Recursive comparison proves canonical backend/frontend owners equal both `.codex` and `.claude` consumers; each Codex/Claude pair is also byte-equal. `aii status --offline --no-lint` ends with the target iteration `一致，无告警`; warnings printed for other iterations are not target failures.
 
-The downstream checks were run from the installed skill roots with the real workspace root for code-root validation. Both backend harnesses passed sync, smoke, conformance, skill orphan/reachability, code orphan/reachability, and route health. Both frontend harnesses passed sync, smoke, conformance, skill orphan/reachability, and route health. The frontend code-root audit retains one pre-existing orphan, `references/project-overview.md`; the downstream migration Plan already records it as unrelated to the current migration. It is not an installed-skill regression, was not created by this Plan, and was not deleted or edited because its canonical owner is the downstream business/docs repository outside this scope. This residual is an explicit limitation of the code-root audit, not a claim of zero code-root orphans.
+The downstream checks were run from the installed skill roots with the real workspace root for code-root validation. All four installed roots passed sync, smoke, conformance, skill orphan/reachability, and route health: backend `854 / 0` conformance and `40 / 0` smoke for Codex/Claude; frontend `793 / 0` conformance and `42 / 0` smoke for Codex/Claude. Both backend code roots passed code orphan/reachability (`0 / 48` orphan inventory, `0` unreachable); both frontend code roots passed reachability and retain one pre-existing code-root orphan, `references/project-overview.md`. The downstream migration Plan already records that document as unrelated to this migration. It was not created by this Plan and was not deleted or edited because its canonical owner is the downstream business/docs repository outside this scope. This residual is an explicit limitation of the code-root audit, not a claim of zero code-root orphans.
 
-Business-worktree protection is proven against the final snapshots, not by an unsafe equality claim during concurrent editing:
+The first assembly's business-worktree protection is proven against its final snapshots, not by an unsafe equality claim during concurrent editing:
 
-- frontend stayed on `release-0.77_shiqi_bugfix` at `423652ae00735827374dde1f2f6a91ed9206256a`; its final dirty snapshot remained unstaged and conflict-free (`status=9e20ee21d378142776e7d9451e44dc29c75f382886c8bc8ca0a0dabf5a62f3a0`, `unstaged=f1e3a0aab2131e4c2d9455c0f413a86457558349feee77e28253e2c49578bfd0`, empty staged/unmerged streams).
-- backend stayed on `release-0.77_shiqi_bugfix` at `1b3d4a0b255e6bb8b4809b93b519cd9836c97199`; another editor continued changing its dirty diff during the assembly window, but the branch, HEAD, staged stream, and unmerged stream were never changed by assembly. The final snapshot is `status=98e7b64ec0684a69bdf14fc5cf3a5c1d30ba7b445a5c3314a2121cbb338e4e81`, `unstaged=32887eb0657d6e917c5d07da726f40f2bd95e6df191f7802ad47bf08f04beed3`, empty staged/unmerged streams. Therefore backend pre/post byte identity is deliberately not claimed.
+- frontend stayed on `release-0.77_shiqi_bugfix` at `e08b7f3c96c6be893d36b1e16c3cf9e9a30c9181`; its final dirty snapshot remained unstaged and conflict-free (`status=d52ecf8b18dd90ef521fcc70affaebd618e18f730bdc463d5e96f6aece043ac4`, `unstaged=236eb4216e09bc4a5e6a89530e650c00ec92bea0b1b09bfa05ddcbeec51e44b2`, empty staged/unmerged streams).
+- backend stayed on `release-0.77_shiqi_bugfix` at `f696aa36d87c4c8284545f1472eebdc65930c3bb`; its final dirty snapshot remained unstaged and conflict-free (`status=e158a2c617ef03aa5944a93dbe8a35439764dc0e16c438577158cde8d1319ab9`, `unstaged=2e8a2fc0212c9c7244221a6b04ebc5d55357d75aba7f2c2e381d9dbb42296358`, empty staged/unmerged streams). Assembly did not change the branch, HEAD, staged stream, unmerged stream, or the two tracked business files.
 - Canonical app-shell preservation hashes remain unchanged: backend `AGENTS.app.md` `a1a17d271113f6c9466d82c2fd2f3bc4cb5952d22e3a289d238c87f119dc9df0`; frontend `AGENTS.app.md` `4628ef56e713c4becf21680ba3807fa99a71297212b253660eab770666ba6ec0`.
+
+### Post-Closure source-preservation review — 2026-08-07
+
+The supplied review screenshot exposed a concrete remaining failure in D13: an Agent paraphrase retained the broad accusation but dropped the user's question/force, stop boundary, knowledge boundary, and same-day ownership commitment. The accepted correction is now implemented in SBA, the canonical Chaos root/app owners, and the named downstream:
+
+- root `AGENTS.md` carries the short Always-On rule; app `task-execution.md` preserves later user messages before runtime-state updates; app `plan-feature.md`, `user-decision-drift.md`, and `maintain-docs.md` carry the phase-specific source-preservation contract;
+- a clear user statement stays verbatim; optional normalization is limited to punctuation, obvious typo, grammar, or word order, with the original retained adjacent; an Agent-derived interpretation is optional and subordinate;
+- pragmatic force is load-bearing: question/command/refusal, stop or ownership handoff, actor/responsibility, timing/commitment, uncertainty/emphasis, boundaries, reasons, and rejected directions cannot be discarded as tone;
+- the Plan retains the user's source wording and the screenshot-derived failure as `Evidence / Source: current conversation`; no separate Plan or business leaf was created because D13 already owns this semantic boundary.
+
+Canonical validation after the correction passed SBA self-scenarios `587/0`, template conformance `621/0`, self-hosting conformance `434/0`, and `bash scripts/check-all.sh --base HEAD` exit `0`. Canonical Chaos backend/frontend passed conformance `870/0` and `809/0`, smoke `40/0` and `42/0`; canonical aii lint returned `通过，无问题`. The target downstream was reassembled with canonical aii source and its `aii status --offline --no-lint` target ended `一致，无告警`; all four installed roots passed their corresponding conformance and smoke suites.
+
+The backend business worktree remained at `f696aa36d87c4c8284545f1472eebdc65930c3bb` with its pre-existing two dirty paths and diff fingerprint `2e8a2fc...`. The frontend had the pre-existing snapshot at the reassembly boundary, then concurrent edits appeared in `version.cutover.test.ts` and `versionTabs/versionHeader.ts` while validation was running; the current fingerprint is `91a307...`, with no staged or unmerged files. This is recorded as a concurrent `premise-changed` preservation boundary, not attributed to aii; no business source file was edited or reverted by this task.
 
 ### Downstream representative journey audit
 
@@ -511,10 +577,19 @@ The installed behavior matches the intended user contract:
 
 ### Reverse validation result
 
-The SBA generic owner contracts were re-read against the assembled Chaos consumers. Project-specific differences are valid adaptations: Chaos adds backend permission/devops-version and frontend UI/API/cross-application ownership, while the generic typed protocols and one-kernel/one-completion-owner boundaries remain intact. One actual semantic defect was found: both Chaos workflow-distillation owners had omitted the generic rule that the two independent instances may be compared across Sessions. That gap was repaired in both canonical app owners and their conformance contracts, then reassembled and revalidated in all four installed roots. No SBA generic owner required a further change.
+The SBA generic owner contracts were re-read against the assembled Chaos consumers. Project-specific differences are valid adaptations: Chaos adds backend permission/devops-version and frontend UI/API/cross-application ownership, while the generic typed protocols and one-kernel/one-completion-owner boundaries remain intact. One actual semantic defect was found: both Chaos workflow-distillation owners had omitted the generic rule that the two independent instances may be compared across Sessions. That gap was repaired in both canonical app owners and their conformance contracts, then reassembled and revalidated in all four installed roots. The clause-level matrix in `findings.md` classifies every load-bearing clause from SBA `880b3550` and Chaos `d1ef8a84`; all semantic losses found in the audit are repaired or explicitly preserved, and no SBA generic owner required a further change.
 
 The remaining intentionally unresolved scope is explicit: the generated iteration-root `AGENTS.md` still contains the unchanged application-module layers, and frontend has no dedicated terminal `inspect-code` route because this Plan admitted that route as backend-only. Neither is reported as solved by this Plan.
 
+### Verified failure reconciliation
+
+- The repeated shell-backtick command-substitution failure is `add-and-activate`: its safe command-construction rule was promoted to the personal layer and rendered to active iterations before Closure.
+- The validator working-directory failures are one same-task occurrence with outcome `covered/no-write`: `maintain-docs.md` and `update-upstream.md` already require skill-root execution and explicit per-root `--namespace ... --routing ...` checks; the incorrect results were discarded and every affected canonical/installed/code-root check was rerun from the correct root.
+- The canonical aii checkout's missing local `js-yaml` installation is `transient/no-write`: `package.json` and `package-lock.json` already declare the dependency, and the fitted source tests passed through the existing installed dependency without changing the global package.
+- The unsupported `aii status --dir`, unmatched shell glob from the wrong repository, and JavaScript-template/Bash-expansion collision are `transient/no-write` command-construction mistakes. Their failed calls caused no source mutation; each was replaced with the documented interface or fixed literal command, and the affected evidence was freshly rerun.
+
 ### Closure outcome
 
-All admitted slices have canonical owners, normal activation paths, and current fitted evidence; no implementation conclusion remains only in this Plan. The frontend code-root orphan is recorded as a pre-existing out-of-scope residual, not hidden or “fixed” by deleting downstream material. No commit, push, MR, merge, deploy, publish, database, work-item, version-revision, or other external/shared-system action was performed for this Plan. The Plan is therefore reconciled, marked `done`, and frozen.
+All admitted slices and the post-Closure source-preservation review reached canonical owners, normal activation paths, and fitted evidence. The post-delivery root review is closed: product/domain/design/current-fact separation, long-session language boundaries, unknown-owner Bug intake, `Problem / Chosen Approach`, workspace/routing bootstrap, locked marker pairing, user-source-first capture, and both previously lost team recommendations were restored or retained at the canonical root owner. The standalone business-model selector and the backend read-only route were verified at their normal activation points. The attached clause-level audit records the exact semantic identity, owner, timing, proof, and disposition for each load-bearing clause; no conclusion remains only in the Plan.
+
+Local Closure is complete and the Plan is `done; frozen`. No commit, push, MR update or merge, deploy, publish, database write, work item, version revision, reviewer change, or other external/shared-system action was performed in this review task. The frontend code-root `references/project-overview.md` orphan is an explicitly recorded pre-existing residual outside scope; all other admitted structural and activation checks are green. The named downstream is assembled and verified, but external delivery of these new uncommitted canonical changes remains a separate authorization boundary.

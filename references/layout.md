@@ -72,6 +72,32 @@ Brief, scannable list of the most costly pitfalls. Full details in `references/g
 - Boundary 2
 ```
 
+### Single-file and Common Tasks audit
+
+Progressive disclosure is a loading rule, not a mandate to route every request
+through a complex execution protocol. A **Single-file** skill is deliberately
+allowed to have no `routing.yaml`, no `workflows/` directory, and no Task
+Execution/Closure machinery when it has fewer than three topics, no recurring
+procedure, and no cross-session lesson-capture need. Its `SKILL.md` may keep a
+small, direct Common Tasks list, and an ordinary task should follow the rule it
+needs with one direct check.
+
+Once a skill crosses a real upgrade trigger, the Folder-light/Full form may put
+task selection in `routing.yaml` and turn `Common Tasks` into the generated
+action hook shown above. That hook must still select only the first relevant
+workflow; it must not preload every rule or force a Simple task to read
+`task-execution.md`, a domain manifest, or a Closure protocol. The selected
+workflow owns its conditional reads, and `task-execution.md` retains a direct
+Simple fast path while reserving Anchor/Plan ceremony for Managed or Design
+work.
+
+Audit both sides before changing tiers: name the concrete pressure that made a
+new file or route independently necessary, and prove that delaying a file until
+its evidence/phase boundary changes the next action. If no such pressure exists,
+keep the content in the smallest truthful carrier. “Progressive disclosure”
+does not justify deleting a useful direct task rule, replacing its meaning with a
+generic fallback, or adding a workflow merely to make the tree look complete.
+
 ### Description as Trigger Condition
 
 The `description` field in frontmatter is **not** a passive summary — it is what the Agent uses at runtime to decide whether to activate the skill. It should answer "is this request in this skill's domain?", not "which workflow should run?" A vague description means the skill silently never fires; an overstuffed description becomes a brittle keyword list that competes with `SKILL.md` routing.

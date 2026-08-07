@@ -40,11 +40,25 @@ Your project skill's `routing.yaml` routes certain task types *directly* to anot
 ```yaml
 - id: security-review
   labels: { en: Security review, zh: 安全评审 }
-  workflow: skills/security-review/workflows/review.md
+  workflow: workflows/security-review.md
   trigger_examples: [review this code for security, 安全评审这段代码]
 ```
 
 **Key property:** routing delegates the full task. Your skill stays lean; you haven't written a wrapper workflow just to forward.
+
+The route target must be a safe, skill-relative `workflows/*.md` path because
+the routing validator and reachability check resolve it inside the current
+skill. The example therefore assumes that the complete security-review
+procedure is materialized at `workflows/security-review.md` (for example by a
+vendor/assembly step with an equality check). Do **not** put an arbitrary
+`skills/<other>/...` path in `workflow:`; it is rejected as an unsafe or
+unreachable route and would make delivery depend on an unverified checkout.
+
+When the other Skill is external and is not materialized locally, use Pattern A
+to read and follow its workflow at an explicit step, or add a small local
+handoff workflow that verifies the dependency and returns its result. That
+explicit invocation/hand-off preserves the other Skill's ownership without
+pretending that the local route validator can execute an external path.
 
 ### Pattern C — Subagent delegation (for isolation)
 

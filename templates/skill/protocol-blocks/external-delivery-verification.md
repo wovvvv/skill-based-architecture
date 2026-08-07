@@ -7,7 +7,7 @@ Load this protocol only when the user requested commit, push, MR/PR, deploy, pub
 1. Name the authorized action, expected artifact, target/source identity, and exact readback before delivery.
 2. Verify the real artifact rather than a precursor: inspect commit/ref, remote branch, MR/PR URL and state, deployed runtime, published output, migration/version artifact, or authoritative schema/data readback as applicable.
 3. For database delivery, never infer execution from a reviewed SQL sibling or application build. Require the project-owned migration/version artifact plus authoritative schema/data proof.
-4. Return `stale` when source content, branch/config inputs, relevant verification, or delivery premise changed; Task Closure sends the task back to fitted verification or Task Execution.
+4. Return `stale` when source content, branch/config inputs, or relevant verification changed. Return `premise-changed` when the requested artifact, target, authority, or delivery scope/premise changed; Task Closure sends the task back to fitted verification or Task Execution.
 5. Return `blocked` for authorization, credentials, conflict, policy, network, or target-state failure. Retry only the external boundary when verified local inputs remain unchanged.
 
 ## Result
