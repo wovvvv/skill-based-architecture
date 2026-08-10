@@ -1,30 +1,34 @@
 # Reference — Layout & Structure
 
-## Recommended Layout
+## Evidence-selected layouts
+
+There is no universal downstream tree. A real project may receive one of these
+carriers, or evolve between them through ordinary maintenance:
 
 ```text
-project/
-├── skills/
-│   └── <name>/
-│       ├── SKILL.md
-│       ├── rules/
-│       │   ├── project-rules.md
-│       │   ├── coding-standards.md
-│       │   └── <domain>-rules.md
-│       ├── workflows/
-│       │   └── <task>.md
-│       ├── references/
-│       │   ├── gotchas.md         # recommended: known gotchas / footguns
-│       │   └── <topic>.md
-│       └── docs/                  # optional: prompts, reports, external material
-├── AGENTS.md                      # thin shell (universal)
-├── CLAUDE.md                      # thin shell (Claude)
-├── CODEX.md                       # thin shell (Codex)
-├── .cursor/rules/*.mdc            # thin shells (Cursor)
-└── .claude/                       # thin shells (Claude Code)
+# direct / Single-file
+project/skills/<name>/SKILL.md
+
+# folder-light (only when rules or one recurring procedure need an owner)
+project/skills/<name>/{SKILL.md,rules/,workflows/<procedure>.md}
+
+# broad / routed (only when independent selection and lifecycle/check pressure exists)
+project/skills/<name>/{SKILL.md,routing.yaml,rules/,workflows/,references/,scripts/}
+project/<detected-entry-or-registration-surfaces>
 ```
 
-The tree above is the **Folder-light** form (a single `rules/`, gotchas in `references/gotchas.md`). At the **Full** tier this splits by **abstraction (骨架/肉)**: abstract design theory → `architecture/`, **code maps** (module tree, dir layout, source index) → `references/`, house style → `conventions/`, independently routed module landmines → `gotchas/` (add a selecting `gotchas/index.md` only after real multi-file pressure), methodology stays in `rules/`. The skeleton/flesh judgement test + split mechanics (path migration, conditional selecting index, routing re-derivation): [skeleton-flesh-split.md](skeleton-flesh-split.md). For growth/topology decisions (when to upgrade tier, when to split into multiple skills), see [progressive-rigor.md](progressive-rigor.md). For where this skill sits in the broader agent stack, see the "Positioning" section at the bottom of this file.
+`AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, Cursor registration, and
+optional hooks are evidence-selected entry surfaces, not a mandatory set. The
+materializer preserves existing entries and adds only detected/declared readers.
+At the broad shape, splitting by **abstraction (骨架/肉)** remains useful:
+abstract design theory → `architecture/`, **code maps** (module tree, dir
+layout, source index) → `references/`, house style → `conventions/`, and
+independently routed landmines → `gotchas/`. Add a selecting `gotchas/index.md`
+only after real multi-file pressure; methodology stays in `rules/`. The
+skeleton/flesh judgement test + split mechanics: [skeleton-flesh-split.md](skeleton-flesh-split.md).
+For growth/topology decisions, see [progressive-rigor.md](progressive-rigor.md).
+For where this skill sits in the broader agent stack, see the "Positioning"
+section at the bottom of this file.
 
 ## SKILL.md Template
 

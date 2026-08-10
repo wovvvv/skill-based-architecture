@@ -1,0 +1,12 @@
+---
+name: {{NAME}}
+description: >
+  <!-- FILL: Keep identical to skills/{{NAME}}/SKILL.md after migration. -->
+  This skill should be used when the user asks to "<trigger phrase 1>",
+  "<trigger phrase 2>", or "<trigger phrase 3 / 中文触发短语>".
+  Activate when <condition 1> or <condition 2>.
+---
+
+Read `skills/{{NAME}}/SKILL.md` and follow its direct procedure. The formal
+Skill owns the project's rules, evidence gates, verification, and completion
+boundary; this file exists only for Cursor discovery.

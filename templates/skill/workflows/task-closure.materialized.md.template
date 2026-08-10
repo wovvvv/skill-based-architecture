@@ -1,0 +1,16 @@
+# Task Closure
+
+Use this owner only when more than one changing procedure shares completion, or
+when a delayed AAR, knowledge, integrity, or external-delivery phase has real
+evidence of independent use.
+
+## Completion Gate
+
+1. Re-state the frozen outcome and the exact deliverables bound to this task.
+2. Run the fitted, fresh validation set and record failures honestly.
+3. Perform the short AAR/integrity scan required by the materialized owners.
+4. Verify the requested terminal artifact itself; readiness or an intermediate
+   command is not the terminal state.
+
+If any gate is unverified, return to the selected procedure with the affected
+path paused. Do not broaden scope merely because a neighboring task is open.

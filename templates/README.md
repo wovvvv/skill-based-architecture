@@ -1,25 +1,37 @@
-# templates/ — Pre-Built Copy-Pasteable Content
+# templates/ — Canonical Materializer Sources
 
-This directory holds **ready-to-copy files** for downstream projects. WORKFLOW.md Quick Start copies this tree into the target project and runs a single `sed` pass to substitute placeholders. The goal: eliminate the "Agent generated the file inline and dropped half the sections" failure mode.
+This directory is the upstream source catalog, not a universal downstream file
+tree. Quick Start first inventories the target repository, then
+`scripts/scaffold-downstream.sh` selects the smallest complete carriers and
+copies or renders only the owners admitted by that evidence. A generated
+project never needs to understand SBA tiers, profiles, capability packs, or
+install modes.
 
-`SKILL.md` sources intentionally use the `.template` suffix. Codex-style skill loaders may recursively scan installed skills for `SKILL.md`; leaving raw template files with placeholder frontmatter under `templates/` makes them look like broken real skills. Quick Start renames `SKILL.md.template` to `SKILL.md` after copying into the downstream project.
+The files here remain canonical sources for independently materialized owners.
+They are intentionally richer than the result a small project receives. The
+fitted result, not equality with this directory, is the downstream contract.
+
+`SKILL.md` carrier sources intentionally use the `.template` suffix. Codex-style
+skill loaders may recursively scan installed skills for `SKILL.md`; leaving raw
+template files with placeholder frontmatter under `templates/` makes them look
+like broken real skills. The materializer selects one carrier, renders it as
+the downstream `SKILL.md`, and leaves unselected sources upstream.
 
 ## Layout
 
 ```
 templates/
-├── skill/                    → becomes skills/{{NAME}}/
-│   ├── SKILL.md.template     (renamed to SKILL.md during Quick Start)
-│   ├── routing.yaml            (first-workflow routes + shell bootstraps)
-│   ├── domain-routing.yaml     (optional; materialized with the first real business domain)
-│   ├── sync-manifest.yaml      (vendor-class file list consumed by scripts/sync-vendor.sh)
-│   ├── rules/{project-rules,coding-standards,change-discipline}.md
-│   ├── workflows/{task-execution,plan,fix,change,review,refactor,rule/template maintenance,subagent modes,task-closure}.md
-│   ├── workflows/invoke-skill.md.example  (copy-paste template for Pattern A composition; rename and adapt)
-│   ├── workflows/profile-business-model.md.example  (opt-in product/business model workflow; rename only after real pressure)
-│   ├── references/{behavior-failures,gotchas,subagent-verification}.md
-│   ├── protocol-blocks/       → internal Task Closure / routing reinforcement blocks
-│   └── scripts/              → automated verification (lives inside the skill)
+├── skill/                    → canonical owners selected into skills/{{NAME}}/
+│   ├── SKILL.single.md.template   (direct Single-file carrier)
+│   ├── SKILL.routed.md.template   (routed Folder-light/broad carrier)
+│   ├── SKILL.md.template          (complete broad/full carrier when admitted)
+│   ├── routing.yaml               (only when routing has an independent owner)
+│   ├── domain-routing.yaml        (only with a real business owner)
+│   ├── rules/                     (selected rule owners)
+│   ├── workflows/                 (selected procedures/lifecycle owners)
+│   ├── references/                (selected current-code/gotcha owners)
+│   ├── protocol-blocks/            (only when a selected workflow links them)
+│   └── scripts/                   (fitted checks and maintenance owners)
 │       ├── smoke-test.sh                (fully automated structural + routing checks)
 │       ├── sync-routing.sh              (generate/check routing action hook + shell bootstraps from routing.yaml)
 │       ├── sync-vendor.sh               (mechanical vendor-file sync from an upstream clone; base = synced_sha)
@@ -28,11 +40,11 @@ templates/
 │       ├── audit-orphans.sh             (content-tier files with zero inbound links)
 │       ├── route-reachability.sh        (task-route activation, including workflows)
 │       └── check-version-conformance.sh (downstream contract: required/forbidden phrases + files)
-├── shells/                   → becomes repo-root entry files
+├── shells/                   → selected repo-root entry/registration surfaces
 │   ├── AGENTS.md / CLAUDE.md / CODEX.md / GEMINI.md
 │   ├── .cursor/rules/workflow.mdc
 │   └── .cursor/skills/{{NAME}}/SKILL.md.template
-├── hooks/                    → optional SessionStart and long-workflow context injection
+├── hooks/                    → optional hooks only for a harness that adopts them
 │   ├── session-start              (bash, per-harness JSON branching — re-inject one router)
 │   ├── workflow-state             (bash, UserPromptSubmit — inject one active workflow hint)
 │   ├── hooks.json                 (Claude Code settings fragment — SessionStart + UserPromptSubmit)
@@ -41,17 +53,21 @@ templates/
 │   └── SECURITY.md                (trust boundary: what may vs must not be written to hook-read files)
 ```
 
-## Placeholders
+## Rendering and migration work
 
 Two kinds — each with a different "fill" mechanism:
 
 | Marker | Meaning | Filled by |
 |---|---|---|
-| `{{NAME}}`, `{{SUMMARY}}` | Mechanical substitution | Single `sed` pass in Quick Start |
-| `<!-- FILL: … -->` | Requires agent judgment before the skill ships | `grep -r 'FILL:'` lists pending migration work |
-| `<!-- OPTIONAL: … -->` | Advanced or organically-grown content | Leave empty unless the project has real evidence or user asks |
+| `{{NAME}}`, `{{SUMMARY}}` | Materializer metadata substitution | Rendered while staging the admitted owner |
+| `<!-- FILL: … -->` | Canonical-source author guidance | Replace with project evidence before that owner is shipped |
+| `<!-- OPTIONAL: … -->` | Advanced or organically-grown content | Materialize only after a real route/owner pressure appears |
 
-**Audit after Quick Start:** run `grep -r 'FILL:' skills/{{NAME}} AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor` — every match is required agent work before shipping. Users should not need to interpret these markers.
+The materializer rejects unresolved project-facing markers in its staged result.
+It does not claim that generic text is the target project's semantic content:
+the Agent must still fill the admitted owners, merge preserved entries, and
+produce session-scoped source-to-destination migration evidence. Users should
+not have to interpret markers or choose a package composition.
 
 ## Size Review Budgets
 
@@ -59,9 +75,9 @@ Line counts trigger review, not automatic splitting. The SKILL dual budget and s
 
 | Path | Budget | Enforcement |
 |---|---|---|
-| `shells/*` | ≤ 60 lines | Thin shells must stay thin; > 60 = content leaking in. Must include generated Always Read + `routing.yaml` bootstrap + evidence-first request-clarity judgment (see `protocol-blocks/ambiguous-request-gate.md`) |
+| `shells/*` | ≤ 60 lines | Thin shells must stay thin; > 60 = content leaking in. Routed shells include the generated Always Read + `routing.yaml` bootstrap; direct shells point to the sole procedure. Both use the evidence-first request-clarity judgment when that block is admitted (see `protocol-blocks/ambiguous-request-gate.md`) |
 | `skill/routing.yaml` | ≤ 120 lines | Single source of truth for generated Always Read, first-workflow routes, trigger examples, and thin-shell bootstraps; project-specific after fill |
-| `skill/rules/project-rules.md`, `skill/rules/coding-standards.md` | ≤ 20 lines, ≥ 60% must be `<!-- FILL: -->` | Rule stubs are scaffolding, not content |
+| `skill/rules/project-rules.md`, `skill/rules/coding-standards.md` | ≤ 20 lines for starter carriers | Generated only when a folder/broad result needs an independent rule owner; fill from target evidence |
 | `skill/rules/change-discipline.md` | ≤ 40 lines | Canonical pre-mutation semantic and mutation boundary; loaded by modifying workflows, never Always Read |
 | `hooks/session-start`, `hooks/workflow-state` | ≤ 150 lines each | Optional hook scripts. Keep per-harness branching in-script; see `hooks/README.md` |
 | `hooks/README.md` | ≤ 150 lines | Per-hook rollout guidance; allowed larger because it documents optional installs + tuning |
@@ -69,7 +85,7 @@ Line counts trigger review, not automatic splitting. The SKILL dual budget and s
 | `skill/workflows/profile-business-model.md.example` | ≤ 100 lines | Optional business-model workflow; stays inactive until a downstream renames it and adds a real route |
 | `skill/workflows/update-rules.md`, `maintain-docs.md` | ≤ 250 lines | Protocol-heavy workflows allowed more room |
 | `skill/protocol-blocks/*` | ≤ 40 lines each | One idea per block |
-| `skill/SKILL.md.template` | dual budget: description ≤ 25 lines + body ≤ 90 lines | Same hard cap as downstream SKILL.md (smoke-test enforces both separately). description carries quoted trigger phrases; body navigates rules/workflows/references. Keep each shorter when possible. |
+| `skill/SKILL*.md.template` | dual budget: description ≤ 25 lines + body ≤ 90 lines | Direct, routed, and complete carriers each stay within the cap; only the selected carrier is materialized. |
 | `skill/scripts/smoke-test.sh` | ≤ 980 lines | Structural test harness; optional overlay line accounting is isolated from the task core; the next substantial concern should replace/simplify existing checks |
 | `skill/scripts/sync-routing.sh` | ≤ 520 lines | Dependency-free generator/checker; optional domain-manifest parsing and generic cross-owner path validation stay internal so domain-free projects gain no extra files or setup |
 | `skill/scripts/sync-vendor.sh` | ≤ 160 lines | Mechanical vendor sync; base check via upstream git history — no new state files |
@@ -121,7 +137,7 @@ Run these when templates change:
 1. **Placeholder audit** — `grep -r '{{' templates/` lists every placeholder; it must match the Quick Start substitution set.
 2. **Loader-safety audit** — `find templates -name 'SKILL.md'` returns no rows; template sources stay `SKILL.md.template` until materialized.
 3. **FILL audit** — `grep -r 'FILL:' templates/` returns only required migration-work markers.
-4. **Routing audit** — run `sync-routing.sh --check`, then repeat it on a minimally filled sample.
+4. **Routing audit** — run `sync-routing.sh --check` on a routed result and instantiate direct, folder-light, and broad samples through the canonical materializer.
 5. **Integrity audit** — run `audit-orphans.sh` for link reachability and `route-reachability.sh` for real task activation; two-root skills pass the namespace/routing arguments documented by those scripts.
 6. **Homogeneity spot-check** — compare two unlike toy projects; skeleton may match, project rules/routes must not.
 7. **Upstream check suite** — run `bash scripts/check-all.sh`; it instantiates a temporary downstream and enforces the upstream change-note contract.

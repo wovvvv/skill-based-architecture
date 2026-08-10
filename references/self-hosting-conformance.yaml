@@ -21,6 +21,46 @@
 # stop teaching what the templates require downstream to carry.
 
 required_sections:
+  - file: README.md
+    must_contain:
+      - "SBA is a Skill, not an agent operating system, task database, or execution runtime"
+      - "derives an evidence-selected `direct`, `folder`, or `broad` result"
+      - "does not expose a tier/profile/capability/install-mode switch"
+      - "source-to-destination semantic evidence"
+      - "fitted checks that the materializer emitted"
+      - "Sub-agents are optional accelerators, not a setup requirement"
+      - "continues the same bounded work inline"
+      - "Correctness and completion never depend on sub-agent availability"
+      - "changes the execution mode, not the requested result"
+      - "Structural checks do not prove that every previous instruction survived semantically"
+      - "a pushed branch is not an MR or PR"
+    must_not_contain:
+      - "Codex is the exception"
+      - "you have to authorize it explicitly"
+      - "silently skip the delegation step"
+      - "planned evidence-driven materializer remains roadmap work"
+      - "not a shipped capability"
+
+  - file: README.zh-CN.md
+    must_contain:
+      - "SBA 是一个 Skill，不是 Agent 操作系统、任务数据库或执行 runtime"
+      - "按证据推导 `direct`、`folder` 或 `broad` 结果"
+      - "不向用户暴露 tier/profile/capability/安装模式开关"
+      - "source 到 destination 的语义证据"
+      - "只运行 materializer 实际生成的 fitted checks"
+      - "Sub-agent 是可选加速器，不是安装或正常使用的前置条件"
+      - "正确性和完成标准不依赖 sub-agent 是否可用"
+      - "inline 执行同一份有界工作"
+      - "只会改变执行方式，不会改变请求结果"
+      - "结构检查不能证明每一条旧规则都完成了语义迁移"
+      - "已 push 的分支不等于 MR/PR"
+    must_not_contain:
+      - "Codex 是例外"
+      - "都要**显式授权**"
+      - "静默跳过委派步骤"
+      - "仍是 roadmap 工作"
+      - "不是已经交付的能力"
+
   # SKILL.md teaches the activation contract — every principle below has a
   # downstream counterpart that propagates via templates/skill/SKILL.md.template.
   - file: SKILL.md
@@ -79,6 +119,9 @@ required_sections:
       - "不得用测试数量代替证据质量"
       - "跨 harness 兼容应当优雅降级"
       - "SBA 负责吸收工程复杂度"
+      - "Agent 的完成承诺只覆盖当前任务明确绑定的交付物及其请求终态"
+      - "历史任务、相邻仓库和隐含后续流程"
+      - "不得用中间状态冒充目标终态"
       - "不发展成 Agent 操作系统、任务数据库或项目管理平台"
       - "不为了“以后也许有用”持续增加文件、状态、marker、脚本和术语"
       - "不用结构检查的绿色结果冒充语义正确"
@@ -128,12 +171,14 @@ required_sections:
     must_contain:
       - "Quick Start"
       - "workflows/full-migration.md"
-      - "workflows/upgrade-downstream.md"
+      - "templates/skill/workflows/update-upstream.md"
       - "scripts/scaffold-downstream.sh"
       - "never overwrites existing project entry files"
       - "source-to-destination evidence"
       - "does **not** prove that pre-existing user instructions survived"
       - "task-execution.md#user-decision-drift-gate"
+      - 'MIGRATION_EVIDENCE_JSON="$(mktemp'
+      - "The path is not a persistent downstream ledger"
 
   - file: references/thin-shells.md
     must_contain:
@@ -417,6 +462,8 @@ required_sections:
       - "workflow-distillation-proposal.md"
       - "plan-knowledge-closure.md"
       - "external-delivery-verification.md"
+      - "session-only requested artifact set"
+      - "every requested artifact only against that bound set"
     must_not_contain:
       - "## Accepted Workflow-Distillation Input"
 
@@ -431,8 +478,29 @@ required_sections:
   - file: templates/skill/protocol-blocks/external-delivery-verification.md
     must_contain:
       - "# External Delivery Verification"
+      - "## Requested Artifact Set"
+      - "Historical tasks, adjacent repositories or systems"
+      - "create no ledger, database, or persistent status file"
+      - "Before answering an aggregate status question"
+      - "a pushed branch is not an MR/PR"
+      - "an approved MR/PR is not a merged MR/PR"
+      - "approval can satisfy an approval request but cannot satisfy a merge request"
       - "Verify the real artifact rather than a precursor"
       - "`verified`, `blocked`, `stale`, or `premise-changed`"
+
+  - file: templates/skill/workflows/subagent-auxiliary.md
+    must_contain:
+      - "Optional dispatch unavailable while the task remains possible → continue inline"
+      - "Never turn an unavailable optimization into a blocker"
+
+  - file: templates/skill/workflows/subagent-driven.md
+    must_contain:
+      - "No primitive or optional dispatch denied → execute inline"
+
+  - file: templates/skill/workflows/subagent-orchestration.md
+    must_contain:
+      - "## Degraded Mode"
+      - "execute it inline from only that scope"
 
   - file: templates/skill/protocol-blocks/workflow-distillation-proposal.md
     must_contain:

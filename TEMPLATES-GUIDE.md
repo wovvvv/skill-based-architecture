@@ -1,6 +1,11 @@
 # Templates Guide
 
-> **The authoritative, byte-for-byte copyable files live in [`templates/`](templates/) — copy from there, do not paste from this guide.** This file gives a minimal starter scaffold for projects that don't yet need the full directory split, plus pointers to the canonical workflow templates so this guide cannot drift against them.
+> **The authoritative materializer sources live in [`templates/`](templates/).**
+> Quick Start selects and renders only the carriers admitted by target evidence;
+> do not turn this guide into a universal downstream file list. This file gives
+> a direct Single-file starter for projects that do not yet need independent
+> routing or lifecycle owners, plus pointers to canonical sources so the guide
+> cannot drift against them.
 
 ## Minimal Starter Template
 
@@ -27,7 +32,10 @@ One-line summary.
 - Other → use the guidance above and keep edits minimal
 ```
 
-This inline task list is only for the Single-file tier, where no separate routing manifest exists. When the skill upgrades to Folder-light or Full, move exact task rows to `routing.yaml` and leave only the generated Common Tasks action hook in `SKILL.md`.
+This inline task list is only for the Single-file carrier, where no separate
+routing manifest exists. When evidence admits independent routing, move exact
+task rows to `routing.yaml` and leave only the generated Common Tasks action hook
+in `SKILL.md`. The user does not select that promotion.
 
 Start here when:
 
@@ -84,13 +92,30 @@ This guide intentionally does not restate the protocol. When the protocol change
 
 For the protocol-level concepts (recording threshold, where to record, generalization rule, activation check, when not to record), see [`references/protocols.md`](references/protocols.md).
 
-Reusable reinforcement blocks live in [`templates/skill/protocol-blocks/`](templates/skill/protocol-blocks/) and are copied inside each downstream skill — workflows link them without user-visible setup. The current conditional owners are `reboot-check.md` (recovery after interruption/compaction), `ambiguous-request-gate.md` (implementation-fact versus normative ambiguity), `subagent-contract.md` (delegation envelope), `composite-plan-execution.md` (one Integrating Plan over consumed Components), `user-decision-drift.md` (user-confirmed meaning conflict), `plan-knowledge-closure.md` (Plan/Component and durable-knowledge reconciliation), `external-delivery-verification.md` (requested external artifact proof), and `workflow-distillation-proposal.md` (post-Closure repeated-procedure proposal). They are conditionally loaded by their owning workflow, not an Always Read bundle. Task Closure Rationalizations and Red Flags live only in `workflows/task-closure.md`.
+Reusable reinforcement blocks live in [`templates/skill/protocol-blocks/`](templates/skill/protocol-blocks/)
+and materialize only when an admitted workflow links them. The current
+conditional owners are `reboot-check.md` (recovery after
+interruption/compaction), `ambiguous-request-gate.md` (implementation-fact
+versus normative ambiguity), `subagent-contract.md` (delegation envelope),
+`composite-plan-execution.md` (one Integrating Plan over consumed Components),
+`user-decision-drift.md` (user-confirmed meaning conflict),
+`plan-knowledge-closure.md` (Plan/Component and durable-knowledge
+reconciliation), `external-delivery-verification.md` (requested external
+artifact proof), and `workflow-distillation-proposal.md` (post-Closure
+repeated-procedure proposal). They are conditionally loaded by their owning
+workflow, not an Always Read bundle. Task Closure Rationalizations and Red
+Flags live only in `workflows/task-closure.md` when that independent owner is
+admitted; a smaller workflow keeps only its applicable completion behavior.
+
+In short, these owners are conditionally loaded by their owning workflow, not an Always Read bundle.
 
 Route intake starts from the selected workflow and the evidence-driven context kernel in [`SKILL.md.template`](templates/skill/SKILL.md.template). Managed tasks use [`task-execution.md`](templates/skill/workflows/task-execution.md), while modifying workflows load [`change-discipline.md`](templates/skill/rules/change-discipline.md) only before their first mutation.
 
 ## Workflow Templates
 
-Real workflow templates live under [`templates/skill/workflows/`](templates/skill/workflows/) — they are copied byte-for-byte into downstream skills:
+Real workflow sources live under [`templates/skill/workflows/`](templates/skill/workflows/).
+They are copied or rendered into a downstream only when the selected evidence
+admits that procedure or lifecycle owner:
 
 | Template | Purpose |
 |---|---|

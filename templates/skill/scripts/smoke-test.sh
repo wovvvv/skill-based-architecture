@@ -4,16 +4,18 @@
 # Example: bash smoke-test.sh my-project
 #          bash smoke-test.sh my-project --phase 4   # run only Phase 4 subset
 #
-# Zero manual input required. Checks canonical routing.yaml plus generated action/bootstrap blocks.
+# Zero manual input required. Checks every responsibility the target actually
+# materialized; a Single-file Skill is valid without Full-only routing, shell,
+# workflow, or maintenance surfaces.
 # Supports both English and Chinese (中文) section names.
 # Exit code: 0 = all pass, 1 = failures found.
 #
 # ═══════════════════════════════════════════════════════════════════════
 # 9 CATEGORIES of checks (see corresponding section markers below):
 #
-#   1. Structural Checks          — SKILL.md, rules/, workflows/, gotchas,
-#                                   Cursor registration entry, thin shells exist;
-#                                   SessionStart re-injection hook wired (1d, WARN)
+#   1. Structural Checks          — SKILL.md always exists; separately materialized
+#                                   rules/workflows/gotchas/routing/entry surfaces
+#                                   are valid; SessionStart hook wired (1d, WARN)
 #   2. Line Count Budgets         — SKILL.md dual budget (description ≤ 25 + body ≤ 90), routing task core ≤ 140,
 #                                   optional domain manifest reported separately, shells ≤ 60 lines,
 #                                   gotchas/pitfall ≤ $GOTCHAS_MAX_LINES (default 400),
@@ -27,11 +29,13 @@
 #                                   language(s), not keyword-stuffed (WARN if
 #                                   > $DESCRIPTION_MAX_TRIGGERS quoted phrases),
 #                                   Common Tasks action hook + Known Gotchas sections exist
-#   5. Routing Completeness       — routing.yaml structure/paths and generated blocks match
+#   5. Routing Completeness       — routing.yaml structure/paths and generated blocks
+#                                   match when routed; otherwise SKILL.md owns a
+#                                   concrete direct Common Tasks boundary
 #   6. Description Consistency    — SKILL.md and .cursor/skills/<name>/SKILL.md
 #                                   descriptions match byte-for-byte
-#   7. Shell Routing Consistency  — AGENTS / CLAUDE / CODEX / GEMINI shells
-#                                   point at routing.yaml bootstrap
+#   7. Shell Routing Consistency  — materialized harness entries point at the
+#                                   actual routing owner (routing.yaml or SKILL.md)
 #   8. Broken Link Check          — every relative markdown link [text](path)
 #                                   across all skill .md files resolves to an
 #                                   existing file. Catches "path drift" after
@@ -201,6 +205,11 @@ has_routing_bootstrap() {
   grep -q 'routing.yaml' "$file" 2>/dev/null
 }
 
+has_skill_bootstrap() {
+  local file="$1"
+  grep -qE "skills/$NAME/SKILL\.md|(^|[^[:alnum:]_])SKILL\.md([^[:alnum:]_]|$)" "$file" 2>/dev/null
+}
+
 if section 1 "Structural Checks"; then :
 
 # 1a-skill. SKILL.md exists (Phase 3+)
@@ -212,8 +221,10 @@ if sub_runs "1a-skill"; then
   fi
   if [[ -f "$ROUTING_YAML" ]]; then
     pass "$ROUTING_YAML exists"
+  elif grep -qE '## (Common Tasks|常见任务)' "$SKILL_MD" 2>/dev/null; then
+    pass "Single-file routing responsibility stays in SKILL.md"
   else
-    fail "$ROUTING_YAML missing (routing source of truth)"
+    fail "$ROUTING_YAML missing and SKILL.md has no direct Common Tasks owner"
   fi
 fi
 
@@ -222,25 +233,32 @@ fi
 # split, in architecture/ (stable) + conventions/ (volatile). Any non-empty one passes.
 if sub_runs "1a-rules"; then
   CONSTRAINT_N=0
+  CONSTRAINT_DIR_N=0
   for d in rules architecture conventions; do
     if [[ -d "$SKILL_DIR/$d" ]]; then
+      CONSTRAINT_DIR_N=$((CONSTRAINT_DIR_N + 1))
       n=$(find "$SKILL_DIR/$d" -maxdepth 1 -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
       CONSTRAINT_N=$((CONSTRAINT_N + n))
     fi
   done
   if [[ "$CONSTRAINT_N" -gt 0 ]]; then
     pass "constraint surface: $CONSTRAINT_N file(s) across rules/ architecture/ conventions/"
+  elif [[ "$CONSTRAINT_DIR_N" -eq 0 ]]; then
+    pass "no separate constraint surface materialized; SKILL.md owns the current rules"
   else
-    fail "no constraint surface — expected rules/, architecture/, or conventions/ with .md files"
+    fail "materialized constraint directories contain no .md files"
   fi
 fi
 
 # 1a-workflows. workflows/*.md (Phase 5+)
 if sub_runs "1a-workflows"; then
-  if [[ -f "$SKILL_DIR/workflows/update-rules.md" ]]; then
-    pass "$SKILL_DIR/workflows/update-rules.md exists"
+  WORKFLOW_N=$(find "$SKILL_DIR/workflows" -maxdepth 1 -name '*.md' -type f 2>/dev/null | wc -l | tr -d ' ' || true)
+  if [[ ! -d "$SKILL_DIR/workflows" ]]; then
+    pass "no separate workflows materialized; SKILL.md owns the direct procedure"
+  elif [[ "$WORKFLOW_N" -gt 0 ]]; then
+    pass "workflow surface: $WORKFLOW_N file(s)"
   else
-    fail "$SKILL_DIR/workflows/update-rules.md missing"
+    fail "materialized workflows/ directory contains no .md files"
   fi
 
   if [[ -f "$ROUTING_YAML" ]]; then
@@ -285,8 +303,10 @@ if sub_runs "1a-gotchas"; then
     GOTCHA_FILE=$(find "$SKILL_DIR/references" -maxdepth 1 -type f \( -name '*pitfall*' -o -name '*gotcha*' \) 2>/dev/null | head -1 || true)
     if [[ -n "$GOTCHA_FILE" ]]; then
       pass "gotchas/pitfalls reference found: $(basename "$GOTCHA_FILE")"
+    elif [[ ! -d "$SKILL_DIR/gotchas" && ! -d "$SKILL_DIR/references" ]]; then
+      pass "no separate gotcha owner materialized"
     else
-      fail "no gotchas/ tier, $SKILL_DIR/references/gotchas.md, or equivalent pitfalls file"
+      pass "no gotcha owner materialized in the current content directories"
     fi
   fi
 fi
@@ -298,33 +318,39 @@ if sub_runs "1b"; then
   elif [[ "$TWO_ROOT" == "1" ]]; then
     warn "Cursor entry $CURSOR_ENTRY missing (two-root layout: entry may be rendered by an external assembler — verify there)"
   else
-    fail "Cursor entry $CURSOR_ENTRY missing (Cursor will never discover this skill)"
+    pass "Cursor registration not materialized for this Skill"
   fi
 fi
 
 # 1c. Thin shells + .cursor/rules (Phase 7+)
 if sub_runs "1c"; then
+  SHELL_COUNT=0
   for shell in AGENTS.md CLAUDE.md CODEX.md GEMINI.md; do
-    if [[ ! -f "$shell" ]]; then
-      if [[ "$TWO_ROOT" == "1" ]]; then
-        warn "$shell missing (two-root layout: shells may be rendered by an external assembler — verify there)"
-      else
-        fail "$shell missing"
-      fi
-    elif has_routing_bootstrap "$shell"; then
+    [[ -f "$shell" ]] || continue
+    SHELL_COUNT=$((SHELL_COUNT + 1))
+    if [[ -f "$ROUTING_YAML" ]] && has_routing_bootstrap "$shell"; then
       pass "$shell exists with routing.yaml bootstrap"
-    else
+    elif [[ ! -f "$ROUTING_YAML" ]] && has_skill_bootstrap "$shell"; then
+      pass "$shell exists with direct SKILL.md bootstrap"
+    elif [[ -f "$ROUTING_YAML" ]]; then
       fail "$shell exists but does not point at routing.yaml"
+    else
+      fail "$shell exists but does not point at the Single-file SKILL.md owner"
     fi
   done
+  [[ "$SHELL_COUNT" -gt 0 ]] || pass "no root harness shells materialized"
 
   # .codex/instructions.md is an optional compatibility mirror. If a project
   # opts in, validate the routing bootstrap; otherwise stay silent.
   if [[ -f ".codex/instructions.md" ]]; then
-    if has_routing_bootstrap ".codex/instructions.md"; then
+    if [[ -f "$ROUTING_YAML" ]] && has_routing_bootstrap ".codex/instructions.md"; then
       pass ".codex/instructions.md exists with routing.yaml bootstrap"
-    else
+    elif [[ ! -f "$ROUTING_YAML" ]] && has_skill_bootstrap ".codex/instructions.md"; then
+      pass ".codex/instructions.md exists with direct SKILL.md bootstrap"
+    elif [[ -f "$ROUTING_YAML" ]]; then
       fail ".codex/instructions.md exists but does not point at routing.yaml"
+    else
+      fail ".codex/instructions.md exists but does not point at the Single-file SKILL.md owner"
     fi
   fi
 
@@ -334,7 +360,7 @@ if sub_runs "1c"; then
   elif [[ "$TWO_ROOT" == "1" ]]; then
     warn ".cursor/rules/ has no .mdc files (two-root layout: Cursor shell may be rendered by an external assembler)"
   else
-    fail ".cursor/rules/ has no .mdc files"
+    pass "no Cursor rule shell materialized"
   fi
 
   # 1d. SessionStart re-injection hook (WARN-only — harness-dependent).
@@ -364,7 +390,7 @@ if section 2 "Line Count Budgets"; then :
 
 check_lines() {
   local file="$1" max="$2" label="$3"
-  if [[ ! -f "$file" ]]; then return; fi
+  if [[ ! -f "$file" ]]; then return 0; fi
   local lines
   lines=$(wc -l < "$file" | tr -d ' ')
   if [[ "$lines" -le "$max" ]]; then
@@ -376,7 +402,7 @@ check_lines() {
 
 check_routing_budget() {
   local file="$1"
-  [[ -f "$file" ]] || return
+  [[ -f "$file" ]] || return 0
   check_lines "$file" 140 "routing.yaml task routes"
   if grep -q '^domain_overlays:' "$file"; then
     fail "routing.yaml contains legacy domain_overlays (move them to domain-routing.yaml)"
@@ -395,7 +421,7 @@ check_domain_routing_budget() {
 # vice versa). Hard caps: description ≤ 25 lines, body ≤ 90 lines.
 check_skill_md_budget() {
   local file="$1"
-  [[ -f "$file" ]] || return
+  [[ -f "$file" ]] || return 0
   local desc_lines body_lines
   desc_lines=$(awk '
     /^---$/ { f++; next }
@@ -515,6 +541,16 @@ else
   echo "$FILL_HITS" | head -20 | sed 's/^/       /'
 fi
 
+# 3c. Renaming an unresolved marker is not migration. Reject the historical
+# `FILL:` -> `FILLED:` laundering pattern explicitly.
+RENAMED_FILL_HITS=$(grep -rnE '(^|[[:space:]#<])FILLED:' "$SKILL_DIR" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor 2>/dev/null | grep -v 'node_modules' | grep -v '/scripts/' || true)
+if [[ -z "$RENAMED_FILL_HITS" ]]; then
+  pass "No renamed FILLED: markers"
+else
+  fail "Renamed FILLED: markers found; replace migration work with real project content:"
+  echo "$RENAMED_FILL_HITS" | head -20 | sed 's/^/       /'
+fi
+
 fi  # end section 3
 
 # ── 4. SKILL.md Content Quality ───────────────────────────────────────
@@ -625,6 +661,24 @@ if [[ -f "$SKILL_MD" ]]; then
       fail "routing.yaml generated blocks drifted"
       printf '%s\n' "$ROUTING_OUTPUT" | sed 's/^/       /' | head -50
     fi
+  elif [[ -f "$ROUTING_YAML" ]]; then
+    fail "routing.yaml exists but no sync-routing.sh is available to verify its generated consumers"
+  else
+    if grep -q 'routing.yaml' "$SKILL_MD"; then
+      fail "Single-file SKILL.md references routing.yaml even though no routing manifest exists"
+    else
+      DIRECT_TASK_COUNT=$(awk '
+        /^## (Common Tasks|常见任务)/ { in_tasks=1; next }
+        in_tasks && /^## / { exit }
+        in_tasks && /^[[:space:]]*[-*][[:space:]]+/ && $0 !~ /<[^>]+>/ { count++ }
+        END { print count+0 }
+      ' "$SKILL_MD")
+      if [[ "$DIRECT_TASK_COUNT" -gt 0 ]]; then
+        pass "Single-file SKILL.md owns $DIRECT_TASK_COUNT concrete direct task entr$( [[ "$DIRECT_TASK_COUNT" -eq 1 ]] && printf 'y' || printf 'ies' )"
+      else
+        fail "Single-file SKILL.md has no concrete direct task entry"
+      fi
+    fi
   fi
 
 fi
@@ -678,7 +732,8 @@ if [[ -f "scripts/check-self-shells.sh" && -f "references/self-hosting-routing.y
   fi
 fi
 
-# Check that all shells point at the routing manifest instead of carrying hand-maintained tables.
+# Check that every materialized shell points at the actual routing owner instead
+# of carrying an unowned hand-maintained table.
 SHELL_FILES=(AGENTS.md CLAUDE.md CODEX.md GEMINI.md)
 # Optional: include .codex/instructions.md only when the project opts into the compatibility mirror.
 [[ -f ".codex/instructions.md" ]] && SHELL_FILES+=(".codex/instructions.md")
@@ -687,10 +742,14 @@ while IFS= read -r cursor_rule; do
 done < <(find .cursor/rules -maxdepth 1 -name '*.mdc' -type f 2>/dev/null | sort)
 for shell in "${SHELL_FILES[@]}"; do
   if [[ ! -f "$shell" ]]; then continue; fi
-  if grep -q 'routing.yaml' "$shell"; then
+  if [[ -f "$ROUTING_YAML" ]] && grep -q 'routing.yaml' "$shell"; then
     pass "$shell points at routing.yaml"
-  else
+  elif [[ ! -f "$ROUTING_YAML" ]] && has_skill_bootstrap "$shell"; then
+    pass "$shell points at the Single-file SKILL.md owner"
+  elif [[ -f "$ROUTING_YAML" ]]; then
     fail "$shell does not point at routing.yaml"
+  else
+    fail "$shell does not point at the Single-file SKILL.md owner"
   fi
 done
 
@@ -837,6 +896,7 @@ if [[ "$FAIL" -gt 0 ]]; then
   exit 1
 else
   echo ""
-  echo "  All checks passed! Skill '$NAME' is ready."
+  echo "  All applicable structural checks passed for Skill '$NAME'."
+  echo "  This does not prove semantic migration or live Agent behavior."
   exit 0
 fi

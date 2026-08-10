@@ -17,28 +17,43 @@ description: >
 # <Project Name> (Cursor Entry)
 
 Formal skill content lives at `skills/<name>/SKILL.md`.
-**Read that file immediately, then follow its Always Read list and Common Tasks action hook; select the exact route from `routing.yaml`.**
+**Read that file immediately, then follow its Always Read list and Common Tasks action hook; select the exact route from `routing.yaml` when the routed carrier is present, otherwise follow the sole direct procedure.**
 
-## Quick Routing (survives context truncation)
+## Quick Routing (survives context truncation for routed carriers)
 
-Task routes live in `skills/<name>/routing.yaml`.
+Task routes live in `skills/<name>/routing.yaml` for routed carriers. A direct
+carrier keeps its sole task route in `skills/<name>/SKILL.md`.
 
 For every new task:
-1. Read `skills/<name>/routing.yaml`.
-2. Match exactly one task route; if none matches, use `other`.
-3. Follow only that route's `workflow`; the task route does not preload knowledge.
-4. Let the workflow inspect the smallest evidence that can decide the next action.
+1. If `routing.yaml` exists, read it and match exactly one task route; if none matches, use `other`.
+2. If it does not exist, follow the sole direct procedure in `SKILL.md`.
+3. Follow only the selected/sole procedure; the task route does not preload knowledge.
+4. Let the procedure inspect the smallest evidence that can decide the next action.
 5. Evaluate optional `domain-routing.yaml` only for an explicit business-rule request, known owner, or evidence-backed unresolved business decision; keywords identify candidates only.
-6. Load mutation, testing, managed-execution, and closure contracts only when their phase begins.
+6. Load mutation, testing, managed-execution, and closure contracts only when their phase begins and their owner was admitted.
 ```
 
 The generated bootstrap always explains the optional delayed domain stage, but it never copies domain candidates into the shell. Domain-free projects omit `domain-routing.yaml`; the first admitted business owner materializes it atomically. See [`business-global-model.md`](business-global-model.md#orthogonal-task-and-domain-routing).
 
-**Why a bootstrap?** In long conversations, Cursor summarizes earlier context. Instructions like "go read `skills/<name>/SKILL.md`" get truncated. The bootstrap keeps the lookup rule in every shell while the route data stays in one YAML manifest.
+**Why a bootstrap?** In long conversations, Cursor summarizes earlier context.
+For routed carriers, instructions like "go read `skills/<name>/SKILL.md`" get
+truncated; the bootstrap keeps the lookup rule in every emitted routed shell
+while route data stays in one YAML manifest. A direct carrier needs no empty
+manifest and uses its sole-procedure pointer.
 
-## Common Thin Shell Body
+## Common Thin Shell Body (routed carriers)
 
-All thin shells share the same core content, and two parts of it are **generated**, not hand-edited per shell: route data lives in `skills/<name>/routing.yaml`, and the shared **behavior block** (Auto-Triggers + Red Flags) lives once in `scripts/sync-routing.sh`. Edit those single sources and run `scripts/sync-routing.sh` to regenerate every shell. The behavior block sits between `<!-- BEHAVIOR_BLOCK_START -->` / `<!-- BEHAVIOR_BLOCK_END -->` markers; a shell opts into generation by having those markers (older shells without them are left untouched). Changing a behavioral rule is then one edit + re-sync, not N hand-edits across shells — and there is no cross-harness drift.
+Routed thin shells share the same core content, and two parts of it are
+**generated**, not hand-edited per shell: route data lives in
+`skills/<name>/routing.yaml`, and the shared **behavior block** (Auto-Triggers +
+Red Flags) lives once in `scripts/sync-routing.sh`. Direct shells use the
+single-procedure carrier and do not require this manifest or generated block.
+Edit the admitted routed sources and run `scripts/sync-routing.sh` to
+regenerate every emitted routed shell. The behavior block sits between
+`<!-- BEHAVIOR_BLOCK_START -->` / `<!-- BEHAVIOR_BLOCK_END -->` markers; a shell
+opts into generation by having those markers (older shells without them are
+left untouched). Changing a behavioral rule is then one edit + re-sync, not N
+hand-edits across routed shells — and there is no cross-harness drift.
 
 ```md
 Formal docs live under `skills/`. Read `skills/*/SKILL.md` — default to `primary: true` skill; only switch when task clearly matches another skill's description.
@@ -57,7 +72,7 @@ Conflicts between loaded project instructions → formal docs in `skills/<name>/
 
 <task-routing>
 
-**Quick Routing (survives context truncation)**
+**Quick Routing (survives context truncation for routed carriers)**
 
 Task routes live in `skills/<name>/routing.yaml`.
 
@@ -74,12 +89,16 @@ For every new task:
 ## Auto-Triggers
 
 - **New task in same session** → always re-match routing. After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence.
-- Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter Task Closure Protocol (see `workflows/task-closure.md`); `Ready for Delivery` is not completion
+- Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter the applicable completion owner. If an independent `workflows/task-closure.md` was admitted, use its Task Closure Protocol; otherwise use the selected workflow's fitted completion behavior. `Ready for Delivery` is not completion when a delivery gate exists
 - Skip only for: formatting-only, comment-only, dependency-version-only, or behavior-preserving refactors
 - When user asks to "record/save/remember" something → project-level knowledge goes to `skills/<name>/` docs; personal preferences go to agent memory
 ```
 
-**Why a bootstrap instead of just "Scan skills/"?** The "Scan skills/*/SKILL.md" instruction is natural language that gets lost during context summarization. The bootstrap preserves the actionable rule for reading `routing.yaml` while avoiding duplicated route tables in every shell.
+**Why a bootstrap instead of just "Scan skills/"?** The "Scan skills/*/SKILL.md"
+instruction is natural language that gets lost during context summarization.
+The bootstrap preserves the actionable rule for reading `routing.yaml` in every
+emitted routed shell while avoiding duplicated route tables. Direct shells use
+their sole-procedure pointer instead.
 
 **Why Auto-Triggers?** A skill knows *how* to do something; the project entry tells the Agent *when* to do it. Auto-Triggers encode event→action mappings so the Agent proactively runs workflows at the right moment without waiting for a prompt.
 

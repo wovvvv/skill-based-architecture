@@ -2,7 +2,11 @@
 
 Templates for each AI harness's required entry file. Each template below shows **only the tool-specific parts**. Combine each with the common thin-shell body in [thin-shells.md § Common Thin Shell Body](thin-shells.md#common-thin-shell-body).
 
-Pre-built shells for the scaffolded harnesses ship under [`templates/shells/`](../templates/shells/); tools that read `AGENTS.md` can share that shell. Downstream projects should `cp -R` the tree rather than regenerate the files inline.
+Pre-built routed-shell sources for the scaffolded harnesses ship under
+[`templates/shells/`](../templates/shells/); tools that read `AGENTS.md` can
+share that shell. Downstream projects should use the evidence-driven
+materializer, which renders only detected/declared surfaces; these snippets are
+not a universal copy tree.
 
 ## AGENTS.md
 
@@ -121,16 +125,20 @@ See root `CLAUDE.md` for entry point.
 <!-- external-fact: verified=2026-04-28 source=https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md -->
 <!-- external-fact: verified=2026-04-28 source=https://opencode.ai/docs/rules/ -->
 
-| Tool | Discovery mechanism | Required entry | Must have routing bootstrap? |
+| Tool | Discovery mechanism | Required entry | Routed result needs bootstrap? |
 |---|---|---|---|
-| **Cursor** | Uses project skill registration under `.cursor/skills/` for this scaffold | `.cursor/skills/<name>/SKILL.md` | Yes |
-| **Cursor rules** | `.cursor/rules/*.mdc` (`alwaysApply: true`) | `.cursor/rules/workflow.mdc` | Yes |
-| **Claude Code** | Reads root `CLAUDE.md`; native skills scan `.claude/skills/` with enterprise > personal > project same-name precedence | `CLAUDE.md`; optional `.claude/skills/<project-name>/SKILL.md` stub | Yes |
-| **Codex CLI** | Reads the `AGENTS.md` hierarchy; `AGENTS.override.md` can override project guidance | `AGENTS.md`; keep `CODEX.md` / `.codex/instructions.md` only as compatibility mirrors if your harness reads them | Yes |
-| **Windsurf** | Reads workspace memories/rules such as `.windsurf/rules/`; can also infer memories from `AGENTS.md` | `.windsurf/rules/*.md` or shared `AGENTS.md` shell | Yes |
-| **Gemini CLI** | Reads `GEMINI.md` at repo root (+ parent/child dirs) | `GEMINI.md` | Yes |
-| **Copilot CLI** | Reads `AGENTS.md` | `AGENTS.md` (shared shell) | Yes |
-| **OpenCode** | Reads `AGENTS.md` | `AGENTS.md` (shared shell) | Yes |
-| **Other agents** | Reads `AGENTS.md` | `AGENTS.md` | Yes |
+| **Cursor** | Uses project skill registration under `.cursor/skills/` for this scaffold | `.cursor/skills/<name>/SKILL.md` | Yes, routed only |
+| **Cursor rules** | `.cursor/rules/*.mdc` (`alwaysApply: true`) | `.cursor/rules/workflow.mdc` | Yes, routed only |
+| **Claude Code** | Reads root `CLAUDE.md`; native skills scan `.claude/skills/` with enterprise > personal > project same-name precedence | `CLAUDE.md`; optional `.claude/skills/<project-name>/SKILL.md` stub | Yes, routed only |
+| **Codex CLI** | Reads the `AGENTS.md` hierarchy; `AGENTS.override.md` can override project guidance | `AGENTS.md`; keep `CODEX.md` / `.codex/instructions.md` only as compatibility mirrors if your harness reads them | Yes, routed only |
+| **Windsurf** | Reads workspace memories/rules such as `.windsurf/rules/`; can also infer memories from `AGENTS.md` | `.windsurf/rules/*.md` or shared `AGENTS.md` shell | Yes, routed only |
+| **Gemini CLI** | Reads `GEMINI.md` at repo root (+ parent/child dirs) | `GEMINI.md` | Yes, routed only |
+| **Copilot CLI** | Reads `AGENTS.md` | `AGENTS.md` (shared shell) | Yes, routed only |
+| **OpenCode** | Reads `AGENTS.md` | `AGENTS.md` (shared shell) | Yes, routed only |
+| **Other agents** | Reads `AGENTS.md` | `AGENTS.md` | Yes, routed only |
 
-**All entries must contain a routing bootstrap** — natural-language-only instructions ("Scan skills/") get lost during context summarization in long conversations. In generated scaffolds, `routing.yaml` is the single source for route data; shells only preserve the lookup protocol.
+**Routed entries need a routing bootstrap** — natural-language-only instructions
+("Scan skills/") get lost during context summarization in long conversations.
+Direct entries instead point to the sole `SKILL.md` procedure. In generated
+routed scaffolds, `routing.yaml` is the single source for route data; shells
+only preserve the lookup protocol.

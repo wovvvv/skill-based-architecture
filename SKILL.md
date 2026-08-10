@@ -21,56 +21,90 @@ Restructure oversized single-file Skills or scattered project rules into a well-
 
 ## When NOT to Use
 
-- Very small projects (fewer than 3 rule/doc files)
-- Temporary repos with no long-term maintenance needs
-- Teams with a well-functioning documentation system who don't want to migrate
+- Temporary repos with no durable instruction or task-routing need
+- Teams with a working documentation system that do not want to migrate
+- Do not force structured folders onto a small project; an explicit SBA request
+  may still materialize a complete direct `SKILL.md` carrier
 
 ## Progressive Rigor
 
-Grow only under pressure. Tiers: **Single-file** (`SKILL.md` only, < 3 topics) → **Folder-light** (`+ rules/`, 3–5 topics or 1 recurring workflow) → **Full** (`+ workflows/` + `references/` + thin shells; ≥ 3 routed tasks, gotcha log, or multi-harness repo). Upgrade triggers: SKILL.md body > 90 lines or description > 25 lines, same pitfall surfaces twice, a task needs step-by-step instructions, or two harnesses share routing. **Split by abstraction (骨架/肉)** when content tangles invariant design theory with current-code facts: abstract theory → `architecture/`, code maps → `references/`, house style → `conventions/`, per-module landmines → `gotchas/` (methodology stays in `rules/`). Downgrade when content shrinks. Details: [references/progressive-rigor.md](references/progressive-rigor.md).
+Grow only under pressure. The materializer derives **Single-file**,
+**Folder-light**, or **Full/broad** internally from target evidence; users do
+not select a tier, profile, capability pack, or install mode. `routing.yaml`,
+Task Execution, Task Closure, maintenance checks, and each harness surface need
+their own routing/loading/ownership pressure. **Split by abstraction (骨架/肉)**
+when content tangles invariant design theory with current-code facts: abstract
+theory → `architecture/`, code maps → `references/`, house style →
+`conventions/`, per-module landmines → `gotchas/` (methodology stays in
+`rules/`). Downgrade when content shrinks. Details:
+[references/progressive-rigor.md](references/progressive-rigor.md).
 
-## Target Structure
+## Evidence-Selected Structure
 
 ```text
-skills/<name>/
-├── SKILL.md          # dual budget (description ≤ 25 + body ≤ 90 lines): always-read list, task routing, priority
-├── architecture/     # abstract design theory (骨架) — layering/contract principles, the "why" — NOT the module map
-├── conventions/      # house style (肉) — naming, paths, commands, formats
-├── gotchas/          # code-coupled landmines (肉) — split by independently routed module; index only when it selects a leaf
-├── workflows/        # step-by-step procedures (骨架 — process theory)
-├── references/       # code maps + background (肉) — module tree, dir layout, source index, build/env
-└── docs/             # Optional: prompts, reports, external-facing material
+# direct
+skills/<name>/SKILL.md
+
+# folder-light or broad: only admitted owners/directories
+skills/<name>/{SKILL.md,rules/,workflows/,references/,scripts/}
+# routing.yaml appears only when route data has an independent owner
+# root/tool entry and registration surfaces appear only for proven readers
 ```
 
-Root entries (`AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, `.cursor/rules/*.mdc`) → thin shells with a `routing.yaml` bootstrap, not duplicated route tables.
-`.cursor/skills/<name>/SKILL.md` → Cursor registration entry (required for discovery). See [REFERENCE.md](REFERENCE.md) for templates.
+Existing root entries are preserved. Emitted routed entries use a generated
+`routing.yaml` bootstrap; direct entries point to the sole `SKILL.md` procedure.
+Cursor registration exists only when Cursor is detected, declared, currently
+used, or explicitly requested. See [REFERENCE.md](REFERENCE.md) for sources.
 
 ## Core Principles
 
 1. **Single concise entry** — `SKILL.md` keeps a dual budget: description ≤ 25 lines (trigger phrases + activation) + body ≤ 90 lines (navigation). It navigates, not exhausts. ✓ Check: smoke-test reports both separately; over either → split intent clusters / move detail to sub-files.
-2. **One skill folder** — all formal docs under `skills/<name>/`, not scattered at repo root. ✓ Check: `ls *.md` at root shows only thin shells, not rule/workflow files.
+2. **One skill folder when a folder is admitted** — folder-light and broad results keep formal docs under `skills/<name>/`; a direct result may remain a complete single `SKILL.md` carrier. ✓ Check: no emitted root entry becomes a second rule/workflow owner.
 3. **Rules ≠ Flows** — `rules/` for constraints, `workflows/` for procedures. ✓ Check: any numbered steps in `rules/`? Any "always/never" in `workflows/`? Either = mixing.
-4. **Routing.yaml as source** — task routes live in `routing.yaml`; shells only say how to read it. ✓ Check: route changed without running sync/check? No → drift risk.
-5. **Cursor registration entry** — `.cursor/skills/<name>/SKILL.md` must exist. ✓ Check: `ls .cursor/skills/` — missing = Cursor cannot discover the skill.
-6. **Progressive Rigor** — three tiers (Single-file / Folder-light / Full); grow only under pressure — see [Progressive Rigor section above](#progressive-rigor) + [details](references/progressive-rigor.md). ✓ Check: can you name the specific pressure that forced the current tier? "It felt right" ≠ pressure.
+4. **Routing.yaml as source when admitted** — a direct carrier owns its sole
+   route in `SKILL.md`; multiple/shared routes live only in `routing.yaml`, with
+   routed shells generated from it. ✓ Check: is there an independent selector
+   or consumer that justifies the manifest, and does its fitted sync check pass?
+5. **Harness surfaces follow readers** — create/merge only entries and
+   registrations supported by existing files/config, the current harness,
+   repository/team declaration, or an explicit request. ✓ Check: can every
+   emitted surface name its reader, and was every existing entry preserved?
+6. **Progressive Rigor** — three carriers (Single-file / Folder-light / Full)
+   grow only under pressure and are not user package choices. ✓ Check: can you
+   name the independent responsibility that forced every generated file?
 7. **Description = coarse activation** — domain boundary + real user trigger phrases; never enumerate workflow keywords nor summarize a workflow's steps — a step-summary becomes a shortcut the agent runs instead of reading the body ([ref](references/layout.md#description-as-trigger-condition)). ✓ Check: (a) can `routing.yaml` task routes change without rewriting the description? (b) does the description or any route label carry HOW an agent could act on without opening the body/workflow? "no" to (a) or "yes" to (b) → fix.
-8. **Gotchas are highest-value** — maintain costly pitfalls actively; keep them discoverable. ✓ Check: is each high-cost gotcha activated by a workflow reachable from a canonical `routing.yaml` task route, not only buried in `references/`?
+8. **Gotchas are highest-value** — maintain costly pitfalls actively; keep them discoverable. ✓ Check: is each high-cost gotcha activated by the admitted route owner (`SKILL.md` or `routing.yaml`), not only buried in `references/`?
 9. **Progressive disclosure** — every loaded file needs an independent task-time reason; conditional content leaves the startup read set, and files every real caller co-loads should merge unless ownership/generation requires separate storage. ✓ Check: for each route read, can you name a request that needs it now and a next action it changes? No → conditionally route, merge, or remove it.
-10. **Task Execution + Closure** — after routing, one clear action/check executes directly; otherwise establish a Task Anchor (Goal + Done When + optional Boundaries), present it proportionally instead of dumping a fixed chat template, use the harness-native Plan without repeating visible steps, and run a compact Anchor Checkpoint before every main step so evidence—not drift—advances the task, then enter Task Closure ([ref](references/protocols.md#task-execution-protocol)). Workflow remains the domain procedure; Plan is only this Session's runtime instance, with no planning-file persistence. ✓ Check: immediately before the current step, can you name the Goal, remaining Done When evidence, step check, and Closure proof without replacing or skipping the matched Workflow?
+10. **Task Execution + Closure** — after route selection, one clear action/check executes directly; otherwise establish a Task Anchor (Goal + Done When + optional Boundaries), present it proportionally instead of dumping a fixed chat template, use the harness-native Plan without repeating visible steps, and run a compact Anchor Checkpoint before every main step so evidence—not drift—advances the task. Enter the applicable completion owner: a simple workflow may inline its fitted verification/AAR/completion behavior, while an independent Task Closure owner is materialized only when its own lifecycle pressure is admitted ([ref](references/protocols.md#task-execution-protocol)). Workflow remains the domain procedure; Plan is only this Session's runtime instance, with no planning-file persistence. ✓ Check: immediately before the current step, can you name the Goal, remaining Done When evidence, step check, and applicable completion proof without replacing or skipping the matched Workflow?
 11. **Durable-record rule** — generic records generalize across projects; business global models stay project-specific but must survive implementation replacement ([ref](references/protocols.md#generalization-rule)). ✓ Check: use the destination's test—cross-project pattern or cross-implementation business truth—without mixing code details into either.
 12. **Self-maintenance** — line counts signal evaluation, not automatic action. Split only for independently selected tasks; merge files universally co-loaded/co-changed unless ownership or generation explains the boundary. ✓ Check: can the before/after load matrix prove less irrelevant reading without losing definitions, conditions, boundaries, or reasons?
 13. **Activation over storage** — content in `references/` alone is not "captured"; it must be on the task path **and change what the agent does when read**. Reached-but-inert (correct, on-route, yet the agent would have proceeded identically without it) is a distinct failure from absent or unreachable — and no structural gate (orphan / route-reachability / smoke-test) can see it, only judgment can. ✓ Check: (a) trace the normal route — Agent hits the entry without hunting? (b) does hitting it change the next action — a file it now reads, a check it now runs, a step it now skips? "no" to either → stored, not activated.
 14. **Token efficiency** — Always Read defaults to empty; every addition needs proof that all real tasks require it before workflow selection. Domain and lifecycle knowledge loads only when evidence or a phase boundary can change the next action. ✓ Check: can any startup read be delayed without changing the first workflow decision? If yes, move it to that workflow checkpoint.
 15. **Rationalizations Table** — captures verbatim excuses from real pressure-test failures, organic or proven by a [baseline run](references/scenario-testing.md) before shipping ([ref](templates/skill/workflows/task-closure.md#rationalizations-to-reject), [Phase 9](workflows/full-migration.md#phase-9-pressure-test-the-skill)). ✓ Check: every row traces to a real failure — no failure observed and unwilling to baseline it → imagined-pain, drop it.
 16. **Response discipline** — output short, precise, direct answers; avoid process narration, self-congratulation, gratuitous confirmations, and requirement restatement. Correct objective errors neutrally; do not infer user stance. ✓ Check: does each sentence serve the explicit request? No → delete it.
+17. **Proof claims stay separated** — fitted structural checks, source-disposition
+    migration evidence, and live Agent behavior prove different things. Green
+    structure cannot be promoted into semantic or behavioral correctness.
+    ✓ Check: does the final claim name the exact layer actually run, and report
+    unavailable live evidence as no verdict?
 
 ## Common Pitfalls
 
-1. **Missing Cursor registration entry** — Formal skill at `skills/<name>/` but no `.cursor/skills/<name>/SKILL.md` → Cursor never discovers the skill; all rules/workflows silently ignored
-2. **Soft-pointer-only shell** — Thin shell says only "go read SKILL.md" without a `routing.yaml` bootstrap → instruction lost after context summarization in long conversations
+1. **Missing admitted harness surface** — A project proves a Cursor/Claude/etc.
+   reader but its fitted registration/entry is absent → that harness never
+   discovers the formal owner. The opposite error is emitting every harness
+   without evidence and imposing permanent maintenance cost.
+2. **Wrong routing carrier** — A routed shell says only "go read SKILL.md"
+   without the generated `routing.yaml` bootstrap, or a direct project gains an
+   empty manifest merely for uniformity → either recovery breaks or false
+   machinery appears.
 3. **Vague / wrong-scope description** — Description is passive, wrong-language, too narrow ("fix bug" only), or bloated with every workflow keyword → skill misses natural requests or over-fires; keep description domain-level and route tasks in SKILL.md
 4. **Stored but not activated — or activated but inert** — Costly pitfall recorded in `references/` but not surfaced in an owning workflow checkpoint or canonical route when task selection changes → future agents still miss it. Subtler form: it *is* on the route and gets read, but it's "correct but inert" — written as a background fact, not as a next action — so the agent reads it and proceeds unchanged. Reachable ≠ useful; the entry must change what the agent does, not merely be present and correct
-5. **Task Closure Protocol skipped when it should have fired** — Agent considers itself "done" after main work and skips the 30-second AAR scan even though the Trigger Policy admitted the task (code/doc change happened) → lessons not captured. AAR is a completion gate when triggered, not an optional add-on. Pure Q&A / read-only tasks are correctly exempt — do not run AAR on them either
+5. **Completion responsibility lost during materialization** — Agent considers
+   itself "done" after main work even though the admitted workflow/Closure owner
+   requires fitted verification or AAR. A simple workflow may own that behavior
+   inline; an independent `task-closure.md` is not required merely for form.
+   Pure Q&A/read-only tasks remain exempt.
 6. **Project-specific records** — Lessons written as project narratives ("in our product module, we found…") instead of reusable knowledge → useless outside current context; apply generalization rule before recording
 7. **No SessionStart hook on long sessions** — `/clear` or `/compact` silently drops SKILL.md from context; agent loses all routing and protocol awareness without the user noticing → install SessionStart hook if your harness supports it (see [references/thin-shells.md § SessionStart Hook](references/thin-shells.md#sessionstart-hook-optional))
 8. **Route skipping in multi-task sessions** — Agent reads SKILL.md for the first task, then skips re-reading for subsequent tasks in the same session ("I already know the rules"). New tasks may match different routes; context may have been compressed. Result: agent works from partial/stale memory, misses critical rules, debugs in wrong direction for hours → SKILL.md template ships a tiered Session Discipline (re-match the route every task; re-read files only on route-change or compaction — cheap re-match catches different routes without re-reading everything); all shells carry the trigger

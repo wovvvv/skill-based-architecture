@@ -11,8 +11,8 @@
 - `workflows/add-controller.md` — new Controller + route + template
 - `workflows/add-entity-and-mapper.md` — new Entity + Mapper + Service method
 - `workflows/fix-bug.md` — debug flow
-- `workflows/task-execution.md` — cross-cutting Task Anchor + harness-native Plan protocol; Simple tasks skip it
-- `workflows/task-closure.md` — cross-cutting closure gate + after-action review + rationalizations
+- `workflows/task-execution.md` — shared Task Anchor + harness-native Plan protocol when Managed execution pressure is admitted; Simple tasks may keep the behavior inline
+- `workflows/task-closure.md` — independent closure gate + after-action review + rationalizations when completion pressure forms a separate owner
 - `workflows/update-rules.md` — rule sync + recording mechanics + learn-from-mistakes
 - `workflows/maintain-docs.md` — file health check, split, merge
 - `references/architecture.md` — package map, tech stack versions
@@ -22,7 +22,7 @@
 ### General-purpose
 
 - `rules/project-rules.md`, `rules/coding-standards.md`
-- `workflows/task-execution.md`, `workflows/fix-bug.md`, `workflows/update-rules.md`, `workflows/maintain-docs.md`
+- `workflows/fix-bug.md`, `workflows/update-rules.md`, `workflows/maintain-docs.md` (plus Task Execution/Closure only when their independent pressure is evidenced)
 - `references/architecture.md`, `references/source-index.md`
 
 ### Frontend-heavy
@@ -102,8 +102,8 @@ Both are valuable. The key difference: rules are constraints agents must follow;
 | **Mega sub-file** — one `backend-rules.md` at 500+ lines | Same problem as the original oversized SKILL.md, one level down | Split by subdomain: `controller-rules.md`, `mapper-rules.md`, etc. |
 | **Over-splitting** — 20 tiny files with 10 lines each | Navigation overhead exceeds the benefit | Merge related files; aim for 50–200 lines per file |
 | **Record everything** — Agent logs every trivial discovery as a rule | Rules bloat with low-value noise; important rules get buried | Apply recording threshold: repeat + high cost + not obvious from code (2/3) |
-| **Missing registration entry** — formal skill at `skills/<name>/` but no `.cursor/skills/<name>/SKILL.md` | Cursor never discovers the skill; all rules/workflows silently ignored | Always create `.cursor/skills/<name>/SKILL.md` pointing to formal skill |
-| **Soft-pointer-only shell** — thin shell says "go read SKILL.md" without a `routing.yaml` bootstrap | Instruction lost after context summary truncation in long conversations | Embed the route lookup protocol in every entry file; keep route data in `routing.yaml` |
+| **Missing admitted registration entry** — Cursor is detected/declared but no `.cursor/skills/<name>/SKILL.md` | Cursor never discovers the skill; rules/workflows silently ignored | Create the fitted direct pointer or routed bootstrap only when Cursor is an admitted reader |
+| **Soft-pointer-only routed shell** — a routed shell says "go read SKILL.md" without a `routing.yaml` bootstrap | Route selection is lost after context summary truncation in long conversations | Embed the route lookup protocol in each emitted routed entry; direct entries point to their sole procedure |
 | **Mechanical splitting** — split solely because line count exceeded threshold | Coherent files broken apart; readers jump between fragments | Line count triggers evaluation, not action; check topic separability first |
 | **Process overhead** — full health check run after every tiny edit | Meta-work dominates real work | Only scan modified files; skip review for formatting/comment-only changes |
 
@@ -114,7 +114,7 @@ Common symptoms and their fixes:
 | Symptom | Likely cause | Fix |
 |---------|-------------|-----|
 | Skill never triggers | Description too vague, too short (< 20 words or < 40 CJK chars), or missing the language users ask in | Rewrite with ≥ 2 quoted trigger phrases in the user's actual language(s) + concrete activation conditions |
-| Agent forgets rules in long conversations | Thin shells lack `routing.yaml` bootstraps | Embed the route lookup protocol in every entry file — natural language instructions get lost in context summarization |
+| Agent forgets routes in long conversations | An emitted routed shell lacks a `routing.yaml` bootstrap | Embed the route lookup protocol in each emitted routed entry; direct single-route entries need only their sole-procedure pointer |
 | Agent keeps making the same mistake | Pitfall stored in `references/` but not in the task execution path | Surface the lesson in the owning workflow checkpoint or a concise rule; change `routing.yaml` only when task selection changes |
 | AAR never runs | Auto-Triggers require agent to judge "behavior-changing"; agent defaults to skipping | Use Task Closure Protocol: trigger on "any non-trivial task", not "behavior-changing tasks" |
 | Records are project-specific and unreadable outside context | No generalization check on recordings | Apply Generalization Rule: rewrite as reusable pattern before recording |

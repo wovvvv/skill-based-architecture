@@ -5,29 +5,35 @@ set -euo pipefail
 
 MODE="worktree"
 BASE="${UPSTREAM_CHANGES_BASE:-HEAD}"
+RUN_LIVE_AGENT=0
 
 usage() {
   cat <<'EOF'
-Usage: scripts/check-all.sh [--base <git-ref>] [--staged]
+Usage: scripts/check-all.sh [--base <git-ref>] [--staged] [--live-agent]
 
 Runs the self-hosting upstream maintenance checks used before commit/push:
   - upstream change-note guard
   - upstream supersedes refs check
   - template routing manifest check
   - template SessionStart hook runtime contract
-  - temporary downstream scaffold smoke test
+  - responsibility-aware downstream validation contracts
+  - empty-target Single-file materializer journey
+  - one-procedure Folder-light materializer journey
+  - declared Full downstream scaffold structural contract
   - existing-project first-migration journey
   - self-hosting shells + activation check
   - whitespace diff check
   - single-root + two-root integrity contracts
-  - self-hosting scenario checks
-  - self-hosting phase 7 smoke test
+  - self-hosting manifest route proofs
+  - self-hosting shell/bootstrap/link smoke subset
   - self-hosting orphan audit
-  - template content conformance (downstream contract)
+  - Full template content conformance
   - self-hosting content conformance (upstream-canon)
 
 Default mode checks the working tree. Use --staged from a pre-commit hook to
 check the pending commit for UPSTREAM-CHANGES.md coverage and whitespace.
+Use --live-agent to add one real Codex journey in a fresh temporary project;
+without it, green means deterministic structure and contract checks only.
 EOF
 }
 
@@ -40,6 +46,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --staged)
       MODE="staged"
+      shift
+      ;;
+    --live-agent)
+      RUN_LIVE_AGENT=1
       shift
       ;;
     -h|--help)
@@ -78,10 +88,60 @@ fill_sample_scaffold() {
         -e "s/<trigger phrase 3 \\/ 中文触发短语>/更新示例技能/g" \
         -e "s/<condition 1>/working on the sample project/g" \
         -e "s/<condition 2>/maintaining sample project rules/g" \
-        -e "s/FILL:/FILLED:/g" \
         {} +
     find . -name '*.bak' -type f -delete
+
+    find "skills/$name" .cursor \
+      -type f \( -name '*.md' -o -name '*.mdc' -o -name '*.yaml' \) \
+      -exec perl -0pi -e 's/<!-- FILL:.*?-->//sg' {} +
+    perl -0pi -e 's/^# FILL:.*?(?=^tasks:)/# This fixture intentionally exercises the complete routed scaffold.\n/ms' \
+      "skills/$name/routing.yaml"
+    perl -0pi -e 's/- <!-- Boundary 1 -->/- Owns the sample application and its repository-local validation rules./; s/- <!-- Boundary 2 -->/- Does not own deployment credentials or external release approval./' \
+      "skills/$name/SKILL.md"
+
+    cat > "skills/$name/rules/project-rules.md" <<'MARKDOWN'
+# Project Rules
+
+- Changes to the sample application must preserve its command-line contract.
+- Release-affecting work requires the repository validation workflow before delivery.
+- External credentials, deployment, and publication remain outside this project Skill.
+- Project-rule changes require explicit user intent and the routed update-rules workflow.
+MARKDOWN
+
+    cat > "skills/$name/rules/coding-standards.md" <<'MARKDOWN'
+# Coding Standards
+
+- Use kebab-case file names and descriptive shell function names.
+- Comment only non-obvious ownership, failure, or recovery boundaries.
+- Keep shell scripts compatible with Bash 3.2 unless a checked runtime contract says otherwise.
+- Run the repository-owned formatter or syntax check before reporting implementation complete.
+- Keep imports and helper ownership local to the smallest responsible module.
+MARKDOWN
   )
+}
+
+assert_full_scaffold_surfaces() {
+  local target="$1" name="$2" path
+  local required=(
+    "skills/$name/routing.yaml"
+    "skills/$name/workflows/task-execution.md"
+    "skills/$name/workflows/task-closure.md"
+    "skills/$name/scripts/smoke-test.sh"
+    "skills/$name/scripts/sync-routing.sh"
+    ".cursor/skills/$name/SKILL.md"
+    ".cursor/rules/workflow.mdc"
+    "AGENTS.md"
+    "CLAUDE.md"
+    "CODEX.md"
+    "GEMINI.md"
+  )
+
+  for path in "${required[@]}"; do
+    [[ -e "$target/$path" ]] || {
+      echo "Full scaffold fixture missing declared surface: $path" >&2
+      return 1
+    }
+  done
 }
 
 validate_downstream_scaffold() {
@@ -98,6 +158,139 @@ validate_downstream_scaffold() {
   )
 }
 
+# Exercise the actual no-evidence Quick Start path.  The assertions are about
+# the fitted boundary (the two owners and the absence of independently owned
+# surfaces), not a copied Full scaffold inventory.
+check_single_file_materializer_journey() (
+  set -euo pipefail
+  local tmp before name summary preview apply file_count
+  tmp="$(mktemp -d)"
+  before="$(mktemp -d)"
+  trap 'rm -rf "$tmp" "$before"' EXIT
+  name="single-project"
+  summary="Small project with one direct procedure"
+
+  preview="$(bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary")"
+  [[ "$preview" == *"DRY-RUN: target unchanged; the evidence plan is session-scoped and was not written to the target"* ]]
+  diff -r "$before" "$tmp"
+
+  apply="$(bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary" --apply)"
+  [[ "$apply" == *"APPLIED: evidence-selected Skill created; generated owners passed marker/path staging checks"* ]]
+  [[ "$apply" == *"APPLIED RESPONSIBILITIES: materialization=direct routed=0"* ]]
+
+  [[ -f "$tmp/AGENTS.md" ]]
+  [[ -f "$tmp/skills/$name/SKILL.md" ]]
+  file_count="$(find "$tmp" -type f -print | wc -l | tr -d '[:space:]')"
+  [[ "$file_count" -eq 2 ]]
+  for path in \
+    "skills/$name/routing.yaml" \
+    "skills/$name/workflows" \
+    "skills/$name/scripts" \
+    "CLAUDE.md" "CODEX.md" "GEMINI.md" \
+    ".cursor" ".claude" ".codex" ".gemini"; do
+    [[ ! -e "$tmp/$path" ]] || {
+      echo "Single-file journey materialized an unadmitted surface: $path" >&2
+      return 1
+    }
+  done
+  grep -qF "skills/$name/SKILL.md" "$tmp/AGENTS.md"
+  ! grep -qE 'routing\.yaml|workflows/|scripts/' "$tmp/skills/$name/SKILL.md"
+
+  (
+    cd "$tmp"
+    bash "$ROOT/templates/skill/scripts/smoke-test.sh" "$name" --phase 8 >/dev/null
+  )
+  printf 'PASS: empty target materializes only the fitted Single-file owners\n'
+)
+
+# Exercise a single recurring workflow signal.  This must produce the
+# Folder-light direct shape: rule owners plus one project procedure, while
+# routing, Full execution/Closure owners, maintenance scripts, and extra
+# harness registrations remain absent.
+check_folder_direct_materializer_journey() (
+  set -euo pipefail
+  local tmp before name summary preview apply file_count
+  tmp="$(mktemp -d)"
+  before="$(mktemp -d)"
+  trap 'rm -rf "$tmp" "$before"' EXIT
+  name="folder-project"
+  summary="Project with one recurring release procedure"
+  cat > "$tmp/README.md" <<'MARKDOWN'
+# Release Helper
+
+## Release Workflow
+
+Follow this workflow to change release metadata and verify a release.
+
+1. Read VERSION.
+2. Run the repository release check.
+MARKDOWN
+  cp -R "$tmp/." "$before/"
+
+  preview="$(bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary")"
+  [[ "$preview" == *"recurring_signals=1"* ]]
+  [[ "$preview" == *"workflow_pressure=1"* ]]
+  [[ "$preview" == *"CREATE: skills/$name/rules/project-rules.md"* ]]
+  [[ "$preview" == *"CREATE: skills/$name/rules/coding-standards.md"* ]]
+  [[ "$preview" == *"CREATE: skills/$name/workflows/project-task.md"* ]]
+  [[ "$preview" != *"CREATE: skills/$name/routing.yaml"* ]]
+  [[ "$preview" != *"CREATE: skills/$name/scripts/"* ]]
+  [[ "$preview" != *"CREATE: skills/$name/workflows/task-execution.md"* ]]
+  [[ "$preview" != *"CREATE: skills/$name/workflows/task-closure.md"* ]]
+  [[ "$preview" == *"DRY-RUN: target unchanged; the evidence plan is session-scoped and was not written to the target"* ]]
+  diff -r "$before" "$tmp"
+
+  apply="$(bash "$ROOT/scripts/scaffold-downstream.sh" \
+    --target "$tmp" --name "$name" --summary "$summary" --apply)"
+  [[ "$apply" == *"APPLIED: evidence-selected Skill created; generated owners passed marker/path staging checks"* ]]
+  [[ "$apply" == *"APPLIED RESPONSIBILITIES: materialization=folder routed=0"* ]]
+  cmp "$before/README.md" "$tmp/README.md"
+
+  for path in \
+    "skills/$name/SKILL.md" \
+    "skills/$name/rules/project-rules.md" \
+    "skills/$name/rules/coding-standards.md" \
+    "skills/$name/workflows/project-task.md"; do
+    [[ -f "$tmp/$path" ]] || {
+      echo "Folder-light direct journey is missing fitted owner: $path" >&2
+      return 1
+    }
+  done
+  file_count="$(find "$tmp" -type f -print | wc -l | tr -d '[:space:]')"
+  [[ "$file_count" -eq 6 ]]
+  for path in \
+    "skills/$name/routing.yaml" \
+    "skills/$name/scripts" \
+    "skills/$name/workflows/task-execution.md" \
+    "skills/$name/workflows/task-closure.md" \
+    "skills/$name/conformance.yaml" \
+    "skills/$name/sync-manifest.yaml" \
+    "skills/$name/.upstream-sync" \
+    "skills/$name/references" \
+    "CLAUDE.md" "CODEX.md" "GEMINI.md" \
+    ".cursor" ".claude" ".codex" ".gemini"; do
+    [[ ! -e "$tmp/$path" ]] || {
+      echo "Folder-light direct journey materialized an unadmitted surface: $path" >&2
+      return 1
+    }
+  done
+  grep -qF "rules/project-rules.md" "$tmp/skills/$name/SKILL.md"
+  grep -qF "workflows/project-task.md" "$tmp/skills/$name/SKILL.md"
+  grep -qF "repository-owned fitted" \
+    "$tmp/skills/$name/workflows/project-task.md"
+  grep -qF "validation command." \
+    "$tmp/skills/$name/workflows/project-task.md"
+
+  (
+    cd "$tmp"
+    bash "$ROOT/templates/skill/scripts/smoke-test.sh" "$name" --phase 8 >/dev/null
+  )
+  printf 'PASS: one recurring procedure materializes fitted Folder-light direct owners\n'
+)
+
 check_downstream_scaffold() (
   set -euo pipefail
   local tmp name summary
@@ -106,15 +299,31 @@ check_downstream_scaffold() (
   name="sample-skill"
   summary="Sample downstream scaffold for upstream regression checks"
 
+  # This is an explicitly evidenced broad project, not the default path. The
+  # blank-target/default journey is covered separately by the responsibility
+  # contract fixture; keeping this evidence here preserves a real Full-like
+  # regression without teaching Quick Start to copy it unconditionally.
+  mkdir -p "$tmp/.cursor" "$tmp/.claude" "$tmp/.codex" "$tmp/.gemini" \
+    "$tmp/.github/workflows" "$tmp/scripts"
+  printf '# Sample project instructions\n\n## Fix bug\nReproduce the bug and run the check.\n\n## Add feature\nPreserve the public contract.\n\n## Refactor\nUpdate all callers and review the result.\n' > "$tmp/AGENTS.md"
+  printf '# Upstream tracking evidence\nRefresh upstream vendor files only with the repository check.\n' > "$tmp/UPSTREAM-CHANGES.md"
+
   bash "$ROOT/scripts/scaffold-downstream.sh" \
     --target "$tmp" --name "$name" --summary "$summary" --apply
+  # Simulate the Agent's semantic merge of the preserved source entry before
+  # running fitted structural checks; the scaffold itself must not overwrite it.
+  for shell in AGENTS.md CLAUDE.md CODEX.md GEMINI.md; do
+    cp "$ROOT/templates/shells/$shell" "$tmp/$shell"
+  done
+  cp "$ROOT/templates/shells/.cursor/rules/workflow.mdc" "$tmp/.cursor/rules/workflow.mdc"
   fill_sample_scaffold "$tmp" "$name" "$summary"
+  assert_full_scaffold_surfaces "$tmp" "$name"
   validate_downstream_scaffold "$tmp" "$name"
 )
 
 check_existing_project_scaffold_journey() (
   set -euo pipefail
-  local tmp before after_apply name summary preview conflict_output conflict_status
+  local tmp before after_apply name summary preview conflict_output conflict_status evidence
   tmp="$(mktemp -d)"
   before="$(mktemp -d)"
   after_apply="$(mktemp -d)"
@@ -122,8 +331,9 @@ check_existing_project_scaffold_journey() (
   name="existing-project"
   summary="Existing project migration journey"
 
-  mkdir -p "$tmp/.cursor/rules"
+  mkdir -p "$tmp/.cursor/rules" "$tmp/.codex" "$tmp/.gemini"
   printf '# Existing Agent Rules\n\nKeep the release approval rule.\n' > "$tmp/AGENTS.md"
+  printf '# Existing Claude Rules\n\n## Fix bug\nReproduce the failing case.\n\n## Change feature\nPreserve the public behavior.\n' > "$tmp/CLAUDE.md"
   printf '# Existing Cursor Rule\n\nRun the repository formatter before review.\n' > "$tmp/.cursor/rules/workflow.mdc"
   cp -R "$tmp/." "$before/"
 
@@ -151,11 +361,110 @@ check_existing_project_scaffold_journey() (
   cp "$before/AGENTS.md" "$tmp/skills/$name/rules/project-rules.md"
   cp "$before/.cursor/rules/workflow.mdc" "$tmp/skills/$name/rules/coding-standards.md"
   cp "$ROOT/templates/shells/AGENTS.md" "$tmp/AGENTS.md"
+  # The existing Claude entry is also a preserved source.  The original remains
+  # available under `before`/`.migration-source` for semantic evidence; the
+  # target root entry is switched to the canonical thin shell so the generated
+  # marker contract can be checked after the merge below.
+  cp "$ROOT/templates/shells/CLAUDE.md" "$tmp/CLAUDE.md"
   cp "$ROOT/templates/shells/.cursor/rules/workflow.mdc" "$tmp/.cursor/rules/workflow.mdc"
   fill_sample_scaffold "$tmp" "$name" "$summary"
+  cp "$before/AGENTS.md" "$tmp/skills/$name/rules/project-rules.md"
+  cp "$before/.cursor/rules/workflow.mdc" "$tmp/skills/$name/rules/coding-standards.md"
+  cat >> "$tmp/skills/$name/rules/project-rules.md" <<'MARKDOWN'
 
-  cmp "$before/AGENTS.md" "$tmp/skills/$name/rules/project-rules.md"
-  cmp "$before/.cursor/rules/workflow.mdc" "$tmp/skills/$name/rules/coding-standards.md"
+## Migrated Claude rules
+
+- Reproduce the failing case.
+- Preserve the public behavior.
+MARKDOWN
+
+  grep -qF 'Keep the release approval rule.' "$tmp/skills/$name/rules/project-rules.md"
+  grep -qF 'Run the repository formatter before review.' "$tmp/skills/$name/rules/coding-standards.md"
+  mkdir -p "$tmp/.migration-source/.cursor/rules"
+  cp "$before/AGENTS.md" "$tmp/.migration-source/AGENTS.md"
+  cp "$before/CLAUDE.md" "$tmp/.migration-source/CLAUDE.md"
+  cp "$before/.cursor/rules/workflow.mdc" "$tmp/.migration-source/.cursor/rules/workflow.mdc"
+  evidence="$tmp/migration-evidence.json"
+  cat > "$evidence" <<JSON
+{
+  "version": 1,
+  "inventory": [
+    {
+      "id": "release-approval",
+      "source": ".migration-source/AGENTS.md",
+      "text": "Keep the release approval rule."
+    },
+    {
+      "id": "formatter-before-review",
+      "source": ".migration-source/.cursor/rules/workflow.mdc",
+      "text": "Run the repository formatter before review."
+    },
+    {
+      "id": "claude-reproduce-failing-case",
+      "source": ".migration-source/CLAUDE.md",
+      "text": "Reproduce the failing case."
+    },
+    {
+      "id": "claude-preserve-public-behavior",
+      "source": ".migration-source/CLAUDE.md",
+      "text": "Preserve the public behavior."
+    }
+  ],
+  "mappings": [
+    {
+      "inventory_id": "release-approval",
+      "destination": "skills/$name/rules/project-rules.md",
+      "mode": "verbatim",
+      "activation_chain": [
+        "skills/$name/SKILL.md",
+        "skills/$name/routing.yaml",
+        "skills/$name/workflows/change-managed.md",
+        "skills/$name/rules/change-discipline.md",
+        "skills/$name/rules/project-rules.md"
+      ]
+    },
+    {
+      "inventory_id": "formatter-before-review",
+      "destination": "skills/$name/rules/coding-standards.md",
+      "mode": "verbatim",
+      "activation_chain": [
+        "skills/$name/SKILL.md",
+        "skills/$name/routing.yaml",
+        "skills/$name/workflows/change-managed.md",
+        "skills/$name/rules/change-discipline.md",
+        "skills/$name/rules/coding-standards.md"
+      ]
+    },
+    {
+      "inventory_id": "claude-reproduce-failing-case",
+      "destination": "skills/$name/rules/project-rules.md",
+      "mode": "verbatim",
+      "activation_chain": [
+        "skills/$name/SKILL.md",
+        "skills/$name/routing.yaml",
+        "skills/$name/workflows/fix-bug.md",
+        "skills/$name/rules/change-discipline.md",
+        "skills/$name/rules/project-rules.md"
+      ]
+    },
+    {
+      "inventory_id": "claude-preserve-public-behavior",
+      "destination": "skills/$name/rules/project-rules.md",
+      "mode": "verbatim",
+      "activation_chain": [
+        "skills/$name/SKILL.md",
+        "skills/$name/routing.yaml",
+        "skills/$name/workflows/change-managed.md",
+        "skills/$name/rules/change-discipline.md",
+        "skills/$name/rules/project-rules.md"
+      ]
+    }
+  ],
+  "exclusions": []
+}
+JSON
+  bash "$ROOT/scripts/check-migration-evidence.sh" --root "$tmp" --manifest "$evidence"
+  assert_full_scaffold_surfaces "$tmp" "$name"
   validate_downstream_scaffold "$tmp" "$name"
 )
 
@@ -591,7 +900,10 @@ run "upstream supersedes refs check" bash scripts/check-upstream-supersedes.sh
 
 run "template routing manifest check" bash templates/skill/scripts/sync-routing.sh templates/skill --check
 run "template SessionStart hook runtime contract" bash scripts/check-template-hooks.sh
-run "temporary downstream scaffold smoke test" check_downstream_scaffold
+run "responsibility-aware downstream validation contracts" bash scripts/check-validation-contract.sh
+run "empty-target Single-file materializer journey" check_single_file_materializer_journey
+run "one-procedure Folder-light materializer journey" check_folder_direct_materializer_journey
+run "declared Full downstream scaffold structural contract" check_downstream_scaffold
 run "existing-project first-migration journey" check_existing_project_scaffold_journey
 run "single-root + two-root integrity contracts" check_two_root_integrity
 run "conformance option-like phrase contract" check_conformance_option_like_phrases
@@ -600,10 +912,20 @@ run "task route + domain overlay and cross-owner guards" check_overlay_owner_con
 run "code-root domain materialization + nested-owner guards" check_code_root_domain_contract
 run "recursive business-reference integrity" check_recursive_knowledge_integrity
 run "self-hosting shells + activation check" bash scripts/check-self-shells.sh
-run "self-hosting scenario checks" bash scripts/check-self-scenarios.sh
-run "self-hosting phase 7 smoke test" bash templates/skill/scripts/smoke-test.sh skill-based-architecture --phase 7
+run "self-hosting manifest route proofs" bash scripts/check-self-scenarios.sh
+# The self-hosting root intentionally stores unfilled template sources. This
+# Phase 7 slice checks only its root shell/bootstrap/link surfaces; the valid
+# Single-file and declared Full fixtures above own downstream Skill structure.
+run "self-hosting shell/bootstrap/link smoke subset" bash templates/skill/scripts/smoke-test.sh skill-based-architecture --phase 7
 run "self-hosting orphan audit" bash templates/skill/scripts/audit-orphans.sh
-run "template content conformance" bash templates/skill/scripts/check-version-conformance.sh templates/skill
+run "Full template content conformance" bash templates/skill/scripts/check-version-conformance.sh templates/skill
 run "self-hosting content conformance" bash templates/skill/scripts/check-version-conformance.sh . --conformance references/self-hosting-conformance.yaml
 
-printf '\nAll upstream maintenance checks passed.\n'
+printf '\nAll deterministic upstream structure and contract checks passed.\n'
+if [[ "$RUN_LIVE_AGENT" -eq 1 ]]; then
+  run "live Codex Single-file user journey" bash scripts/check-live-agent-journey.sh
+  printf '\nThe requested live Codex journey also passed.\n'
+else
+  printf 'Live Agent behavior was not run; this green result does not prove real Agent behavior.\n'
+  printf 'Run `bash scripts/check-all.sh --base %q --live-agent` for the opt-in journey.\n' "$BASE"
+fi

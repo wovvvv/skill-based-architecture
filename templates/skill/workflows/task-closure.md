@@ -49,7 +49,7 @@ If implementation work or non-delivery evidence is missing, return to [`task-exe
 
 Closure never grants commit, push, MR, deploy, publish, or other side-effect authority. The matched workflow or harness performs only the delivery already authorized by the user, while Closure remains open.
 
-- When the user requested an external/shared-system artifact, read [`external-delivery-verification.md`](../protocol-blocks/external-delivery-verification.md) and consume its `verified / blocked / stale / premise-changed` result. The protocol verifies the artifact but cannot grant authority or declare completion.
+- When the user requested an external/shared-system artifact, read [`external-delivery-verification.md`](../protocol-blocks/external-delivery-verification.md) and consume its `verified / blocked / stale / premise-changed` result. When delivery contains multiple artifacts, crosses repository/system owners, or the user asks an aggregate completion question, first consume that protocol's session-only requested artifact set and evaluate every requested artifact only against that bound set. The protocol verifies the artifact but cannot grant authority or declare completion.
 - When no external delivery was requested, the verified local result and final response are the delivery artifact.
 - Task Closure alone marks `Closure Complete`, and only after every required local and conditional proof has passed and every requested artifact is verified. Name residual risk without self-certifying beyond the checks run.
 

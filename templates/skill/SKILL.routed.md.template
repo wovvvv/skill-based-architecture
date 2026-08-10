@@ -1,0 +1,52 @@
+---
+name: {{NAME}}
+description: >
+  <!-- FILL: Keep activation domain-level; route rows belong only in
+       routing.yaml. Use real user-language trigger phrases and conditions. -->
+  This skill should be used when the user asks to "<trigger phrase 1>",
+  "<trigger phrase 2>", or "<trigger phrase 3 / 中文触发短语>".
+  Activate when <condition 1> or <condition 2>.
+primary: true
+---
+
+# {{NAME}}
+
+{{SUMMARY}}
+
+<always-applicable>
+
+## Always Read
+
+<!-- ALWAYS_READ_START -->
+None by default; workflows load knowledge at evidence and phase boundaries.
+<!-- ALWAYS_READ_END -->
+
+## Session Discipline
+
+Every new task reads `routing.yaml`, matches exactly one route by labels,
+trigger examples, and intent, then follows only that route's workflow. Do not
+preload unrelated rules. After interruption or compaction, recover the current
+workflow and decision-relevant evidence before acting.
+
+</always-applicable>
+
+<task-routing>
+
+## Common Tasks
+
+<!-- ROUTING_SUMMARY_START -->
+- For each new task, read `routing.yaml`, match exactly one route, fall back to
+  `other`, and follow only the selected workflow.
+<!-- ROUTING_SUMMARY_END -->
+
+</task-routing>
+
+## Known Gotchas
+
+<!-- OPTIONAL: keep empty until a recurring, evidence-backed pitfall exists. -->
+
+## Project Boundaries
+
+<!-- FILL: Record what this project Skill owns and does not own. -->
+- <!-- project-owned boundary -->
+- <!-- outside boundary -->

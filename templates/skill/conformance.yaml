@@ -1,4 +1,7 @@
-# Downstream behavior contract for the reusable scaffold.
+# Content contract for the complete reusable scaffold, not a universal file
+# inventory for every valid downstream Skill. Evidence-selected Single-file or
+# Folder-light results use only a fitted manifest when their materialized owners
+# have repeatable machine-check pressure.
 # Validated by scripts/check-version-conformance.sh. Keep only load-bearing
 # behavior anchors here; routing, generated blocks, links, and budgets have
 # their own checks.
@@ -274,6 +277,8 @@ required_sections:
       - "is a checkpoint, not task completion"
       - "Closure never grants commit, push, MR, deploy, publish"
       - "external-delivery-verification.md"
+      - "session-only requested artifact set"
+      - "every requested artifact only against that bound set"
       - "Closure Complete"
       - "The command exited 0, so the stage is complete"
       - "proves only the command's own contract"
@@ -316,6 +321,13 @@ required_sections:
     must_contain:
       - "# External Delivery Verification"
       - "never grants it or declares task completion"
+      - "## Requested Artifact Set"
+      - "Historical tasks, adjacent repositories or systems"
+      - "create no ledger, database, or persistent status file"
+      - "Before answering an aggregate status question"
+      - "a pushed branch is not an MR/PR"
+      - "an approved MR/PR is not a merged MR/PR"
+      - "approval can satisfy an approval request but cannot satisfy a merge request"
       - "Verify the real artifact rather than a precursor"
       - "authoritative schema/data readback"
       - "Return `stale` when source content, branch/config inputs, or relevant verification changed"
@@ -603,6 +615,8 @@ required_sections:
       - "## Admission Test"
       - "## Main-Agent Boundary"
       - "## Interception Transparency"
+      - "Optional dispatch unavailable while the task remains possible → continue inline"
+      - "Never turn an unavailable optimization into a blocker"
 
   - file: workflows/subagent-driven.md
     must_contain:
@@ -610,6 +624,7 @@ required_sections:
       - "## Mode 2 Entry"
       - "## Harness Compatibility"
       - "Worker-local status never advances the Native Plan"
+      - "No primitive or optional dispatch denied → execute inline"
     must_not_contain:
       - "Iron Law (violation = task failure"
       - "must directly call `spawn_agent`"
@@ -622,6 +637,8 @@ required_sections:
       - "Context Read"
       - "provenance index, not proof"
       - "does **not** run project-wide Task Closure"
+      - "## Degraded Mode"
+      - "execute it inline from only that scope"
 
   - file: protocol-blocks/subagent-contract.md
     must_contain:

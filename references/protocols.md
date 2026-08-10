@@ -16,10 +16,14 @@
 
 ## Meta-Workflow Templates
 
-The canonical workflow templates live under `templates/skill/workflows/`. Every project should adopt at least these:
+The canonical workflow templates live under `templates/skill/workflows/`. A
+downstream materializes each owner only when its admitted tasks create an
+independent load, routing, ownership, generation, or lifecycle reason. A simple
+workflow may keep its applicable execution, verification, AAR, and completion
+behavior inline; the catalog is not a universal file checklist.
 
-- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — cross-cutting task-start and progress contract: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
-- [`task-closure.md`](../templates/skill/workflows/task-closure.md) — cross-cutting closure gate (verified-failure outcome accounting, Task Closure Protocol, AAR, post-completion workflow proposal, Rationalizations, Red Flags); referenced by every behavior-changing workflow at closure.
+- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — the optional shared Managed-execution owner: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
+- [`task-closure.md`](../templates/skill/workflows/task-closure.md) — the optional independent completion owner (verified-failure outcome accounting, Task Closure Protocol, AAR, post-completion workflow proposal, Rationalizations, Red Flags); changing workflows link it only when Closure pressure admits a separate owner.
 - [`update-rules.md`](../templates/skill/workflows/update-rules.md) - compact shared durable-write contract and ambiguous-request dispatcher: input/destination classification, fidelity, reconciliation, activation, placement, synchronization, verification, and unchanged authority.
 - [`rule-update/business-truth.md`](../templates/skill/workflows/rule-update/business-truth.md), [`verified-failure.md`](../templates/skill/workflows/rule-update/verified-failure.md), [`knowledge-reconciliation.md`](../templates/skill/workflows/rule-update/knowledge-reconciliation.md), and [`workflow-distillation.md`](../templates/skill/workflows/rule-update/workflow-distillation.md) - independently loaded execution owners for user-confirmed business meaning, proven engineering prevention, ordinary knowledge correction/retirement, and accepted repeated workflows.
 - [`maintain-docs.md`](../templates/skill/workflows/maintain-docs.md) — independent-load-reason audit, semantic before/after reconciliation, file health, split/merge/index decisions, and reference integrity.
@@ -30,11 +34,37 @@ For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES
 
 Canonical source: [`templates/skill/workflows/task-execution.md`](../templates/skill/workflows/task-execution.md).
 
-Task Execution sits after route selection and before Task Closure. One clear action with one direct check stays Simple; other tasks establish Task Anchor state and use the visible native Plan for step display rather than duplicating it in chat. Long, complex, scope-sensitive, confirmation-dependent, or no-native-Plan work escalates presentation while the state remains runtime state, not a fixed chat template. Design-derived work carries every governing Plan path and relevant user-confirmed Decision Context. Composite execution identifies one Integrating owner, checks Component interfaces from their owners, and derives exactly one Native Plan/semantic `Current Task`; it adds no mirror status or runtime store. Each main step refreshes the applicable decision and evidence boundary through an Anchor Checkpoint.
+When both owners are admitted, Task Execution sits after route selection and
+before Task Closure. One clear action with one direct check stays Simple; other
+tasks establish Task Anchor state and use the visible native Plan for step
+display rather than duplicating it in chat. Long, complex, scope-sensitive,
+confirmation-dependent, or no-native-Plan work escalates presentation while the
+state remains runtime state, not a fixed chat template. Design-derived work
+carries every governing Plan path and relevant user-confirmed Decision Context.
+Composite execution identifies one Integrating owner, checks Component
+interfaces from their owners, and derives exactly one Native Plan/semantic
+`Current Task`; it adds no mirror status or runtime store. Each main step
+refreshes the applicable decision and evidence boundary through an Anchor
+Checkpoint. A simple workflow without the shared owner keeps only the compact
+execution behavior it needs.
+
+Workflow owns the reusable domain procedure; the visible native Plan for step display
+remains the harness surface for the current runtime instance rather than a second
+workflow definition.
 
 If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. Composite conflicts return to the narrowest owner: Integrating for order/legal adapters/integrated proof, Component for its meaning or interface. Schema-structure work also pauses application mutation until the Plan's explicit impact checkpoint, authoritative baseline, dedicated SQL artifact, execution owner, and authorization boundary are ready. This reference does not duplicate either gate's complete procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
 
-The separation is load-bearing: Workflow owns the reusable domain procedure and mandatory gates; Task Anchor owns this task's outcome; Native Plan owns current runtime step state; Task Closure owns the readiness and final completion decisions. Closure may begin with only explicit delivery-dependent Done When evidence outstanding, declare `Ready for Delivery` after local checks, remain open across authorized delivery, and complete only after the requested artifact is verified. It does not grant delivery authority. A user-visible Plan may group Workflow steps but cannot replace the Workflow or weaken a gate. New independent tasks re-route and replace the old Anchor/Plan; refinements update the current one.
+The separation is load-bearing when those owners are split: Workflow owns the
+reusable domain procedure and mandatory gates; Task Anchor owns this task's
+outcome; Native Plan owns current runtime step state; the admitted completion
+owner owns readiness and final completion decisions. A simple workflow may own
+that last behavior locally. When an independent Closure owner exists, it may
+begin with only explicit delivery-dependent Done When evidence outstanding,
+declare `Ready for Delivery` after local checks, remain open across authorized
+delivery, and complete only after the requested artifact is verified. It does
+not grant delivery authority. A user-visible Plan may group Workflow steps but
+cannot replace the Workflow or weaken a gate. New independent tasks re-route
+and replace the old Anchor/Plan; refinements update the current one.
 
 For the user-facing design and examples, see [`docs/task-anchor-native-plan.md`](../docs/task-anchor-native-plan.md).
 

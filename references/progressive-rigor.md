@@ -7,8 +7,8 @@ Not every skill needs the full `skills/<name>/` tree. Start at the smallest tier
 | Tier | Layout | Use when | Typical SKILL.md size |
 |---|---|---|---|
 | **Single-file** | `SKILL.md` only (official minimum) | < 3 topics, no task routing needed, no lesson-capture history | ≤ 60 lines |
-| **Folder-light** | `skills/<name>/SKILL.md` + `rules/` | 3–5 topics, OR 1 recurring workflow that needs step-by-step instructions, OR a growing list of project conventions | 60–115 lines total (description + body), `rules/` adds 1–3 files |
-| **Full** | `skills/<name>/{SKILL,architecture,conventions,gotchas,workflows,references}/` (or a single `rules/` before the rate-of-change split) + thin shells + Cursor registration entry | ≥ 3 routed task types, gotcha log needs a home, multi-harness repo (Cursor + Claude + Codex + Gemini), or lessons-learned across multiple sessions | Up to dual cap (description ≤ 25 + body ≤ 90), multiple files per subdir |
+| **Folder-light** | `skills/<name>/SKILL.md` plus only the admitted `rules/` and/or recurring procedure owner | 3–5 topics, one recurring workflow that needs steps, or a growing convention surface | The selected carrier stays within the dual entry budget; no empty routing or lifecycle files |
+| **Full** | A routed skill plus only the independent rules, workflows, references, checks, and harness surfaces its evidence admits; it may later split by abstraction | Multiple independently selected task types, shared Managed/Closure lifecycle, fitted validation or upstream pressure, multi-harness maintenance, or a proven gotcha owner | Up to dual cap (description ≤ 25 + body ≤ 90); no empty subtrees |
 
 ## Upgrade triggers
 
@@ -18,10 +18,31 @@ Add structure when **any** of these fires, not before:
 2. **Recurrence pressure** — the same pitfall is recorded in Common Pitfalls twice, or the same question gets asked by the agent twice in different sessions. Promote it into a routed Gotcha entry organized by stable root cause. A single `references/gotchas.md` is the small-skill form. Split into module files only when real tasks select them independently; add `gotchas/index.md` only when task signals use it to choose the next file, never as a passive hub by default.
 3. **Abstraction tangle (骨架/肉)** — a `rules/` (or `architecture/`) file mixes invariant design theory with current-code facts: a module map or directory layout (flesh) sits next to a layering principle (skeleton), so `architecture/` both drifts and diverges (re-describing the code instead of converging on the few invariants). Split by abstraction: abstract design theory → `architecture/`, **code maps** (module tree, dir layout, source index) → `references/`, house style → `conventions/`, landmines → per-module `gotchas/`; **methodology stays in `rules/`**. The most common Full-tier pressure for code-coupled skills — judgement test + full playbook: [skeleton-flesh-split.md](skeleton-flesh-split.md).
 4. **Procedure pressure** — you catch yourself writing "how to do X in steps" inside a rule file. Steps belong in `workflows/`, not `rules/`. Create the `workflows/` directory.
-5. **Harness-sharing pressure** — two harness entries (e.g. `AGENTS.md` and `CLAUDE.md`) need the same route lookup logic, or you're manually keeping them in sync. Move task data into `routing.yaml` and generate thin-shell blocks.
+5. **Harness-sharing pressure** — two harness entries (e.g. `AGENTS.md` and `CLAUDE.md`) need the same route lookup logic, or you're manually keeping them in sync. Move task data into `routing.yaml` and generate only the detected/declared thin-shell blocks.
 6. **Cross-session lesson pressure** — you want a lesson from today to persist into a `/clear`-fresh session next week. A single-file skill with no `references/` has no durable place for it.
 
 **Downgrade is also fine.** If a skill lost a domain or shed complexity, collapse back. Structure serves the content, not the other way around. Empty `workflows/` or `references/` directories are a smell.
+
+### Materialization contract
+
+The materializer has one public path: inspect evidence, preview the selected
+owners, then apply. `direct` keeps a sole task route and its completion behavior
+in `SKILL.md`; `folder` adds only the rule/procedure owners needed by a small
+recurring task; `broad` admits independent routing and lifecycle/check owners
+only when evidence creates that responsibility. These names are diagnostic
+results, not user-selectable tiers. Existing entries remain preserved until an
+Agent performs semantic merge and records one source-to-destination disposition
+for each decision-changing clause. Structural green proves only the fitted
+owners; migration fidelity and live Agent behavior are separate proof layers.
+
+`routing.yaml` is conditional. Create it when multiple workflows need
+selection, multiple harnesses share generated route data, or route data gains
+independent generation/validation pressure. Do not create an empty manifest for
+a Single-file result. Task Execution and Task Closure are also independent:
+either may be materialized, or a simple workflow may own its compact behavior
+directly. Harness surfaces follow existing readers, target configuration,
+team/repository declarations, current harness use, or an explicit request; the
+full Codex/Claude/Gemini/Cursor set is not a default.
 
 ### Optional business-global-model pressure
 

@@ -1,0 +1,21 @@
+# {{HARNESS}} entry
+
+Formal project rules live in `skills/{{NAME}}/SKILL.md`. Read that file before
+acting; it is the sole route and procedure owner for this small project.
+
+<always-applicable>
+
+**Always Read (every task, before acting)**
+
+Read `skills/{{NAME}}/SKILL.md`, follow its direct Common Tasks procedure, and
+load only the evidence that procedure says can change the next action.
+
+**Request-clarity judgment**: vague wording is a signal, not an automatic
+blocker. Inspect the smallest read-only project evidence, ask only for an
+unresolved normative choice, and do not mutate until the outcome is verifiable.
+
+</always-applicable>
+
+Existing project instructions remain authoritative migration input until their
+meaning has an evidence-backed destination. This shell is only a discovery
+hook; it contains no duplicate project rules.

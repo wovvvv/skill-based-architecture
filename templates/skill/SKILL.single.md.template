@@ -1,0 +1,45 @@
+---
+name: {{NAME}}
+description: >
+  <!-- FILL: Keep this activation description domain-level. Use at least two
+       quoted phrases in the user's real language and concrete conditions. -->
+  This skill should be used when the user asks to "<trigger phrase 1>",
+  "<trigger phrase 2>", or "<trigger phrase 3 / 中文触发短语>".
+  Activate when <condition 1> or <condition 2>.
+primary: true
+---
+
+# {{NAME}}
+
+{{SUMMARY}}
+
+<!--
+  Single-file owner: keep the complete direct procedure here until a real
+  routing, sharing, or maintenance pressure gives one responsibility an
+  independent owner. This file is intentionally a carrier, not a profile.
+-->
+
+## Always Read
+
+<!-- FILL: Add only evidence that every admitted task needs before acting. -->
+- <!-- core project rule or source -->
+
+## Common Tasks
+
+<!-- FILL: Replace these rows with the project's concrete task procedure and
+     direct verification. Keep one unambiguous fallback for other requests. -->
+- Main task: inspect the smallest relevant project evidence, make the change,
+  and run the repository-owned check before reporting completion.
+- Other: identify the nearest applicable rule, make the smallest safe change,
+  and state what remains unverified.
+
+## Completion
+
+<!-- FILL: State the observable result, validation, and stop boundary. -->
+Do not report an intermediate command, commit, or push as the requested result.
+
+## Project Boundaries
+
+<!-- FILL: Record what this project Skill owns and does not own. -->
+- <!-- project-owned boundary -->
+- <!-- outside boundary -->

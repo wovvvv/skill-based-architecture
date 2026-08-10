@@ -4,13 +4,14 @@
 # Usage:
 #   bash check-version-conformance.sh <skill-root> [--conformance <path>]
 #
-# The conformance.yaml lists required sections / phrases / files. Each rule
-# applies to a path resolved relative to <skill-root>.
+# The selected conformance.yaml lists required sections / phrases / files for
+# the owners materialized by that result. Each rule applies to a path resolved
+# relative to <skill-root>; the checker never infers a universal file inventory.
 #
 # Default conformance.yaml path: <skill-root>/conformance.yaml
 #
-# Useful as part of update-upstream workflows to ensure downstream skills
-# carry every section the upstream template promises. Complementary to
+# Useful as part of update-upstream workflows when the selected manifest fits
+# the downstream's actual owners. Complementary to
 # check-upstream-changes.sh (changelog enforcement) and smoke-test.sh
 # (structural budgets / routing) — none of those validates content presence.
 #

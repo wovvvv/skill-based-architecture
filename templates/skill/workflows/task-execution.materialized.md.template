@@ -1,0 +1,24 @@
+# Managed Task Execution
+
+Use this owner only when the target evidence shows dependent steps, pause/resume,
+Task Anchor continuity, decision drift, or re-planning pressure shared by more
+than one admitted procedure.
+
+## Before Each Main Step
+
+1. Re-state the current Goal, remaining Done When evidence, and relevant boundary.
+2. Read only the evidence that can resolve the next step.
+3. Make one risk-sized action; if evidence changes the premise, pause and update
+   the Anchor/Plan before continuing.
+
+## Recovery
+
+After interruption, compaction, a failed or surprising check, or a new scope
+signal, recover the last verified boundary and the governing user decision
+before acting. A later independent request re-matches routing; it does not
+silently chain workflows.
+
+## Handoff
+
+Return the verified result to the selected procedure. Do not claim completion
+until its fitted validation and the requested terminal state are proven.

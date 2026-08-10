@@ -4,23 +4,26 @@ Step-by-step procedure for restructuring a long SKILL.md or scattered rules into
 
 ## Quick Start
 
-For small-to-medium projects, run the scaffold and fill in content. Skip the full 9-phase process.
+Quick Start has one ordinary-user action: let the Agent inspect the target and
+materialize the smallest complete carrier for the evidence it finds. The Agent
+does not ask the user to choose Single-file, Folder-light, Full, a profile, a
+capability pack, or an install mode.
 
-### Which path should I take?
+### Evidence-selected shape
 
-Answer these questions to decide:
+The shape is an implementation result, not a user option:
 
-1. **Is the total rule content > 150 lines across all files?** (Count SKILL.md + AGENTS.md + .cursor/rules/ + README rules sections combined, not just one file)
-2. **Are rules duplicated across 2+ entry files?** (e.g., AGENTS.md and .cursor/rules/ overlap)
-3. **Do you have recurring pitfalls that keep being rediscovered?** (same debugging lesson learned twice)
+| Target evidence | Typical carrier | What is admitted |
+|---|---|---|
+| One small task, no independent procedure or maintenance pressure | `direct` / Single-file | `SKILL.md` owns the sole route and direct completion behavior; no empty `routing.yaml` |
+| A small rules surface or one recurring procedure | `folder` / Folder-light | Only the detected rule/procedure owners and the supported entry/registration surfaces |
+| Multiple independently selected tasks, harnesses, managed execution, Closure, fitted validation, or upstream pressure | `broad` / routed | `routing.yaml` plus only the workflows, lifecycle owners, checks, and harness surfaces admitted by evidence |
 
-| Answers | Path |
-|---------|------|
-| All No | **Minimal single SKILL.md** — use the [minimal starter template](TEMPLATES-GUIDE.md#minimal-starter-template) |
-| 1 Yes, others No | **Quick Start scaffold** below — run the script, fill TODOs |
-| 2+ Yes | **Full 9-phase migration** — follow [`workflows/full-migration.md`](workflows/full-migration.md) |
-
-If the project has only one small skill, no duplicated entry files, and no growing rule/reference sprawl yet, **do not force the full architecture immediately**. Start with a single well-written `SKILL.md` using the minimal starter template in [TEMPLATES-GUIDE.md](TEMPLATES-GUIDE.md), and upgrade only when one of the conditions above becomes true.
+The names above describe the generated result for diagnostics; they are not
+installation tiers the user manages. A project may later grow a new owner or
+route through normal maintenance when a real pressure appears. Use the full
+9-phase procedure only when the migration itself needs that deeper analysis or
+pressure-test; it does not prescribe a universal output tree.
 
 **Step 1 — Profile and inventory before writing.** Read the target repository plus the upstream [`templates/skill/workflows/profile-project.md`](templates/skill/workflows/profile-project.md) before creating scaffold files. Inventory every existing instruction entry (`AGENTS.md`, `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, `.cursor/rules/workflow.mdc`, and any project-specific equivalents) so their meaning can be migrated instead of overwritten. Start with the workflow's user brainstorm gate.
 
@@ -32,7 +35,7 @@ If the project has only one small skill, no duplicated entry files, and no growi
 
 After the evidence scan, product projects may present **business-global-model candidates**: modules whose stable types, macro flow, states, boundaries, or invariants are repeatedly needed and not obvious from code. Explain why each candidate matters and ask `model now / later / not needed`. Only `now` adopts `workflows/profile-business-model.md.example` and creates a routed model after evidence search + user calibration. `later` and `not needed` create no file, directory, index, route, or persistent queue.
 
-**Step 2 — Preview and apply the scaffold.** The upstream command is the only Quick Start write path. It defaults to dry-run, reports every create/preserve/conflict decision, rejects reruns over an existing skill, and never overwrites existing project entry files.
+**Step 2 — Preview and apply the materializer.** The upstream command is the only Quick Start write path. It defaults to a read-only evidence inventory and preview, reports every create/preserve/conflict decision, rejects reruns over an existing skill, stages before apply, and never overwrites existing project entry files.
 
 ```bash
 # Assumes skill-based-architecture is cloned as a sibling, or $UPSTREAM points at it.
@@ -49,9 +52,23 @@ bash "$UPSTREAM/scripts/scaffold-downstream.sh" \
   --target "$PWD" --name "$NAME" --summary "$SUMMARY" --apply
 ```
 
-For every `PRESERVE` row, the Agent owns the semantic merge: extract durable project rules into the appropriate skill files, keep only entry-specific instructions in the thin shell, and integrate the generated routing bootstrap without dropping the old meaning. Do not ask the user to compare files or decide technical destinations that project evidence can establish. Before declaring migration complete, trace each inventoried source instruction to its migrated/merged destination or an explicit exclusion reason in the current task evidence.
+The inventory is evidence, not a completed migration. For every `PRESERVE` row,
+the Agent owns the semantic merge: extract durable project rules into the
+selected owners, keep only entry-specific instructions in the thin shell, and
+integrate the generated routing bootstrap without dropping old meaning. Do not
+ask the user to compare files or decide technical destinations that project
+evidence can establish. Before declaring migration complete, trace each
+decision-changing source clause to exactly one migrated/merged destination or
+an explicit exclusion reason in the current session evidence.
 
-**Why a scaffold command instead of raw copy?** Inline heredoc generation lost sections, while `cp -R templates/shells/. .` silently replaced real project instructions. `scripts/scaffold-downstream.sh` still materializes the byte-for-byte template sources, but it previews the path plan, creates only missing entry files, records the upstream baseline, and rolls back newly created paths if apply fails. Existing entry content remains untouched until the Agent performs the evidence-backed semantic merge.
+**Why a materializer instead of raw copy?** Inline heredoc generation lost
+sections, while `cp -R templates/shells/. .` silently replaced real project
+instructions and copied author-only machinery into every project.
+`scripts/scaffold-downstream.sh` inventories evidence first, selects canonical
+carriers and only admitted owners, previews the path plan, creates only missing
+entry files, records the upstream baseline when maintenance pressure exists,
+and rolls back newly created paths if apply fails. Existing entry content
+remains untouched until the Agent performs the evidence-backed semantic merge.
 
 **Step 3 — Fill content.** Two kinds of placeholders, two different mechanisms:
 
@@ -68,7 +85,13 @@ grep -rn 'FILL:' "skills/$NAME" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor
 
 Every hit is mandatory for the agent before shipping the skill. A user should not have to interpret these markers; they are migration work items.
 
-Always Read lists, the Common Tasks action hook, and shell bootstraps are generated from canonical `skills/$NAME/routing.yaml`; exact task rows remain only in that manifest. Domain-free projects omit `domain-routing.yaml`; the first real business owner materializes a non-empty manifest in the same change. Run the same command after either manifest changes:
+For a routed result, Always Read lists, the Common Tasks action hook, and shell
+bootstraps are generated from canonical `skills/$NAME/routing.yaml`; exact task
+rows remain only in that manifest. A direct Single-file result owns its sole
+route in `SKILL.md` and has no independent routing manifest. Domain-free
+projects omit `domain-routing.yaml`; the first real business owner materializes
+a non-empty manifest in the same change. Run the same command after either
+manifest changes:
 
 ```bash
 bash "skills/$NAME/scripts/sync-routing.sh" "$NAME"
@@ -79,7 +102,7 @@ Do not hand-edit generated Always Read / Common Tasks action-hook content in `SK
 **Step 4 — Verify structure and migration evidence.** After all FILLs and preserved-entry merges are resolved, run the automated smoke test:
 
 ```bash
-# Fully automated — checks structure, routing, placeholders, line budgets, and description quality
+# Checks SKILL.md plus every routing/shell/workflow owner actually materialized.
 bash "skills/$NAME/scripts/smoke-test.sh" "$NAME"
 
 # Routing manifest drift check (also run by smoke-test when routing.yaml exists)
@@ -87,20 +110,39 @@ bash "skills/$NAME/scripts/sync-routing.sh" "$NAME" --check
 
 # (Optional) Surface rules/ or references/ files with zero inbound links
 (cd "skills/$NAME" && bash scripts/audit-orphans.sh)
+
+# Agent-owned, session-scoped evidence; write the inventory to a temporary JSON
+# file and do not commit it. The path is not a persistent downstream ledger.
+MIGRATION_EVIDENCE_JSON="$(mktemp "${TMPDIR:-/tmp}/sba-migration-evidence.XXXXXX.json")"
+trap 'rm -f "$MIGRATION_EVIDENCE_JSON"' EXIT
+# The Agent writes the Step 1 inventory and Step 2 dispositions here before checking.
+bash "$UPSTREAM/scripts/check-migration-evidence.sh" \
+  --root "$PWD" --manifest "$MIGRATION_EVIDENCE_JSON"
 ```
 
-`smoke-test.sh` covers structure and routing: file existence, line count budgets, placeholder/FILL residue, description word count / trigger phrases / keyword-stuffing, routing-manifest drift, routing completeness, description consistency, shell bootstrap consistency, SessionStart-hook presence, broken markdown links, and content conformance. It does **not** prove that pre-existing user instructions survived. Migration completion also requires the Step 1 source inventory and Step 2 source-to-destination evidence.
+`smoke-test.sh` validates only applicable structural responsibilities: `SKILL.md` is universal; separate routing, rules, workflows, harness entries, Cursor registration, and conformance are strict only when materialized. It rejects both unresolved `FILL:` markers and the historical `FILLED:` rename shortcut. A green result explicitly does **not** prove semantic migration or live Agent behavior.
+
+The structural result does **not** prove that pre-existing user instructions survived. Migration completion still requires source-to-destination evidence for the Step 1 inventory; the evidence checker makes its disposition and activation integrity executable without replacing semantic review.
+
+`check-migration-evidence.sh` makes the Step 1 inventory and Step 2 disposition executable without creating a permanent downstream ledger. Every decision-changing source clause receives exactly one mapping or exclusion. Verbatim mappings are machine-checked and must end on a complete activation chain. Faithful rewrites carry explicit review evidence; the checker verifies that evidence is present but does not claim that string search proves semantic equivalence.
 
 For description-quality judgment (too narrow / weak or off-language trigger phrases) — re-read the `description` block aloud and check it uses the user's actual phrasing. `smoke-test.sh` now WARNs on the over-broad / keyword-stuffed case (> 12 quoted phrases), but no script substitutes for the rest of that judgment.
 
-For complex migrations (large projects, heavily scattered rules), follow [`workflows/full-migration.md`](workflows/full-migration.md) for the Phase 1–9 process.
+For complex migrations (large projects, heavily scattered rules), follow
+[`workflows/full-migration.md`](workflows/full-migration.md) for the Phase 1–9
+process. The procedure still derives its physical result from evidence.
 
 ## If a Phase Crashes
 
 The scaffold command rolls back paths it created when apply itself fails. If interruption happens later during Agent-led content migration, do not rerun the scaffold over the existing skill: inspect `git status --short`, compare the current source-instruction inventory with migrated destinations, and resume from the first unverified item. Existing entry files preserved by the scaffold remain the recovery source until their semantic merge is verified.
 
-Use `bash skills/$NAME/scripts/smoke-test.sh $NAME --phase N` to verify a specific phase before moving on (the full smoke test only passes after Phase 8). Phase 9 is a manual attestation: at least one row in `workflows/task-closure.md` § Rationalizations to Reject came from a real pressure test.
+Use `bash skills/$NAME/scripts/smoke-test.sh $NAME --phase N` to verify a materialized phase before moving on. A Single-file result may pass without Full-only phases or files; a complete scaffold remains strict for every owner it materializes. If Closure pressure is admitted, Phase 9 is a manual attestation: at least one row in `workflows/task-closure.md` § Rationalizations to Reject came from a real pressure test. Otherwise run the fitted natural-language journey and do not create Closure machinery merely to satisfy the phase.
 
 ## Upgrading an Existing Downstream Project
 
-When upstream releases new templates, hooks, scripts, or workflow improvements, do **not** re-migrate. Use the agent-led upstream refresh path documented at [`workflows/upgrade-downstream.md`](workflows/upgrade-downstream.md). The user just says "上游项目更新了,帮我更新一下" or "update from upstream", and the agent follows `skills/<name>/workflows/update-upstream.md`.
+When upstream releases new templates, hooks, scripts, or workflow improvements,
+do **not** re-migrate. Use the agent-led upstream refresh path documented at
+[`templates/skill/workflows/update-upstream.md`](templates/skill/workflows/update-upstream.md).
+The user just says "上游项目更新了,帮我更新一下" or "update from upstream",
+and the agent follows the downstream `skills/<name>/workflows/update-upstream.md`
+owner only when that maintenance route was actually materialized.
