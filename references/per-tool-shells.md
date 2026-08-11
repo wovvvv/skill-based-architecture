@@ -1,6 +1,6 @@
 # Reference — Per-Tool Thin Shell Templates
 
-Templates for each AI harness's required entry file. Each template below shows **only the tool-specific parts**. Combine each with the common thin-shell body in [thin-shells.md § Common Thin Shell Body](thin-shells.md#common-thin-shell-body).
+Templates for each AI harness's required entry file. Each template below shows **only the tool-specific parts**. Combine each with the common thin-shell body in [thin-shells.md § Common Thin Shell Body](thin-shells.md#common-thin-shell-body-routed-carriers).
 
 Pre-built routed-shell sources for the scaffolded harnesses ship under
 [`templates/shells/`](../templates/shells/); tools that read `AGENTS.md` can

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # smoke-test.sh — Fully automated post-migration verification
-# Usage: bash smoke-test.sh <skill-name> [--phase N]
+# Usage: bash smoke-test.sh <skill-name> [--phase N] [--workspace-root <path>]
 # Example: bash smoke-test.sh my-project
 #          bash smoke-test.sh my-project --phase 4   # run only Phase 4 subset
 #
@@ -36,10 +36,11 @@
 #                                   descriptions match byte-for-byte
 #   7. Shell Routing Consistency  — materialized harness entries point at the
 #                                   actual routing owner (routing.yaml or SKILL.md)
-#   8. Broken Link Check          — every relative markdown link [text](path)
-#                                   across all skill .md files resolves to an
-#                                   existing file. Catches "path drift" after
-#                                   partial renames or deletions.
+#   8. Local Reference Integrity — relative markdown links, heading fragments,
+#                                   and path-like inline code spans across Skill
+#                                   docs resolve; two-root Skills also run
+#                                   namespace-isolated orphan/reachability checks
+#                                   when --workspace-root is supplied.
 #   9. Content Conformance        — if a conformance.yaml manifest exists, every
 #                                   section/phrase the upstream contract promises
 #                                   is still PRESENT (catches content drift like a
@@ -76,19 +77,33 @@ set -euo pipefail
 # ── Args ──────────────────────────────────────────────────────────────
 NAME="${1:-}"
 PHASE=""
+WORKSPACE_ROOT=""
+SELF_HOSTING_ROOT=0
 shift || true
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --phase) PHASE="$2"; shift 2 ;;
     --phase=*) PHASE="${1#--phase=}"; shift ;;
+    --workspace-root)
+      [[ $# -ge 2 ]] || { echo "Missing value for --workspace-root" >&2; exit 1; }
+      WORKSPACE_ROOT="$2"; shift 2 ;;
+    --workspace-root=*) WORKSPACE_ROOT="${1#--workspace-root=}"; shift ;;
     *) echo "Unknown arg: $1"; exit 1 ;;
   esac
 done
 
 if [[ -z "$NAME" ]]; then
-  echo "Usage: bash smoke-test.sh <skill-name> [--phase N]"
+  echo "Usage: bash smoke-test.sh <skill-name> [--phase N] [--workspace-root <path>]"
   echo "Example: bash smoke-test.sh my-project"
   exit 1
+fi
+
+if [[ -n "$WORKSPACE_ROOT" ]]; then
+  if [[ ! -d "$WORKSPACE_ROOT" ]]; then
+    echo "Workspace root not found: $WORKSPACE_ROOT" >&2
+    exit 1
+  fi
+  WORKSPACE_ROOT="$(cd "$WORKSPACE_ROOT" && pwd -P)"
 fi
 
 # Phase→section map. Each phase runs a subset of sections 1–9 below.
@@ -153,17 +168,30 @@ if [[ -f "$NAME/SKILL.md" ]]; then
 elif [[ -f "$NAME/SKILL.md.template" ]]; then
   SKILL_DIR="${NAME%/}"
   NAME="$(basename "$SKILL_DIR")"
-elif [[ -f "SKILL.md" && -f "routing.yaml" && ( "$NAME" == "." || "$NAME" == "$(pwd)" ) ]]; then
-  SKILL_DIR="."
-  NAME="$(awk -F: '/^name:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' SKILL.md)"
-  NAME="${NAME:-$(basename "$(pwd)")}"
 else
-  SKILL_DIR="skills/$NAME"
+  ROOT_SKILL_NAME=""
+  if [[ -f "SKILL.md" ]]; then
+    ROOT_SKILL_NAME="$(awk -F: '/^name:/{gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2); print $2; exit}' SKILL.md)"
+  fi
+  if [[ -f "skills/$NAME/SKILL.md" ]]; then
+    SKILL_DIR="skills/$NAME"
+  elif [[ -n "$ROOT_SKILL_NAME" && "$ROOT_SKILL_NAME" == "$NAME" ]]; then
+    SKILL_DIR="."
+    NAME="$ROOT_SKILL_NAME"
+  else
+    SKILL_DIR="skills/$NAME"
+  fi
+fi
+if [[ -f "$SKILL_DIR/references/self-hosting-routing.yaml" && ! -f "$SKILL_DIR/routing.yaml" ]]; then
+  SELF_HOSTING_ROOT=1
 fi
 SKILL_MD="$SKILL_DIR/SKILL.md"
 ROUTING_YAML="$SKILL_DIR/routing.yaml"
 DOMAIN_ROUTING_YAML="$SKILL_DIR/domain-routing.yaml"
 CURSOR_ENTRY=".cursor/skills/$NAME/SKILL.md"
+CODE_ROOT_REL=""
+CODE_ROOT_DIR=""
+CODE_ROOT_RESOLUTION_ERROR=""
 
 # Two-root layout (skeleton-flesh-split.md §7): when routing.yaml declares
 # path_resolution, thin shells / Cursor entries may be rendered by an external
@@ -172,6 +200,42 @@ CURSOR_ENTRY=".cursor/skills/$NAME/SKILL.md"
 TWO_ROOT=0
 if [[ -f "$ROUTING_YAML" ]] && grep -q '^path_resolution:' "$ROUTING_YAML"; then
   TWO_ROOT=1
+fi
+
+if [[ -f "$ROUTING_YAML" ]]; then
+  CODE_ROOT_REL=$(awk '
+    /^path_resolution:/ { in_paths=1; next }
+    in_paths && /^[^[:space:]]/ { exit }
+    in_paths && /^  code_root:/ { in_code=1; next }
+    in_code && /^    root:/ {
+      sub(/^    root:[[:space:]]*/, "")
+      gsub(/^["'\'' ]+|["'\'' ]+$/, "")
+      print
+      exit
+    }
+    in_code && /^  [[:alnum:]_-]+:/ { exit }
+  ' "$ROUTING_YAML")
+fi
+
+if [[ -n "$CODE_ROOT_REL" && -n "$WORKSPACE_ROOT" ]]; then
+  if CODE_ROOT_DIR=$(python3 - "$WORKSPACE_ROOT" "$CODE_ROOT_REL" <<'PY'
+from pathlib import Path
+import sys
+
+workspace = Path(sys.argv[1]).resolve()
+candidate = (workspace / sys.argv[2]).resolve()
+try:
+    candidate.relative_to(workspace)
+except ValueError:
+    raise SystemExit(2)
+print(candidate)
+PY
+  ); then
+    :
+  else
+    CODE_ROOT_DIR=""
+    CODE_ROOT_RESOLUTION_ERROR="code_root.root escapes --workspace-root: $CODE_ROOT_REL"
+  fi
 fi
 
 PASS=0
@@ -516,7 +580,14 @@ if section 3 "Placeholder Residue"; then :
 
 # 3a. {{...}} placeholders should all be replaced
 # Exclude JSX/code patterns like styles={{ }}, className={{ }}, etc.
-PLACEHOLDER_HITS=$(grep -rn '{{' "$SKILL_DIR" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor 2>/dev/null \
+RESIDUE_SCAN_TARGETS=("$SKILL_DIR" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor)
+if [[ "$SELF_HOSTING_ROOT" == "1" ]]; then
+  # The upstream authoring repo intentionally contains template placeholders
+  # and prose that teaches downstream FILL handling. Its runtime entry surfaces
+  # must still be fully materialized.
+  RESIDUE_SCAN_TARGETS=("$SKILL_MD" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor)
+fi
+PLACEHOLDER_HITS=$(grep -rn '{{' "${RESIDUE_SCAN_TARGETS[@]}" 2>/dev/null \
   | grep -v 'node_modules' \
   | grep -v '/scripts/' \
   | grep -v '={{' \
@@ -533,7 +604,7 @@ else
 fi
 
 # 3b. <!-- FILL: --> markers should all be replaced
-FILL_HITS=$(grep -rn 'FILL:' "$SKILL_DIR" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor 2>/dev/null | grep -v 'node_modules' | grep -v '/scripts/' || true)
+FILL_HITS=$(grep -rn 'FILL:' "${RESIDUE_SCAN_TARGETS[@]}" 2>/dev/null | grep -v 'node_modules' | grep -v '/scripts/' || true)
 if [[ -z "$FILL_HITS" ]]; then
   pass "No <!-- FILL: --> markers remaining"
 else
@@ -543,7 +614,7 @@ fi
 
 # 3c. Renaming an unresolved marker is not migration. Reject the historical
 # `FILL:` -> `FILLED:` laundering pattern explicitly.
-RENAMED_FILL_HITS=$(grep -rnE '(^|[[:space:]#<])FILLED:' "$SKILL_DIR" AGENTS.md CLAUDE.md CODEX.md GEMINI.md .cursor 2>/dev/null | grep -v 'node_modules' | grep -v '/scripts/' || true)
+RENAMED_FILL_HITS=$(grep -rnE '(^|[[:space:]#<])FILLED:' "${RESIDUE_SCAN_TARGETS[@]}" 2>/dev/null | grep -v 'node_modules' | grep -v '/scripts/' || true)
 if [[ -z "$RENAMED_FILL_HITS" ]]; then
   pass "No renamed FILLED: markers"
 else
@@ -648,7 +719,19 @@ fi  # end section 4
 # ── 5. Routing Completeness ──────────────────────────────────────────
 if section 5 "Routing Completeness (canonical routing.yaml)"; then :
 
-if [[ -f "$SKILL_MD" ]]; then
+if [[ "$SELF_HOSTING_ROOT" == "1" ]]; then
+  SELF_ROUTING_YAML="$SKILL_DIR/references/self-hosting-routing.yaml"
+  SELF_ROUTING_CHECK="$SKILL_DIR/scripts/check-self-shells.sh"
+  if [[ ! -f "$SELF_ROUTING_YAML" ]]; then
+    fail "self-hosting routing owner missing: $SELF_ROUTING_YAML"
+  elif [[ ! -f "$SELF_ROUTING_CHECK" ]]; then
+    fail "self-hosting routing check missing: $SELF_ROUTING_CHECK"
+  elif (cd "$SKILL_DIR" && bash scripts/check-self-shells.sh >/dev/null); then
+    pass "self-hosting routing manifest and generated shells are valid"
+  else
+    fail "self-hosting routing manifest or generated shell blocks drifted"
+  fi
+elif [[ -f "$SKILL_MD" ]]; then
   ROUTING_SYNC="$SKILL_DIR/scripts/sync-routing.sh"
   if [[ ! -f "$ROUTING_SYNC" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -755,15 +838,12 @@ done
 
 fi  # end section 7
 
-# ── 8. Broken Link Check ──────────────────────────────────────────────
-# Catches "path drift": agent renames or deletes a file but only updates SOME
-# of the references to it. Section 5 covers canonical routing and generated blocks;
-# this section scans every relative markdown link [text](path) across all skill
-# .md files and verifies each target exists. Companion to audit-orphans.sh
-# (which finds *orphan* files — files no one links to). Together they cover
-# both directions of drift: broken outbound links here, dangling inbound links
-# there.
-if section 8 "Broken Link Check (all .md files)"; then :
+# ── 8. Local Reference Integrity ─────────────────────────────────────
+# Catches path drift in Markdown links, local heading fragments, and path-like
+# inline code spans. Fenced examples are excluded so sample commands do not
+# become runtime dependencies. For a declared code_root.root, --workspace-root
+# also turns this into the one-command, namespace-isolated two-root integrity gate.
+if section 8 "Local Reference Integrity"; then :
 
 # Layout detection: downstream uses skills/<name>/, self-hosting puts SKILL.md
 # at repo root. Pick the right scan root.
@@ -787,6 +867,15 @@ done < <(find "$LINK_SCAN_ROOT" -type f -name '*.md' \
   -not -path '*/posts/*' \
   2>/dev/null)
 
+if [[ -n "$CODE_ROOT_DIR" && -d "$CODE_ROOT_DIR" ]]; then
+  while IFS= read -r f; do
+    LINK_SCAN_FILES+=("$f")
+  done < <(find "$CODE_ROOT_DIR" -type f \( -name '*.md' -o -name '*.mdc' \) \
+    -not -path '*/node_modules/*' \
+    -not -path '*/.git/*' \
+    2>/dev/null)
+fi
+
 for shell in AGENTS.md CLAUDE.md CODEX.md GEMINI.md .codex/instructions.md "$CURSOR_ENTRY"; do
   # .codex/instructions.md is optional — only included when the project keeps it.
   [[ -f "$shell" ]] && LINK_SCAN_FILES+=("$shell")
@@ -801,55 +890,392 @@ if [[ ${#LINK_SCAN_FILES[@]} -gt 0 ]]; then
   unset IFS
 fi
 
-# Strip fenced code blocks (```...```) before scanning. Paths inside code
-# examples (e.g. `rm references/foo.md` shown as a sample command) are not
-# real references and shouldn't trigger existence checks.
-strip_fences() {
-  awk '/^```/ { in_fence = !in_fence; next } !in_fence { print }' "$1"
+REFERENCE_OUTPUT=""
+REFERENCE_REPORT="$(mktemp)"
+REFERENCE_INPUT="$(mktemp)"
+if [[ ${#LINK_SCAN_FILES[@]} -gt 0 ]]; then
+  printf '%s\0' "${LINK_SCAN_FILES[@]}" > "$REFERENCE_INPUT"
+fi
+if python3 - "$SKILL_DIR" "${CODE_ROOT_DIR:-}" "$PWD" "${WORKSPACE_ROOT:-}" "$REFERENCE_INPUT" "$SELF_HOSTING_ROOT" >"$REFERENCE_REPORT" 2>&1 <<'PY'
+from __future__ import annotations
+
+import html
+import os
+import re
+import sys
+import unicodedata
+from pathlib import Path
+from urllib.parse import unquote
+
+skill_root = Path(sys.argv[1]).resolve()
+code_root = Path(sys.argv[2]).resolve() if sys.argv[2] else None
+project_root = Path(sys.argv[3]).resolve()
+workspace_root = Path(sys.argv[4]).resolve() if sys.argv[4] else project_root
+file_list = Path(sys.argv[5])
+self_hosting_root = sys.argv[6] == "1"
+files = sorted({
+    Path(os.fsdecode(value)).resolve()
+    for value in file_list.read_bytes().split(b"\0")
+    if value and Path(os.fsdecode(value)).is_file()
+})
+code_project_root = None
+
+external_re = re.compile(r"^(?:https?|mailto|data|javascript)://|^(?:mailto|data|javascript):", re.I)
+markdown_link_re = re.compile(r"!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))")
+inline_code_re = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
+reference_cue_re = re.compile(
+    r"(?:\bread\b|\bsee\b|\bload\b|\bopen\b|\bfollow\b|\brun\b|"
+    r"\bpoints?\s+to\b|\brefer(?:s|red)?\s+to\b|读取|参见|加载|打开|执行|指向|入口)",
+    re.I,
+)
+optional_cue_re = re.compile(
+    r"(?:\boptional\b|\bif\s+(?:it\s+)?(?:is\s+)?(?:present|available|admitted|materialized)\b|"
+    r"\bwhen\s+(?:it\s+)?(?:is\s+)?(?:present|available|admitted|materialized)\b|"
+    r"\bonly\s+if\b|\bif\s+(?:it\s+)?exists\b|\bwhen\s+(?:it\s+)?exists\b|"
+    r"可选|按需|若存在|如存在|存在时)",
+    re.I,
+)
+owner_prefixes = (
+    "architecture/", "conventions/", "gotchas/", "protocol-blocks/",
+    "references/", "rules/", "scripts/", "workflows/",
+)
+harness_prefixes = (
+    ".agents/", ".claude/", ".codex/", ".cursor/", ".gemini/", "skills/",
+)
+root_files = {
+    "AGENTS.md", "CLAUDE.md", "CODEX.md", "GEMINI.md", "SKILL.md",
+    "conformance.yaml", "domain-routing.yaml", "hooks.yaml", "routing.yaml",
+}
+path_suffixes = (".md", ".mdc", ".yaml", ".yml", ".sh", ".tpl", ".template")
+historical_inline_parts = {"docs", "examples", "posts"}
+historical_inline_names = {
+    "UPSTREAM-CHANGES.md", "findings.md", "progress.md", "task_plan.md",
 }
 
-LINK_BROKEN=0
-LINK_CHECKED=0
-LINK_BROKEN_LINES=()
 
-for src in "${LINK_SCAN_FILES[@]}"; do
-  src_dir=$(dirname "$src")
-  content=$(strip_fences "$src")
+def under(path: Path, root: Path | None) -> bool:
+    if root is None:
+        return False
+    try:
+        path.relative_to(root)
+        return True
+    except ValueError:
+        return False
 
-  # Extract markdown link targets. Pattern matches `](X` where X has no
-  # closing paren or whitespace — captures the URL portion before any
-  # title attribute like [text](url "title").
-  while IFS= read -r raw; do
-    [[ -z "$raw" ]] && continue
-    # Skip absolute URLs, mail, and anchor-only links — these are not file refs.
-    [[ "$raw" =~ ^https?:// ]] && continue
-    [[ "$raw" =~ ^mailto: ]] && continue
-    [[ "$raw" =~ ^# ]] && continue
-    # Strip anchor fragment (#section) and Claude Code line suffix (:42).
-    target="${raw%%#*}"
-    target="${target%%:[0-9]*}"
-    [[ -z "$target" ]] && continue
-    # Resolve relative to source file's directory (standard markdown semantics).
-    if [[ "$target" = /* ]]; then
-      resolved="$target"
-    else
-      resolved="$src_dir/$target"
-    fi
-    LINK_CHECKED=$((LINK_CHECKED + 1))
-    if [[ ! -e "$resolved" ]]; then
-      LINK_BROKEN=$((LINK_BROKEN + 1))
-      LINK_BROKEN_LINES+=("$src → $raw")
-    fi
-  done < <(printf '%s\n' "$content" | grep -oE '\]\([^) ]+' | sed -E 's/^\]\(//' || true)
-done
 
-if [[ "$LINK_BROKEN" -eq 0 ]]; then
-  pass "No broken markdown links ($LINK_CHECKED relative refs across ${#LINK_SCAN_FILES[@]} files)"
+if code_root is not None and under(code_root, workspace_root):
+    relative_code_root = code_root.relative_to(workspace_root)
+    if relative_code_root.parts:
+        code_project_root = workspace_root / relative_code_root.parts[0]
+
+
+def without_fences(text: str) -> str:
+    output: list[str] = []
+    marker: str | None = None
+    for line in text.splitlines():
+        match = re.match(r"^[ \t]*(```+|~~~+)", line)
+        if match:
+            token = match.group(1)[0]
+            if marker is None:
+                marker = token
+            elif marker == token:
+                marker = None
+            continue
+        if marker is None:
+            output.append(line)
+    return re.sub(r"<!--.*?-->", "", "\n".join(output), flags=re.S)
+
+
+def slugify_heading(value: str) -> str:
+    value = html.unescape(value)
+    value = re.sub(r"!??\[([^\]]*)\]\([^)]*\)", r"\1", value)
+    value = re.sub(r"<[^>]+>", "", value)
+    value = value.replace("`", "").replace("*", "").replace("~", "")
+    kept: list[str] = []
+    for char in value.strip().lower():
+        category = unicodedata.category(char)
+        if char.isspace():
+            kept.append("-")
+        elif category.startswith(("L", "N")) or char in "-_":
+            kept.append(char)
+    return "".join(kept)
+
+
+anchor_cache: dict[Path, set[str]] = {}
+
+
+def anchors(path: Path) -> set[str]:
+    if path in anchor_cache:
+        return anchor_cache[path]
+    found: set[str] = set()
+    seen: dict[str, int] = {}
+    content = without_fences(path.read_text(encoding="utf-8", errors="replace"))
+    for line in content.splitlines():
+        match = re.match(r"^[ \t]{0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$", line)
+        if not match:
+            continue
+        base = slugify_heading(match.group(1))
+        if not base:
+            continue
+        count = seen.get(base, 0)
+        seen[base] = count + 1
+        found.add(base if count == 0 else f"{base}-{count}")
+    for match in re.finditer(r"<(?:a\s+[^>]*?(?:name|id)|[A-Za-z][^>]*?\sid)=[\"']([^\"']+)[\"']", content, re.I):
+        found.add(unquote(match.group(1)).lower())
+    anchor_cache[path] = found
+    return found
+
+
+def split_reference(raw: str) -> tuple[str, str, str]:
+    value = html.unescape(raw.strip()).strip("<>")
+    prefix = ""
+    for candidate in ("skill:", "code:"):
+        if value.startswith(candidate):
+            prefix = candidate[:-1]
+            value = value[len(candidate):]
+            break
+    path_text, separator, fragment = value.partition("#")
+    path_text = unquote(path_text.split("?", 1)[0])
+    path_text = re.sub(r":\d+$", "", path_text)
+    return prefix, path_text, unquote(fragment) if separator else ""
+
+
+def source_project_root(src: Path) -> Path:
+    if under(src, code_root) and code_project_root is not None:
+        return code_project_root
+    return workspace_root
+
+
+def is_harness_source(src: Path) -> bool:
+    if src.name in {"AGENTS.md", "CLAUDE.md", "CODEX.md", "GEMINI.md"}:
+        return True
+    value = src.as_posix()
+    return any(marker in value for marker in ("/.agents/", "/.claude/", "/.codex/", "/.cursor/", "/.gemini/"))
+
+
+def owner_candidates(src: Path, path_text: str) -> list[Path]:
+    root = owner_root(src)
+    candidate = (root / path_text).resolve()
+    return [candidate] if under(candidate, root) else []
+
+
+def bare_candidates(src: Path, path_text: str) -> list[Path]:
+    candidates = [src.parent / path_text]
+    for root in (owner_root(src), skill_root, code_root):
+        if root is not None:
+            candidates.extend(root / directory / path_text for directory in owner_prefixes)
+    return sorted({candidate.resolve() for candidate in candidates if candidate.exists()})
+
+
+def path_like_inline(src: Path, raw: str, context_before: str) -> bool:
+    if any(char.isspace() for char in raw):
+        return False
+    if external_re.match(raw):
+        return False
+    if any(token in raw for token in ("{{", "}}", "<", ">", "{", "}", "*", "?", "[", "]", "$", "|", ";", "...")):
+        return False
+    prefix, path_text, _ = split_reference(raw)
+    if not path_text or path_text.startswith("-"):
+        return False
+    plain = path_text.lstrip("./")
+    if ":" in plain and not prefix:
+        return False
+    if "/" not in path_text and plain not in root_files:
+        return False
+    if plain.startswith(harness_prefixes) and not is_harness_source(src):
+        return False
+    structurally_path_like = (
+        bool(prefix)
+        or path_text.startswith(("./", "../"))
+        or (path_text.startswith("/") and path_text.endswith(path_suffixes))
+        or plain in root_files
+        or plain.startswith(owner_prefixes)
+        or plain.startswith(harness_prefixes)
+        or ("/" in path_text and path_text.endswith(path_suffixes))
+    )
+    if not structurally_path_like:
+        return False
+    if optional_cue_re.search(context_before):
+        return False
+    return bool(prefix) or path_text.startswith(("./", "../", "/")) or is_harness_source(src) or bool(reference_cue_re.search(context_before))
+
+
+def owner_root(src: Path) -> Path:
+    return code_root if under(src, code_root) else skill_root
+
+
+def resolve(src: Path, raw: str, markdown_link: bool) -> tuple[Path | None, str, str]:
+    prefix, path_text, fragment = split_reference(raw)
+    boundary: Path | None = None
+    if prefix == "skill":
+        base = skill_root
+        boundary = skill_root
+    elif prefix == "code":
+        if code_root is None:
+            return None, fragment, "code root unavailable"
+        base = code_root
+        boundary = code_root
+    elif not path_text:
+        return src, fragment, ""
+    elif Path(path_text).is_absolute():
+        return Path(path_text), fragment, ""
+    elif markdown_link or path_text.startswith(("./", "../")):
+        base = src.parent
+    else:
+        plain = path_text.lstrip("./")
+        if plain.startswith("skills/") and under(src, skill_root):
+            base = project_root
+            boundary = project_root
+        elif plain.startswith(harness_prefixes):
+            base = workspace_root
+            boundary = workspace_root
+        elif plain in root_files:
+            if plain == "SKILL.md":
+                base = owner_root(src)
+                boundary = base
+            else:
+                candidates = owner_candidates(src, path_text)
+                existing = [candidate for candidate in candidates if candidate.exists()]
+                base = existing[0].parent if existing else owner_root(src)
+                boundary = owner_root(src)
+                path_text = existing[0].name if existing else path_text
+        elif plain.startswith(owner_prefixes):
+            candidates = owner_candidates(src, path_text)
+            existing = [candidate for candidate in candidates if candidate.exists()]
+            if existing:
+                return existing[0], fragment, ""
+            base = owner_root(src)
+            boundary = base
+        elif "/" not in path_text:
+            candidates = bare_candidates(src, path_text)
+            if len(candidates) != 1:
+                return None, fragment, "bare path is not uniquely resolvable"
+            return candidates[0], fragment, ""
+        elif code_project_root is not None and path_text.startswith(
+            f"{code_project_root.name}/"
+        ):
+            base = workspace_root
+            boundary = workspace_root
+        else:
+            base = source_project_root(src)
+    target = (base / path_text).resolve()
+    if boundary is not None and not under(target, boundary):
+        return None, fragment, f"path escapes {boundary}"
+    return target, fragment, ""
+
+
+def should_check_inline(src: Path) -> bool:
+    if self_hosting_root:
+        return src == (skill_root / "SKILL.md").resolve() or is_harness_source(src)
+    if src.name in historical_inline_names:
+        return False
+    if under(src, skill_root):
+        rel = src.relative_to(skill_root)
+        return not any(part in historical_inline_parts for part in rel.parts[:-1])
+    return True
+
+
+issues: list[str] = []
+links_checked = 0
+codes_checked = 0
+anchors_checked = 0
+skipped_code_root = 0
+
+for src in files:
+    content = without_fences(src.read_text(encoding="utf-8", errors="replace"))
+    references: list[tuple[str, str]] = []
+    for match in markdown_link_re.finditer(content):
+        references.append(("markdown link", match.group(1) or match.group(2)))
+    if should_check_inline(src):
+        for line in content.splitlines():
+            for match in inline_code_re.finditer(line):
+                raw = match.group(1)
+                context_before = line[max(0, match.start() - 80):match.start()]
+                if path_like_inline(src, raw, context_before):
+                    references.append(("inline path", raw))
+
+    for kind, raw in references:
+        if external_re.match(raw):
+            continue
+        target, fragment, reason = resolve(src, raw, kind == "markdown link")
+        if target is None:
+            if reason == "code root unavailable":
+                skipped_code_root += 1
+                continue
+            issues.append(f"{src} -> {raw} ({reason})")
+            continue
+        if kind == "markdown link":
+            links_checked += 1
+        else:
+            codes_checked += 1
+        if not target.exists():
+            issues.append(f"{kind}: {src} -> {raw} (missing {target})")
+            continue
+        if fragment and target.is_file() and target.suffix.lower() in (".md", ".mdc"):
+            if re.fullmatch(r"(?:l|line-?)\d+(?:-l?\d+)?", fragment, re.I):
+                continue
+            anchors_checked += 1
+            normalized = fragment.strip().lower().replace(" ", "-")
+            if normalized not in anchors(target):
+                issues.append(f"heading fragment: {src} -> {raw} (missing #{normalized} in {target})")
+
+print(
+    f"STATS files={len(files)} links={links_checked} inline_paths={codes_checked} "
+    f"fragments={anchors_checked} skipped_code_root={skipped_code_root}"
+)
+for issue in issues:
+    print(issue)
+raise SystemExit(1 if issues else 0)
+PY
+then
+  REFERENCE_OUTPUT="$(<"$REFERENCE_REPORT")"
+  pass "Local links, inline paths, and heading fragments resolve (${REFERENCE_OUTPUT#STATS })"
 else
-  fail "$LINK_BROKEN broken markdown link(s) found ($LINK_CHECKED relative refs checked):"
-  printf '       %s\n' "${LINK_BROKEN_LINES[@]}" | head -25
-  if [[ "$LINK_BROKEN" -gt 25 ]]; then
-    echo "       ... and $((LINK_BROKEN - 25)) more (output truncated)"
+  REFERENCE_OUTPUT="$(<"$REFERENCE_REPORT")"
+  fail "Broken local reference(s) found:"
+  printf '%s\n' "$REFERENCE_OUTPUT" | sed 's/^/       /' | head -30 || true
+fi
+rm -f "$REFERENCE_REPORT" "$REFERENCE_INPUT"
+
+if [[ -n "$CODE_ROOT_RESOLUTION_ERROR" ]]; then
+  fail "$CODE_ROOT_RESOLUTION_ERROR"
+elif [[ -n "$CODE_ROOT_REL" && -z "$WORKSPACE_ROOT" ]]; then
+  warn "routing.yaml declares code_root.root=$CODE_ROOT_REL; rerun with --workspace-root to verify both roots"
+elif [[ -n "$CODE_ROOT_REL" && ! -d "$CODE_ROOT_DIR" ]]; then
+  fail "declared code root missing: $CODE_ROOT_DIR"
+elif [[ -n "$CODE_ROOT_REL" ]]; then
+  ROUTING_ABS="$(cd "$(dirname "$ROUTING_YAML")" && pwd -P)/$(basename "$ROUTING_YAML")"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+  ORPHAN_SH="$SCRIPT_DIR/audit-orphans.sh"
+  REACHABILITY_SH="$SCRIPT_DIR/route-reachability.sh"
+  [[ -f "$ORPHAN_SH" ]] || ORPHAN_SH="$SKILL_DIR/scripts/audit-orphans.sh"
+  [[ -f "$REACHABILITY_SH" ]] || REACHABILITY_SH="$SKILL_DIR/scripts/route-reachability.sh"
+  ORPHAN_SH="$(cd "$(dirname "$ORPHAN_SH")" && pwd -P)/$(basename "$ORPHAN_SH")"
+  REACHABILITY_SH="$(cd "$(dirname "$REACHABILITY_SH")" && pwd -P)/$(basename "$REACHABILITY_SH")"
+
+  if SKILL_ORPHAN_OUT=$(cd "$SKILL_DIR" && bash "$ORPHAN_SH" --namespace skill --routing "$ROUTING_ABS" 2>&1); then
+    pass "skill-root orphan audit passed"
+  else
+    fail "skill-root orphan audit failed"
+    printf '%s\n' "$SKILL_ORPHAN_OUT" | sed 's/^/       /' | head -20 || true
+  fi
+  if SKILL_REACH_OUT=$(cd "$SKILL_DIR" && bash "$REACHABILITY_SH" --namespace skill --routing "$ROUTING_ABS" 2>&1); then
+    pass "skill-root route reachability passed"
+  else
+    fail "skill-root route reachability failed"
+    printf '%s\n' "$SKILL_REACH_OUT" | sed 's/^/       /' | head -20 || true
+  fi
+  if CODE_ORPHAN_OUT=$(cd "$CODE_ROOT_DIR" && bash "$ORPHAN_SH" --namespace code --routing "$ROUTING_ABS" 2>&1); then
+    pass "code-root orphan audit passed"
+  else
+    fail "code-root orphan audit failed"
+    printf '%s\n' "$CODE_ORPHAN_OUT" | sed 's/^/       /' | head -20 || true
+  fi
+  if CODE_REACH_OUT=$(cd "$CODE_ROOT_DIR" && bash "$REACHABILITY_SH" --namespace code --routing "$ROUTING_ABS" 2>&1); then
+    pass "code-root route reachability passed"
+  else
+    fail "code-root route reachability failed"
+    printf '%s\n' "$CODE_REACH_OUT" | sed 's/^/       /' | head -20 || true
   fi
 fi
 
@@ -880,6 +1306,22 @@ elif [[ -f "$CONF_YAML" && ! -f "$CONF_SH" ]]; then
   warn "conformance.yaml present but check-version-conformance.sh missing (vendored dir + fallback) — content conformance NOT verified; re-vendor the conformance checker alongside smoke-test.sh"
 else
   echo "  (no conformance.yaml — content-conformance check skipped)"
+fi
+
+if [[ -n "$CODE_ROOT_REL" && -n "$WORKSPACE_ROOT" && -d "$CODE_ROOT_DIR" ]]; then
+  CODE_CONF_YAML="$CODE_ROOT_DIR/conformance.yaml"
+  if [[ -f "$CODE_CONF_YAML" && -f "$CONF_SH" ]]; then
+    if CODE_CONF_OUT=$(bash "$CONF_SH" "$CODE_ROOT_DIR" --conformance "$CODE_CONF_YAML" 2>&1); then
+      pass "code-root content conformance passed"
+    else
+      fail "code-root content conformance drifted:"
+      printf '%s\n' "$CODE_CONF_OUT" | grep -iE 'FAIL|MISSING|schema error' | head -20 | sed 's/^/       /' || true
+    fi
+  elif [[ -f "$CODE_CONF_YAML" ]]; then
+    fail "code-root conformance.yaml exists but no check-version-conformance.sh is available"
+  else
+    echo "  (no code-root conformance.yaml — code-root content check skipped)"
+  fi
 fi
 
 fi  # end section 9

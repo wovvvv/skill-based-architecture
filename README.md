@@ -150,7 +150,7 @@ These are product principles, not claims that a longer checklist is always bette
 | Failed apply | Work is staged first; newly created paths are rolled back when scaffold apply fails |
 | Structural integrity | `SKILL.md` is always checked; routing, shells, workflows, Cursor, links, reachability, orphan, budgets, and content contracts are strict only for responsibilities actually materialized |
 | Migration integrity | Every inventoried source clause needs one mapped/excluded disposition; verbatim mappings and activation chains are executable checks, while faithful rewrites retain explicit semantic-review evidence |
-| Behavior integrity | Deterministic green never claims model behavior; a separate opt-in live Codex journey tests one fresh-project natural-language path and reports external unavailability separately |
+| Behavior integrity | Deterministic green never claims model behavior; separate opt-in live Codex journeys test a fresh-project Single-file task and ordinary SBA migration, and report external unavailability separately |
 | Delivery integrity | A local change is not a commit, a commit is not a push, a pushed branch is not an MR or PR, and an approved MR or PR is not a merge |
 
 Structural checks do not prove that every previous instruction survived semantically. The migration-evidence gate can prove inventory coverage, verbatim preservation, and activation-chain integrity, but a faithful rewrite still depends on its recorded semantic review. Live Agent behavior is another independent proof layer. SBA keeps these claims separate instead of letting one green aggregate replace judgment.

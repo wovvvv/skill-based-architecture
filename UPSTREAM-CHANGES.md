@@ -48,6 +48,61 @@ Downstream refresh agents almost always only read the most recent 3–5 entries.
 
 The archive file has the same format and is read on demand if a downstream agent is investigating a specific historical change. `scripts/check-upstream-changes.sh` only enforces a same-diff entry in `UPSTREAM-CHANGES.md`; archived entries are out of its scope.
 
+## 2026-08-11 - Code-first first use and fitted validator hardening
+
+- Upstream commit: pending in this working tree
+- Changed areas:
+  - `WORKFLOW.md`, `templates/skill/workflows/profile-project.md`, the
+    self-hosting route, and generated shell templates now send the ordinary
+    request `用 SBA 整理这个项目的规则` through migration. The Agent inventories
+    code, configuration, tests, scripts, and existing instruction sources before
+    asking anything; it asks only unresolved normative, permission, support, or
+    acceptance choices that change generated responsibilities, and otherwise
+    continues directly to preview/apply.
+  - The fitted validator set now treats owner namespaces as containment
+    boundaries, ignores non-live HTML/YAML comments and clearly optional prose,
+    prevents unrelated harness registrations from satisfying a missing owner,
+    resolves formal `skills/...` references from the active harness registry,
+    preserves GitHub heading-slug behavior, accepts mapping keys independent of
+    YAML order, and streams large Markdown inventories without placing every
+    path in one process argument list. Complete-scaffold fixtures retain their
+    declared domain, maintenance, permission, and activation owners.
+  - Self-hosting smoke now resolves a root-owned Skill by its frontmatter name,
+    validates `references/self-hosting-routing.yaml` through the owning shell
+    check, and separates real root entry paths from authoring prose that teaches
+    downstream placeholders and generated paths. Full-tree Markdown links and
+    heading fragments remain strict; an executable root-layout fixture prevents
+    regression without weakening installed `skills/...` resolution.
+  - `scripts/check-self-scenarios.sh`,
+    `scripts/check-validation-contract.sh`, template/self-hosting conformance,
+    and the fitted two-root checks now mutation-protect those boundaries.
+  - The declared-Full and existing-project journeys now model the complete
+    semantic-merge lifecycle: after an Agent replaces preserved shell content,
+    each regenerates canonical routing blocks before strict `--check`
+    validation instead of treating post-merge drift as a materializer defect.
+  - `scripts/check-live-agent-journey.sh` exposes named `single-file` and
+    `migration` black-box journeys. `scripts/check-all.sh --live-agent` runs
+    both and reports unavailable transport, authentication, or model access as
+    exit `3` / `NO VERDICT`, separate from deterministic pass/fail evidence.
+  - README and script documentation describe the two proof layers and journeys
+    without promoting structural green into semantic or live-Agent correctness.
+- Why it matters: the natural first-use request could previously enter a
+  pre-scan brainstorm gate and charge ordinary users for implementation facts
+  already present in the repository. The stronger path checks also exposed
+  false greens from root escapes, cross-Skill collisions, and routing comments,
+  plus false reds from optional examples, valid YAML key order, GitHub slugs,
+  active-harness Skill paths, self-hosting owner-root confusion, and large
+  documentation trees. These changes make first use code-first and
+  keep each validation claim bounded to evidence it actually observes.
+- Downstream refresh guidance: do not copy the upstream migration workflow,
+  live-Agent runner, or validation fixtures into an ordinary downstream merely
+  for uniformity. When a downstream already owns the broad validator scripts,
+  compare and port the containment/comment/registration/slug/inventory fixes as
+  one coupled validator change, preserve project-specific routes and owners,
+  fit conformance to the materialized result, and rerun its own sync, smoke,
+  orphan, reachability, route-health, and content-conformance checks. No
+  downstream consumer was assembled or mutated by this upstream change.
+
 ## 2026-08-10 - Evidence-selected downstream materializer
 
 - Upstream commit: pending in this working tree

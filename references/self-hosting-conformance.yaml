@@ -177,8 +177,26 @@ required_sections:
       - "source-to-destination evidence"
       - "does **not** prove that pre-existing user instructions survived"
       - "task-execution.md#user-decision-drift-gate"
+      - "Begin with a read-only code/config/rule scan"
+      - "For an ordinary request such as `用 SBA 整理这个项目的规则`"
+      - "Ask only when evidence cannot resolve a normative product/business decision"
+      - "continue directly to preview and apply"
       - 'MIGRATION_EVIDENCE_JSON="$(mktemp'
       - "The path is not a persistent downstream ledger"
+    must_not_contain:
+      - "Start with the workflow's user brainstorm gate"
+      - "do not read code yet"
+
+  - file: templates/skill/workflows/profile-project.md
+    must_contain:
+      - "Do not begin by asking whether the user wants to brainstorm"
+      - "complete the read-only evidence scan first"
+      - "Never ask the user for an implementation fact or technical destination"
+      - "User-confirmed desired truth"
+      - "rules require `Confirmed from code/config`; normative rules may use faithfully"
+      - "preserved `User-confirmed desired truth` with its question/context and provenance"
+    must_not_contain:
+      - "User-calibrated"
 
   - file: references/thin-shells.md
     must_contain:
@@ -612,6 +630,8 @@ required_sections:
       - "change-contract.md"
       - "source-localization.md"
       - "Any activated Change Contract is consumed"
+      - "Self-hosting `product-direction` support is optional downstream"
+      - "When it is admitted"
 
   - file: templates/skill/workflows/fix-bug.md
     must_contain:
@@ -637,6 +657,19 @@ required_sections:
     must_contain:
       - "final expanded [`Change Contract`](../protocol-blocks/change-contract.md)"
       - "does not redefine Semantic Intent, source-localization stages, read breadth, or validation depth after green"
+
+  - file: scripts/check-validation-contract.sh
+    must_contain:
+      - "check_html_comments_are_not_live_references"
+      - "check_namespaced_path_escapes_are_rejected"
+      - "check_registration_owners_do_not_cross_resolve"
+      - "check_required_files_path_escape_is_rejected"
+      - "check_routing_comments_do_not_seed_reachability"
+      - "check_github_slug_preserves_consecutive_hyphens"
+      - "check_reason_first_required_files_mapping"
+      - "check_many_markdown_files_do_not_hit_arg_max"
+      - "check_harness_relative_skill_paths_resolve"
+      - "Validation contract results: %s passed, %s failed"
 
 # Files required to exist (presence-only check). Drift here means a
 # self-hosting structural piece was deleted without updating routing.

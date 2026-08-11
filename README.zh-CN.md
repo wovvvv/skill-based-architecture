@@ -150,7 +150,7 @@ flowchart LR
 | Apply 失败 | 先在 staging 中生成；apply 失败时回滚本次新建路径 |
 | 结构完整性 | `SKILL.md` 始终检查；routing、shell、workflow、Cursor、链接、reachability、orphan、预算和内容契约只对实际 materialize 的责任严格验收 |
 | 迁移完整性 | 每条已盘点源指令都要有唯一 mapped/excluded disposition；逐字保留与 activation chain 可执行验证，faithful rewrite 则必须保留显式语义 review 证据 |
-| 行为完整性 | 确定性全绿绝不冒充模型行为；独立 opt-in live Codex journey 验证一条 fresh-project 自然语言路径，并把外部不可用单独报告 |
+| 行为完整性 | 确定性全绿绝不冒充模型行为；独立 opt-in live Codex journeys 分别验证 fresh-project Single-file 任务和普通 SBA 迁移，并把外部不可用单独报告 |
 | 交付完整性 | 本地改动不等于 commit，commit 不等于 push，已 push 的分支不等于 MR/PR，已 approval 的 MR/PR 不等于 merge |
 
 结构检查不能证明每一条旧规则都完成了语义迁移。迁移证据门可以证明 inventory 覆盖、逐字保留和 activation-chain 完整性，但 faithful rewrite 的等价性仍由已记录的语义 review 负责。真实 Agent 行为又是独立的一层证明。SBA 会分开这些结论，不让一个绿色汇总替代判断。

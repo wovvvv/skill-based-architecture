@@ -117,6 +117,18 @@ append_unique() {
       fi
       PRESERVE_FILES+=("$value")
       ;;
+    REGISTRATION_FILES)
+      if [[ ${#REGISTRATION_FILES[@]} -gt 0 ]]; then
+        for item in "${REGISTRATION_FILES[@]}"; do [[ "$item" == "$value" ]] && return; done
+      fi
+      REGISTRATION_FILES+=("$value")
+      ;;
+    REVIEW_REGISTRATIONS)
+      if [[ ${#REVIEW_REGISTRATIONS[@]} -gt 0 ]]; then
+        for item in "${REVIEW_REGISTRATIONS[@]}"; do [[ "$item" == "$value" ]] && return; done
+      fi
+      REVIEW_REGISTRATIONS+=("$value")
+      ;;
     ROUTE_IDS)
       if [[ ${#ROUTE_IDS[@]} -gt 0 ]]; then
         for item in "${ROUTE_IDS[@]}"; do [[ "$item" == "$value" ]] && return; done
@@ -134,6 +146,8 @@ append_unique() {
 
 INSTRUCTION_FILES=()
 PRESERVE_FILES=()
+REGISTRATION_FILES=()
+REVIEW_REGISTRATIONS=()
 ROUTE_IDS=()
 EVIDENCE_TASK_IDS=()
 EVIDENCE_TASK_LABEL_EN=()
@@ -153,6 +167,7 @@ EVIDENCE_UPSTREAM_PRESSURE=0
 EVIDENCE_GOTCHA_PRESSURE=0
 EVIDENCE_SHARED_ROUTING=0
 EVIDENCE_BROAD_PRESSURE=0
+EVIDENCE_EXTERNAL_WRITE_PRESSURE=0
 
 INSTRUCTION_COUNT=0
 ENTRY_COUNT=0
@@ -167,6 +182,7 @@ CLOSURE_PRESSURE=0
 SHARED_ROUTING_DECLARED=0
 TEAM_HARNESS_DECLARED=0
 EXPLICIT_BROAD_PRESSURE=0
+EXTERNAL_WRITE_PRESSURE=0
 GOTCHA_PRESSURE=0
 MULTI_PROCEDURE_EVIDENCE=0
 
@@ -270,7 +286,7 @@ if maintenance is None:
     maintenance = {}
 if not isinstance(maintenance, dict):
     raise SystemExit("maintenance_pressure must be an object")
-for key in ("managed_execution", "closure", "validation", "upstream", "gotchas", "shared_routing", "broad"):
+for key in ("managed_execution", "closure", "validation", "upstream", "gotchas", "shared_routing", "broad", "external_writes"):
     value = maintenance.get(key, False)
     if not isinstance(value, bool):
         raise SystemExit(f"maintenance_pressure.{key} must be boolean")
@@ -293,6 +309,7 @@ PY
           gotchas) EVIDENCE_GOTCHA_PRESSURE=1 ;;
           shared_routing) EVIDENCE_SHARED_ROUTING=1 ;;
           broad) EVIDENCE_BROAD_PRESSURE=1 ;;
+          external_writes) EVIDENCE_EXTERNAL_WRITE_PRESSURE=1 ;;
         esac
         ;;
       *) echo "invalid evidence output" >&2; exit 2 ;;
@@ -326,7 +343,7 @@ instruction_files_contain() {
 }
 
 inventory_entries() {
-  local path
+  local path registry registration_name formal_owner
   for path in AGENTS.md CLAUDE.md CODEX.md GEMINI.md \
     .codex/instructions.md .clinerules .windsurfrules \
     .github/copilot-instructions.md .cursor/rules/workflow.mdc; do
@@ -336,6 +353,22 @@ inventory_entries() {
   collect_glob_files .windsurf/rules '*.md'
   collect_glob_files .claude '*.md'
   collect_glob_files .gemini '*.md'
+
+  for registry in .cursor .claude .codex .agents .gemini; do
+    [[ -d "$TARGET/$registry/skills" ]] || continue
+    while IFS= read -r path; do
+      [[ -n "$path" ]] || continue
+      path="${path#$TARGET/}"
+      append_unique REGISTRATION_FILES "$path"
+      collect_file "$path"
+      registration_name="${path#"$registry/skills/"}"
+      registration_name="${registration_name%/SKILL.md}"
+      formal_owner="skills/$registration_name/SKILL.md"
+      if [[ ! -f "$TARGET/$formal_owner" ]]; then
+        append_unique REVIEW_REGISTRATIONS "$path"
+      fi
+    done < <(find "$TARGET/$registry/skills" -mindepth 2 -maxdepth 2 -type f -name SKILL.md -print 2>/dev/null | sort)
+  done
 
   if [[ ${#INSTRUCTION_FILES[@]} -gt 0 ]]; then
     for path in "${INSTRUCTION_FILES[@]}"; do
@@ -408,6 +441,7 @@ inventory_content_pressure() {
     if grep -Eiq 'upstream|vendor|上游|同步模板' "$TARGET/$file"; then TASK_UPSTREAM=1; fi
     if grep -Eiq 'task[[:space:]_-]*(execution|anchor|plan)|pause|resume|replan|decision drift|中断|恢复|锚点' "$TARGET/$file"; then MANAGED_PRESSURE=1; fi
     if grep -Eiq 'closure|definition of done|AAR|complete|delivery|deliver|commit|push|merge|完成|交付|验收' "$TARGET/$file"; then CLOSURE_PRESSURE=1; fi
+    if grep -Eiq 'database|postgres|mysql|sql[[:space:]_-]*migration|schema[[:space:]_-]*migration|deploy|deployment|publish[[:space:]_-]*(config|configuration)|config(uration)?([[:space:]_-]*(file|value|setting|change|write|publish|update|management|center|service))?|nacos|consul|shared[[:space:]_-]*(system|service|environment)|production[[:space:]_-]*(system|environment)|数据库|部署|配置|发布配置|配置中心|共享系统|生产环境' "$TARGET/$file"; then EXTERNAL_WRITE_PRESSURE=1; fi
       if grep -Eiq 'harness|tooling|route|routing|workflow|procedure|步骤|流程' "$TARGET/$file"; then WORKFLOW_PRESSURE=1; fi
       if grep -Eiq 'claude|cursor|codex|gemini|windsurf|copilot' "$TARGET/$file"; then TEAM_HARNESS_DECLARED=1; fi
       procedure_headings=$(grep -Eic '^#{2,4}[[:space:]].*(workflow|flow|bug|feature|review|plan|release|procedure|流程|修复|规划|评审|发布)' "$TARGET/$file" 2>/dev/null || true)
@@ -446,6 +480,7 @@ inventory_content_pressure() {
       grep -Eiq 'upstream|vendor|sync[_ -]?manifest' "$TARGET/$evidence" && UPSTREAM_PRESSURE=1 || true
       grep -Eiq 'team[_ -]?harness|multi[_ -]?harness|claude|cursor|codex|gemini' "$TARGET/$evidence" && TEAM_HARNESS_DECLARED=1 || true
       grep -Eiq 'full[_ -]?runtime|broad[_ -]?maintenance|author[_ -]?maintenance' "$TARGET/$evidence" && EXPLICIT_BROAD_PRESSURE=1 || true
+      grep -Eiq 'external[_ -]?write|database|deploy|publish[_ -]?config|configuration[_ -]?center|shared[_ -]?(system|service|environment)' "$TARGET/$evidence" && EXTERNAL_WRITE_PRESSURE=1 || true
     done
   fi
 
@@ -462,7 +497,7 @@ inventory_content_pressure() {
         ("$UPSTREAM_PRESSURE" -eq 1 && "$VALIDATION_PRESSURE" -eq 1) ||
         "$EXPLICIT_BROAD_PRESSURE" -eq 1 ]]; then
     MATERIALIZATION="broad"
-  elif [[ "$WORKFLOW_PRESSURE" -eq 1 || "$INSTRUCTION_LINES" -ge 60 ||
+  elif [[ "$EXTERNAL_WRITE_PRESSURE" -eq 1 || "$WORKFLOW_PRESSURE" -eq 1 || "$INSTRUCTION_LINES" -ge 60 ||
           "$TASK_SIGNAL_COUNT" -ge 1 ]]; then
     MATERIALIZATION="folder"
   else
@@ -513,6 +548,7 @@ apply_session_evidence() {
   VALIDATION_PRESSURE=0
   SHARED_ROUTING_DECLARED=0
   EXPLICIT_BROAD_PRESSURE=0
+  EXTERNAL_WRITE_PRESSURE=0
 
   MANAGED_PRESSURE="$EVIDENCE_MANAGED_PRESSURE"
   CLOSURE_PRESSURE="$EVIDENCE_CLOSURE_PRESSURE"
@@ -521,6 +557,7 @@ apply_session_evidence() {
   GOTCHA_PRESSURE="$EVIDENCE_GOTCHA_PRESSURE"
   SHARED_ROUTING_DECLARED="$EVIDENCE_SHARED_ROUTING"
   EXPLICIT_BROAD_PRESSURE="$EVIDENCE_BROAD_PRESSURE"
+  EXTERNAL_WRITE_PRESSURE="$EVIDENCE_EXTERNAL_WRITE_PRESSURE"
 
   NEED_AGENTS=1
   NEED_CLAUDE=0
@@ -559,7 +596,7 @@ apply_session_evidence() {
   [[ "$TASK_SIGNAL_COUNT" -ge 2 || "$SHARED_ROUTING_DECLARED" -eq 1 ]] && ROUTED=1 || ROUTED=0
   if [[ "$TASK_SIGNAL_COUNT" -ge 3 || ("$MANAGED_PRESSURE" -eq 1 && "$CLOSURE_PRESSURE" -eq 1) || "$EXPLICIT_BROAD_PRESSURE" -eq 1 ]]; then
     MATERIALIZATION="broad"
-  elif [[ "$TASK_SIGNAL_COUNT" -ge 1 || "$WORKFLOW_PRESSURE" -eq 1 ]]; then
+  elif [[ "$EXTERNAL_WRITE_PRESSURE" -eq 1 || "$TASK_SIGNAL_COUNT" -ge 1 || "$WORKFLOW_PRESSURE" -eq 1 ]]; then
     MATERIALIZATION="folder"
   else
     MATERIALIZATION="direct"
@@ -727,15 +764,28 @@ render_shells() {
 }
 
 render_cursor_registration() {
-  local destination="$1"
+  local destination="$1" description_block
   mkdir -p "$(dirname "$destination")"
+  description_block="$(awk '
+    BEGIN { frontmatter = 0; capture = 0 }
+    /^---[[:space:]]*$/ {
+      if (frontmatter == 0) { frontmatter = 1; next }
+      if (capture == 1) exit
+    }
+    frontmatter == 1 && /^description:[[:space:]]*/ { capture = 1; print; next }
+    capture == 1 {
+      if ($0 ~ /^[[:space:]]+/ || $0 == "") { print; next }
+      exit
+    }
+  ' "$stage/skills/$NAME/SKILL.md")"
+  [[ -n "$description_block" ]] || {
+    echo "FAIL: formal SKILL.md is missing a description field" >&2
+    return 1
+  }
   cat > "$destination" <<EOF
 ---
 name: $NAME
-description: >
-  This skill should be used when the user asks to "work on $NAME",
-  "maintain $NAME", or "处理 $NAME 任务". Activate when the request concerns
-  $SUMMARY.
+$description_block
 ---
 
 # $NAME (Cursor Entry)
@@ -948,6 +998,11 @@ These rules govern the project scope summarized in \`skills/$NAME/SKILL.md\`.
 - Do not expand completion to historical tasks, adjacent repositories, or
   implicit follow-up delivery.
 EOF
+  if [[ "$EXTERNAL_WRITE_PRESSURE" -eq 1 ]]; then
+    cat >> "$destination" <<'EOF'
+- Task scope does not automatically grant external write authority for databases, deployments, configuration, or shared systems; obtain explicit authorization before performing such writes.
+EOF
+  fi
 }
 
 render_coding_standards() {
@@ -1138,13 +1193,25 @@ render_fitted_conformance() {
   {
     echo "# Fitted content contract: only owners admitted by this evidence plan."
     echo "required_files:"
-    echo "  - SKILL.md"
-    echo "  - routing.yaml"
+    echo "  - path: SKILL.md"
+    echo "    reason: Primary routed skill owner."
+    echo "  - path: routing.yaml"
+    echo "    reason: Evidence-selected route owner."
     local id
-    for id in ${ROUTE_IDS[@]+"${ROUTE_IDS[@]}"}; do echo "  - workflows/$id.md"; done
-    echo "  - workflows/other.md"
-    [[ "$MANAGED_PRESSURE" -eq 1 ]] && echo "  - workflows/task-execution.md"
-    [[ "$CLOSURE_PRESSURE" -eq 1 ]] && echo "  - workflows/task-closure.md"
+    for id in ${ROUTE_IDS[@]+"${ROUTE_IDS[@]}"}; do
+      echo "  - path: workflows/$id.md"
+      echo "    reason: Admitted task workflow."
+    done
+    echo "  - path: workflows/other.md"
+    echo "    reason: Required fallback workflow."
+    if [[ "$MANAGED_PRESSURE" -eq 1 ]]; then
+      echo "  - path: workflows/task-execution.md"
+      echo "    reason: Admitted managed-execution owner."
+    fi
+    if [[ "$CLOSURE_PRESSURE" -eq 1 ]]; then
+      echo "  - path: workflows/task-closure.md"
+      echo "    reason: Admitted completion owner."
+    fi
     echo "required_sections:"
     echo "  - file: SKILL.md"
     echo "    must_contain:"
@@ -1159,6 +1226,11 @@ render_fitted_conformance() {
       echo "  - file: workflows/task-closure.md"
       echo "    must_contain:"
       echo "      - 'Completion Gate'"
+    fi
+    if [[ "$EXTERNAL_WRITE_PRESSURE" -eq 1 ]]; then
+      echo "  - file: rules/project-rules.md"
+      echo "    must_contain:"
+      echo "      - 'Task scope does not automatically grant external write authority for databases, deployments, configuration, or shared systems; obtain explicit authorization before performing such writes.'"
     fi
   } > "$conformance"
 }
@@ -1238,6 +1310,9 @@ render_light_routes() {
 hard_conflict=0
 for path in "skills/$NAME" ".cursor/skills/$NAME"; do
   if has_path "$path"; then
+    if [[ "$path" == ".cursor/skills/$NAME" && -f "$TARGET/.cursor/skills/$NAME/SKILL.md" && ! -f "$TARGET/skills/$NAME/SKILL.md" ]]; then
+      echo "REVIEW: .cursor/skills/$NAME/SKILL.md (formal owner missing: skills/$NAME/SKILL.md; preserve registration until ownership is resolved)"
+    fi
     echo "CONFLICT: $path already exists; inspect the current migration instead of rerunning"
     hard_conflict=1
   fi
@@ -1259,12 +1334,21 @@ derive_plan
 echo "EVIDENCE INVENTORY:"
 echo "  evidence_files=$INSTRUCTION_COUNT preserved_entries=$ENTRY_COUNT source_lines=$INSTRUCTION_LINES recurring_signals=$TASK_SIGNAL_COUNT harness_signals=$HARNESS_COUNT"
 echo "  workflow_pressure=$WORKFLOW_PRESSURE managed_execution_pressure=$MANAGED_PRESSURE closure_pressure=$CLOSURE_PRESSURE validation_pressure=$VALIDATION_PRESSURE upstream_pressure=$UPSTREAM_PRESSURE"
+echo "  external_write_pressure=$EXTERNAL_WRITE_PRESSURE"
 echo "DERIVED RESPONSIBILITIES: direct_route=$([[ "$ROUTED" -eq 0 ]] && echo yes || echo no) shared_routing=$([[ "$ROUTED" -eq 1 ]] && echo yes || echo no)"
 echo "  managed_execution=$([[ "$MANAGED_PRESSURE" -eq 1 ]] && echo admitted || echo deferred) closure_owner=$([[ "$CLOSURE_PRESSURE" -eq 1 ]] && echo admitted || echo deferred)"
 
 if [[ ${#PRESERVE_FILES[@]} -gt 0 ]]; then
   for path in "${PRESERVE_FILES[@]}"; do
     echo "PRESERVE: $path (Agent must migrate its meaning and keep the local shell hook)"
+  done
+fi
+if [[ ${#REVIEW_REGISTRATIONS[@]} -gt 0 ]]; then
+  for path in "${REVIEW_REGISTRATIONS[@]}"; do
+    registry_root="${path%%/skills/*}"
+    registration_name="${path#"$registry_root/skills/"}"
+    registration_name="${registration_name%/SKILL.md}"
+    echo "REVIEW: $path (formal owner missing: skills/$registration_name/SKILL.md; preserve registration until ownership is resolved)"
   done
 fi
 

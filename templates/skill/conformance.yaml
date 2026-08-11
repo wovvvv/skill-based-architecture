@@ -497,14 +497,40 @@ required_sections:
     must_not_contain:
       - "allowed_apps"
 
+  - file: scripts/smoke-test.sh
+    must_contain:
+      - 'REFERENCE_INPUT="$(mktemp)"'
+      - 'file_list.read_bytes().split(b"\0")'
+      - "optional_cue_re = re.compile("
+      - 'return re.sub(r"<!--.*?-->", "",'
+      - "def slugify_heading(value: str) -> str:"
+      - "def owner_root(src: Path) -> Path:"
+      - "root = owner_root(src)"
+      - 'plain.startswith("skills/") and under(src, skill_root)'
+      - "base = project_root"
+      - "path escapes"
+
+  - file: scripts/check-version-conformance.sh
+    must_contain:
+      - "required_files items must be mappings"
+      - "current_item = body"
+      - "records = parse(path)"
+      - "target.relative_to(skill_root)"
+      - "owner path escapes the skill root"
+
   - file: scripts/audit-orphans.sh
     must_contain:
-      - "-type f -name '*.md'"
+      - 'owner.rglob("*.md")'
+      - "cross_sources"
 
   - file: scripts/route-reachability.sh
     must_contain:
-      - "references/business"
-      - "-type f -name '*.md'"
+      - "ACTIVE_DIRS=(architecture conventions gotchas rules workflows references)"
+      - 'owner.rglob("*.md")'
+      - "strip_yaml_comments"
+      - "invalid_references"
+      - "path escapes"
+      - "code_from_skill"
 
   - file: workflows/maintain-docs.md
     must_contain:

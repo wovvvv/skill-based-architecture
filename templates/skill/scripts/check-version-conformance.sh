@@ -52,7 +52,7 @@ fi
 PARSED_FILE="$(mktemp)"
 trap 'rm -f "$PARSED_FILE"' EXIT
 
-if ! python3 - "$CONFORMANCE_PATH" > "$PARSED_FILE" <<'PY'
+if ! python3 - "$CONFORMANCE_PATH" "$SKILL_ROOT" > "$PARSED_FILE" <<'PY'
 from __future__ import annotations
 
 import sys
@@ -86,9 +86,16 @@ def parse(path: Path) -> list[tuple[str, str, str]]:
     list_indent: int | None = None
     current_file: str | None = None
     phrase_kind: str | None = None
+    current_item: str | None = None
     def flush_exists() -> None:
-        if section == "required_files" and current_file:
-            records.append(("EXISTS", current_file, ""))
+        if section != "required_files" or item_indent is None:
+            return
+        if not current_file:
+            raise ValueError(
+                "required_files items must be mappings such as '- path: SKILL.md'; "
+                f"invalid item: {current_item or '-'}"
+            )
+        records.append(("EXISTS", current_file, ""))
 
     for indent, body in lines:
         if indent == 0 and body.endswith(":"):
@@ -96,6 +103,7 @@ def parse(path: Path) -> list[tuple[str, str, str]]:
             section = body[:-1].strip()
             item_indent = list_indent = None
             current_file = phrase_kind = None
+            current_item = None
             continue
         if section not in ("required_sections", "required_files"):
             continue
@@ -109,11 +117,17 @@ def parse(path: Path) -> list[tuple[str, str, str]]:
             if current_file and phrase:
                 records.append((phrase_kind, current_file, phrase))
             continue
+        if body == "-" and section == "required_files":
+            raise ValueError(
+                "required_files items must be mappings such as '- path: SKILL.md'; "
+                "empty list items are invalid"
+            )
         if body.startswith("- ") and (item_indent is None or indent <= item_indent):
             flush_exists()
             item_indent = indent
             list_indent = None
             current_file = phrase_kind = None
+            current_item = body
             payload = body[2:].strip()
             if ":" in payload:
                 key, _, value = payload.partition(":")
@@ -138,7 +152,22 @@ def parse(path: Path) -> list[tuple[str, str, str]]:
     return records
 def main() -> int:
     path = Path(sys.argv[1])
-    for kind, file, phrase in parse(path):
+    skill_root = Path(sys.argv[2]).resolve()
+    try:
+        records = parse(path)
+        for _, file, _ in records:
+            relative = Path(file)
+            if relative.is_absolute():
+                raise ValueError(f"owner path must be relative to the skill root: {file}")
+            target = (skill_root / relative).resolve()
+            try:
+                target.relative_to(skill_root)
+            except ValueError as exc:
+                raise ValueError(f"owner path escapes the skill root: {file}") from exc
+    except ValueError as exc:
+        print(f"conformance schema error: {exc}", file=sys.stderr)
+        return 2
+    for kind, file, phrase in records:
         print(f"{kind}\t{file}\t{phrase}")
     return 0
 raise SystemExit(main())

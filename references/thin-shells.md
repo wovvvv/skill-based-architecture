@@ -141,7 +141,7 @@ The pattern is adopted from [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s
 
 ## Per-Tool Templates
 
-Per-harness shell templates and the tool compatibility matrix moved to [per-tool-shells.md](per-tool-shells.md). Combine each template with the [Common Thin Shell Body](#common-thin-shell-body) above.
+Per-harness shell templates and the tool compatibility matrix moved to [per-tool-shells.md](per-tool-shells.md). Combine each template with the [Common Thin Shell Body](#common-thin-shell-body-routed-carriers) above.
 
 ## SessionStart Hook (Optional)
 

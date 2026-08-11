@@ -46,82 +46,126 @@ fi
 
 TIER_DIRS=(rules references architecture gotchas conventions)
 AUDIT_DIRS=("${TIER_DIRS[@]}" workflows)
-LOCAL_SOURCES=()
-for dir in workflows "${TIER_DIRS[@]}"; do
-  while IFS= read -r file; do LOCAL_SOURCES+=("$file"); done < <(find "$ROOT/$dir" -type f -name '*.md' 2>/dev/null | sort)
-done
-for file in "$ROOT"/*.md; do [[ -f "$file" ]] && LOCAL_SOURCES+=("$file"); done
-if [[ -f "$ROOT/../../AGENTS.md" || -f "$ROOT/../../CLAUDE.md" ]]; then
-  for shell in AGENTS.md CLAUDE.md CODEX.md GEMINI.md; do
-    [[ -f "$ROOT/../../$shell" ]] && LOCAL_SOURCES+=("$ROOT/../../$shell")
-  done
-fi
 
-TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "$TMP_DIR"' EXIT
-NORMALIZED_SOURCES=()
-SOURCE_ORIGINS=()
+python3 - "$ROOT" "$ROUTING" "$NAMESPACE" "${AUDIT_DIRS[@]}" <<'PY'
+from __future__ import annotations
 
-normalize_local() {
-  awk 'BEGIN{f=0} /^```/ {f=1-f; next} !f' "$1" |
-    case "$NAMESPACE" in
-      skill) sed -E 's#code:(rules|references|architecture|gotchas|conventions|workflows)/[A-Za-z0-9._/-]+\.md##g' ;;
-      code) sed -E 's#skill:(rules|references|architecture|gotchas|conventions|workflows)/[A-Za-z0-9._/-]+\.md##g' ;;
-      single) sed -E 's#(skill|code):(rules|references|architecture|gotchas|conventions|workflows)/[A-Za-z0-9._/-]+\.md##g' ;;
-    esac
-}
+import re
+import sys
+from pathlib import Path
 
-i=0
-for file in "${LOCAL_SOURCES[@]:-}"; do
-  [[ -n "$file" && -f "$file" ]] || continue
-  normalized="$TMP_DIR/$i"
-  normalize_local "$file" > "$normalized"
-  SOURCE_ORIGINS+=("$file")
-  NORMALIZED_SOURCES+=("$normalized")
-  i=$((i+1))
-done
+root = Path(sys.argv[1]).resolve()
+routing = Path(sys.argv[2]).resolve()
+namespace = sys.argv[3]
+audit_dirs = sys.argv[4:]
+domain_routing = routing.parent / "domain-routing.yaml"
+path_token_re = re.compile(
+    r"(?:(skill|code):)?"
+    r"((?:architecture|conventions|gotchas|rules|references|workflows)/"
+    r"[A-Za-z0-9._/-]+\.md)"
+)
 
-routing_mentions() {
-  local rel="$1" token source
-  if [[ "$NAMESPACE" == "single" ]]; then token="$rel"; else token="$NAMESPACE:$rel"; fi
-  for source in "$ROUTING" "$DOMAIN_ROUTING"; do
-    [[ -f "$source" ]] || continue
-    awk -v token="$token" '
-      /^[[:space:]]*#/ { next }
-      index($0, token) { found=1 }
-      END { exit(found ? 0 : 1) }
-    ' "$source" && return 0
-  done
-  return 1
-}
 
-has_inbound() {
-  local rel="$1" match="$2" absolute="$ROOT/$1" idx
-  routing_mentions "$rel" && return 0
-  for ((idx=0; idx<${#NORMALIZED_SOURCES[@]}; idx++)); do
-    [[ "${SOURCE_ORIGINS[$idx]}" == "$absolute" ]] && continue
-    grep -qF "$match" "${NORMALIZED_SOURCES[$idx]}" && return 0
-  done
-  return 1
-}
+def strip_nonlive(text: str) -> str:
+    output: list[str] = []
+    marker: str | None = None
+    for line in text.splitlines():
+        match = re.match(r"^[ \t]*(```+|~~~+)", line)
+        if match:
+            token = match.group(1)[0]
+            if marker is None:
+                marker = token
+            elif marker == token:
+                marker = None
+            continue
+        if marker is None:
+            output.append(line)
+    return re.sub(r"<!--.*?-->", "", "\n".join(output), flags=re.S)
 
-ORPHANS=0
-TOTAL=0
-echo "Orphan scan — namespace=$NAMESPACE, root=$ROOT"
-echo "============================================================"
-for dir in "${AUDIT_DIRS[@]}"; do
-  while IFS= read -r file; do
-    case "$(basename "$file")" in README.md|index.md) continue ;; esac
-    TOTAL=$((TOTAL+1))
-    rel="${file#$ROOT/}"
-    if [[ "$dir" == workflows ]]; then match="$(basename "$file")"; else match="$rel"; fi
-    if ! has_inbound "$rel" "$match"; then
-      echo "ORPHAN  $rel"
-      ORPHANS=$((ORPHANS+1))
-    fi
-  done < <(find "$ROOT/$dir" -type f -name '*.md' 2>/dev/null | sort)
-done
 
-echo ""
-echo "Summary: $ORPHANS orphan(s) / $TOTAL file(s)"
-[[ "$ORPHANS" -eq 0 ]] || exit 1
+def read(path: Path) -> str:
+    return strip_nonlive(path.read_text(encoding="utf-8", errors="replace"))
+
+
+def local_normalized(path: Path) -> str:
+    content = read(path)
+    if namespace == "single":
+        return path_token_re.sub(lambda match: "" if match.group(1) else match.group(0), content)
+    opposite = "code" if namespace == "skill" else "skill"
+    return path_token_re.sub(
+        lambda match: "" if match.group(1) == opposite else match.group(0),
+        content,
+    )
+
+
+def markdown_sources(base: Path) -> list[Path]:
+    sources: list[Path] = []
+    for directory in audit_dirs:
+        owner = base / directory
+        if owner.is_dir():
+            sources.extend(owner.rglob("*.md"))
+    sources.extend(path for path in base.glob("*.md") if path.is_file())
+    return sorted(set(sources))
+
+
+local_sources = markdown_sources(root)
+repo_root = root.parent.parent
+if (repo_root / "AGENTS.md").is_file() or (repo_root / "CLAUDE.md").is_file():
+    for name in ("AGENTS.md", "CLAUDE.md", "CODEX.md", "GEMINI.md"):
+        candidate = repo_root / name
+        if candidate.is_file():
+            local_sources.append(candidate)
+
+normalized_sources = [(path.resolve(), local_normalized(path)) for path in local_sources]
+cross_sources: list[str] = []
+if namespace == "code":
+    for path in markdown_sources(routing.parent):
+        content = read(path)
+        refs = [
+            match.group(0)
+            for match in path_token_re.finditer(content)
+            if match.group(1) == "code"
+        ]
+        if refs:
+            cross_sources.append("\n".join(refs))
+
+routing_text = "\n".join(
+    "\n".join(
+        line for line in path.read_text(encoding="utf-8", errors="replace").splitlines()
+        if not line.lstrip().startswith("#")
+    )
+    for path in (routing, domain_routing)
+    if path.is_file()
+)
+
+targets: list[tuple[Path, str, str]] = []
+for directory in audit_dirs:
+    owner = root / directory
+    if not owner.is_dir():
+        continue
+    for path in owner.rglob("*.md"):
+        if path.name in {"README.md", "index.md"}:
+            continue
+        relative = path.relative_to(root).as_posix()
+        match = path.name if directory == "workflows" else relative
+        targets.append((path.resolve(), relative, match))
+
+orphans: list[str] = []
+for absolute, relative, match in sorted(targets, key=lambda item: item[1]):
+    routing_token = relative if namespace == "single" else f"{namespace}:{relative}"
+    inbound = routing_token in routing_text
+    if not inbound:
+        inbound = any(match in content for origin, content in normalized_sources if origin != absolute)
+    if not inbound and namespace == "code":
+        inbound = any(f"code:{relative}" in content for content in cross_sources)
+    if not inbound:
+        orphans.append(relative)
+
+print(f"Orphan scan — namespace={namespace}, root={root}")
+print("=" * 60)
+for relative in orphans:
+    print(f"ORPHAN  {relative}")
+print()
+print(f"Summary: {len(orphans)} orphan(s) / {len(targets)} file(s)")
+raise SystemExit(1 if orphans else 0)
+PY

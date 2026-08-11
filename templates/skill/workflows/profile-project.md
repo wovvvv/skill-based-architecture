@@ -9,12 +9,20 @@ Use this before filling skill content for a new project, after a major repo resh
 3. Inspect real project evidence: README, build/package files, CI, entry points, config, module layout, tests, and recent validation commands.
 4. Read existing `rules/`, `workflows/`, and `references/` only after the first evidence scan, so stale docs do not anchor the summary.
 
+Do not begin by asking whether the user wants to brainstorm. For an ordinary
+rule-consolidation request, complete the read-only evidence scan first. Ask only
+when the resulting working conclusion still contains a normative product or
+business decision, permission boundary, support scope, preserved behavior, or
+acceptance choice that would change durable rules or generated responsibilities.
+Never ask the user for an implementation fact or technical destination the
+repository can establish.
+
 ## Evidence Labels
 
 Use these labels in the output. Do not blur them together.
 
 - `Confirmed from code/config` — supported by a concrete file, command, or directory layout.
-- `User-calibrated` — stated by the user; useful for direction, but not enough to write a hard rule until checked.
+- `User-confirmed desired truth` — stated or selected clearly by the user; authoritative for normative product/business meaning, but not proof of current implementation.
 - `Inferred` — likely from names or repeated patterns; include why it is an inference.
 - `Unknown` — not enough evidence; leave a question instead of guessing.
 
@@ -53,7 +61,9 @@ Produce a compact project profile with these sections:
 - Business-global-model candidates (product projects only; candidate + why + now/later/not-needed, no files yet)
 - Unknowns and follow-up checks
 
-Each non-obvious claim must carry one evidence label. Only `Confirmed from code/config` claims should become stable `rules/` content.
+Each non-obvious claim must carry one evidence label. Technical/current-state
+rules require `Confirmed from code/config`; normative rules may use faithfully
+preserved `User-confirmed desired truth` with its question/context and provenance.
 
 ## Completion Checklist
 

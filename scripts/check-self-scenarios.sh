@@ -100,6 +100,23 @@ echo "Self-hosting Scenario Checks"
 echo "============================"
 
 check_scenario \
+  "ordinary downstream migration" \
+  "references/self-hosting-routing.yaml" \
+  "用 SBA 整理这个项目的规则" \
+  "migrate-downstream" \
+  "WORKFLOW.md#quick-start"
+
+migration_workflow="$(<WORKFLOW.md)"
+profile_project="$(<templates/skill/workflows/profile-project.md)"
+assert_contains "$migration_workflow" "Begin with a read-only code/config/rule scan" "ordinary migration code-first entry"
+assert_contains "$migration_workflow" "Ask only when evidence cannot resolve a normative product/business decision" "ordinary migration question boundary"
+assert_contains "$migration_workflow" "continue directly to preview and apply" "ordinary migration no-question fast path"
+assert_not_contains "$migration_workflow" "Start with the workflow's user brainstorm gate" "ordinary migration removes pre-scan brainstorm gate"
+assert_not_contains "$migration_workflow" "do not read code yet" "ordinary migration does not block evidence reads"
+assert_contains "$profile_project" "Do not begin by asking whether the user wants to brainstorm" "project profile code-first entry"
+assert_contains "$profile_project" "User-confirmed desired truth" "project profile preserves normative authority"
+
+check_scenario \
   "edit templates" \
   "references/self-hosting-routing.yaml" \
   "修改 templates" \
@@ -157,7 +174,8 @@ product_direction="$(task_block references/self-hosting-routing.yaml product-dir
 assert_contains "$product_direction" "吸收一个外部项目" "SBA product direction external-project trigger"
 assert_contains "$product_direction" "增加一个重大机制" "SBA product direction major-mechanism trigger"
 assert_not_contains "$product_direction" "docs/sba-bible.md" "SBA product direction route does not preload Bible"
-assert_contains "$(<templates/skill/workflows/plan-feature.md)" 'self-hosting `product-direction`' "SBA product direction workflow checkpoint"
+assert_contains "$(<templates/skill/workflows/plan-feature.md)" 'Self-hosting `product-direction` support is optional downstream' "SBA product direction optional downstream boundary"
+assert_contains "$(<templates/skill/workflows/plan-feature.md)" "When it is admitted" "SBA product direction admitted-owner checkpoint"
 assert_contains "$(<templates/skill/workflows/plan-feature.md)" "Ordinary downstream planning never loads the SBA Bible" "SBA product direction scope boundary"
 
 check_scenario \

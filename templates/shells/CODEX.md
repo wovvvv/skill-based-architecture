@@ -15,7 +15,10 @@ Formal docs live under `skills/`. Read `skills/*/SKILL.md` — default to `prima
 - None by default; workflows load knowledge at evidence and phase boundaries.
 <!-- ALWAYS_READ_END -->
 
-**Request-clarity judgment**: vague wording is a signal, not an automatic blocker. Use bounded read-only project evidence to derive scope; ask only for an unresolved normative preference, authority boundary, or materially different outcome. Do not mutate before the outcome is verifiable. See `skills/{{NAME}}/protocol-blocks/ambiguous-request-gate.md`.
+**Request-clarity judgment**: vague wording is a signal, not an automatic blocker. Use bounded read-only project evidence to derive scope; ask only for an unresolved normative preference, authority boundary, or materially different outcome. Do not mutate before the outcome is verifiable.
+<!-- REQUEST_CLARITY_OWNER_START -->
+See `skills/{{NAME}}/protocol-blocks/ambiguous-request-gate.md`.
+<!-- REQUEST_CLARITY_OWNER_END -->
 
 </always-applicable>
 
@@ -42,7 +45,7 @@ For every new task:
 <!-- BEHAVIOR_BLOCK_START -->
 ## Auto-Triggers
 
-- **New task in same session** → always re-match the route from canonical `routing.yaml`. After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence. Then execute one clear action/check directly, otherwise follow `skills/{{NAME}}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read the current workflow.
+- **New task in same session** → always re-match the route from canonical `routing.yaml`. After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence. Then execute one clear action/check directly. Otherwise follow `skills/{{NAME}}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read the current workflow.
 - Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter Task Closure Protocol (see `skills/{{NAME}}/workflows/task-closure.md`); `Ready for Delivery` is not completion
 - When user asks to "record/save/remember" something → project-level knowledge goes to `skills/{{NAME}}/` docs; personal preferences go to agent memory
 

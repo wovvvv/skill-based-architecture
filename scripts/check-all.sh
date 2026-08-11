@@ -32,8 +32,9 @@ Runs the self-hosting upstream maintenance checks used before commit/push:
 
 Default mode checks the working tree. Use --staged from a pre-commit hook to
 check the pending commit for UPSTREAM-CHANGES.md coverage and whitespace.
-Use --live-agent to add one real Codex journey in a fresh temporary project;
-without it, green means deterministic structure and contract checks only.
+Use --live-agent to add the real Codex Single-file task and ordinary SBA
+migration journeys in fresh temporary projects; without it, green means
+deterministic structure and contract checks only.
 EOF
 }
 
@@ -72,6 +73,29 @@ run() {
   shift
   printf '\n==> %s\n' "$label"
   "$@"
+}
+
+LIVE_AGENT_NO_VERDICT_MODES=""
+
+run_live_agent_mode() {
+  local label="$1" live_mode="$2" live_exit_code
+  printf '\n==> %s\n' "$label"
+  set +e
+  bash scripts/check-live-agent-journey.sh --mode "$live_mode"
+  live_exit_code=$?
+  set -e
+  case "$live_exit_code" in
+    0) return 0 ;;
+    3)
+      if [[ -n "$LIVE_AGENT_NO_VERDICT_MODES" ]]; then
+        LIVE_AGENT_NO_VERDICT_MODES="$LIVE_AGENT_NO_VERDICT_MODES, $live_mode"
+      else
+        LIVE_AGENT_NO_VERDICT_MODES="$live_mode"
+      fi
+      return 0
+      ;;
+    *) return "$live_exit_code" ;;
+  esac
 }
 
 fill_sample_scaffold() {
@@ -317,6 +341,13 @@ check_downstream_scaffold() (
   done
   cp "$ROOT/templates/shells/.cursor/rules/workflow.mdc" "$tmp/.cursor/rules/workflow.mdc"
   fill_sample_scaffold "$tmp" "$name" "$summary"
+  # Semantic merge changes canonical route inputs and generated shell bodies.
+  # Model the real Agent path: regenerate from routing.yaml, then let the
+  # validator below prove check mode is clean rather than accepting drift.
+  (
+    cd "$tmp"
+    bash "skills/$name/scripts/sync-routing.sh" "$name" >/dev/null
+  )
   assert_full_scaffold_surfaces "$tmp" "$name"
   validate_downstream_scaffold "$tmp" "$name"
 )
@@ -464,6 +495,13 @@ MARKDOWN
 }
 JSON
   bash "$ROOT/scripts/check-migration-evidence.sh" --root "$tmp" --manifest "$evidence"
+  # The migrated rules and preserved shell replacements above are the Agent's
+  # semantic merge. Regenerate their derived routing blocks before strict
+  # check mode, matching the same lifecycle as the declared-Full journey.
+  (
+    cd "$tmp"
+    bash "skills/$name/scripts/sync-routing.sh" "$name" >/dev/null
+  )
   assert_full_scaffold_surfaces "$tmp" "$name"
   validate_downstream_scaffold "$tmp" "$name"
 )
@@ -923,9 +961,15 @@ run "self-hosting content conformance" bash templates/skill/scripts/check-versio
 
 printf '\nAll deterministic upstream structure and contract checks passed.\n'
 if [[ "$RUN_LIVE_AGENT" -eq 1 ]]; then
-  run "live Codex Single-file user journey" bash scripts/check-live-agent-journey.sh
-  printf '\nThe requested live Codex journey also passed.\n'
+  run_live_agent_mode "live Codex Single-file user journey" single-file
+  run_live_agent_mode "live Codex ordinary SBA migration journey" migration
+  if [[ -n "$LIVE_AGENT_NO_VERDICT_MODES" ]]; then
+    printf '\nNO VERDICT: live Agent evidence was unavailable for mode(s): %s.\n' "$LIVE_AGENT_NO_VERDICT_MODES" >&2
+    printf 'Deterministic checks passed, but this run proves no live behavior for those mode(s).\n' >&2
+    exit 3
+  fi
+  printf '\nBoth requested live Codex journeys passed their named terminal checks.\n'
 else
   printf 'Live Agent behavior was not run; this green result does not prove real Agent behavior.\n'
-  printf 'Run `bash scripts/check-all.sh --base %q --live-agent` for the opt-in journey.\n' "$BASE"
+  printf 'Run `bash scripts/check-all.sh --base %q --live-agent` for the opt-in Single-file and migration journeys.\n' "$BASE"
 fi

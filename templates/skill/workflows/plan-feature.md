@@ -2,7 +2,7 @@
 
 > **Inline by default.** This workflow resolves what should be done; it is not the runtime Native Plan. Use it for feature/design planning and admitted implementation-gap intake. Standalone business modeling stays in `profile-business-model.md` when installed.
 
-When this repository selects self-hosting `product-direction`, read `docs/sba-bible.md` and `docs/plans/README.md`. Ordinary downstream planning never loads the SBA Bible. Read a local Plan archive contract only when the Artifact Pressure Gate admits a durable Plan.
+Self-hosting `product-direction` support is optional downstream. When it is admitted, read `docs/sba-bible.md` and `docs/plans/README.md`. Ordinary downstream planning never loads the SBA Bible. Read a local Plan archive contract only when the Artifact Pressure Gate admits a durable Plan.
 
 ## Deliverable Gate
 

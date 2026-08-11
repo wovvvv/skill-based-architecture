@@ -66,6 +66,8 @@ always_start = "<!-- ALWAYS_READ_START -->"
 always_end = "<!-- ALWAYS_READ_END -->"
 behavior_start = "<!-- BEHAVIOR_BLOCK_START -->"
 behavior_end = "<!-- BEHAVIOR_BLOCK_END -->"
+request_owner_start = "<!-- REQUEST_CLARITY_OWNER_START -->"
+request_owner_end = "<!-- REQUEST_CLARITY_OWNER_END -->"
 
 if not manifest.exists():
     raise SystemExit(f"Missing routing manifest: {manifest}")
@@ -395,6 +397,15 @@ summary_block = "- For each new task, read `routing.yaml`, match exactly one rou
 always_skill_block = format_always_skill(always_read)
 always_shell_block = format_always_shell(always_read)
 
+ambiguity_owner = skill_root / "protocol-blocks" / "ambiguous-request-gate.md"
+execution_owner = skill_root / "workflows" / "task-execution.md"
+closure_owner = skill_root / "workflows" / "task-closure.md"
+request_owner_block = (
+    f"See `skills/{name}/protocol-blocks/ambiguous-request-gate.md`."
+    if ambiguity_owner.exists()
+    else ""
+)
+
 bootstrap_block = f"""Task routes live in `skills/{name}/routing.yaml`.
 
 For every new task:
@@ -406,16 +417,56 @@ For every new task:
 6. Load mutation, testing, managed-execution, and closure contracts only when their phase begins."""
 
 # Single source for the behavioral triggers duplicated across every thin shell.
-# Edit here once, re-run sync-routing.sh → all shells update together.
-behavior_block = f"""## Auto-Triggers
+# Owner-specific hooks are emitted only when the formal owner exists.
+new_task_trigger = (
+    "- **New task in same session** → always re-match the route from canonical "
+    "`routing.yaml`. After a route change, read the new workflow; after compaction, "
+    "recover only the current workflow and decision-relevant evidence. Then execute "
+    "one clear action/check directly."
+)
+if execution_owner.exists():
+    new_task_trigger += (
+        f" Otherwise follow `skills/{name}/workflows/task-execution.md` to establish "
+        "a Task Anchor, present only useful alignment, use the harness-native Plan "
+        "without repeating visible steps in chat, and run its compact Anchor Checkpoint "
+        "before each main step."
+    )
+else:
+    new_task_trigger += (
+        " For larger work, keep the current goal and remaining verification state in "
+        "the harness-native Plan without creating a second planning record."
+    )
+new_task_trigger += (
+    " This is Session recitation, not planning-file persistence. Can't tell if context "
+    "compacted? Re-read the current workflow."
+)
 
-- **New task in same session** → always re-match the route from canonical `routing.yaml`. After a route change, read the new workflow; after compaction, recover only the current workflow and decision-relevant evidence. Then execute one clear action/check directly, otherwise follow `skills/{name}/workflows/task-execution.md` to establish a Task Anchor, present only useful alignment, use the harness-native Plan without repeating visible steps in chat, and run its compact Anchor Checkpoint before each main step. This is Session recitation, not planning-file persistence. Can't tell if context compacted? Re-read the current workflow.
-- Before any requested commit/push/MR/deploy/publish delivery, or before declaring any non-trivial task complete → enter Task Closure Protocol (see `skills/{name}/workflows/task-closure.md`); `Ready for Delivery` is not completion
-- When user asks to "record/save/remember" something → project-level knowledge goes to `skills/{name}/` docs; personal preferences go to agent memory
-
-## Red Flags — STOP
-
-- "Just this once I'll skip the AAR" → stop. See `skills/{name}/workflows/task-closure.md` § Rationalizations to Reject."""
+behavior_lines = ["## Auto-Triggers", "", new_task_trigger]
+if closure_owner.exists():
+    behavior_lines.append(
+        f"- Before any requested commit/push/MR/deploy/publish delivery, or before "
+        f"declaring any non-trivial task complete → enter Task Closure Protocol "
+        f"(see `skills/{name}/workflows/task-closure.md`); `Ready for Delivery` is not completion"
+    )
+behavior_lines.append(
+    f'- When user asks to "record/save/remember" something → project-level knowledge '
+    f"goes to `skills/{name}/` docs; personal preferences go to agent memory"
+)
+if closure_owner.exists():
+    closure_text = closure_owner.read_text()
+    anchor = (
+        " § Rationalizations to Reject"
+        if re.search(r"^#{1,6}\s+Rationalizations to Reject\s*$", closure_text, re.MULTILINE)
+        else ""
+    )
+    behavior_lines.extend([
+        "",
+        "## Red Flags — STOP",
+        "",
+        f'- "Just this once I\'ll skip the AAR" → stop. See '
+        f"`skills/{name}/workflows/task-closure.md`{anchor}.",
+    ])
+behavior_block = "\n".join(behavior_lines)
 
 def validate_paths():
     errors = []
@@ -540,16 +591,22 @@ def maybe_behavior(path):
     if path.exists() and behavior_start in path.read_text():
         targets.append((path, behavior_start, behavior_end, behavior_block))
 
+def maybe_request_owner(path):
+    if path.exists() and request_owner_start in path.read_text():
+        targets.append((path, request_owner_start, request_owner_end, request_owner_block))
+
 for rel in shell_targets:
     path = repo_root / rel
     targets.append((path, always_start, always_end, always_shell_block))
     targets.append((path, bootstrap_start, bootstrap_end, bootstrap_block))
+    maybe_request_owner(path)
     maybe_behavior(path)
 rules_dir = repo_root / ".cursor" / "rules"
 if rules_dir.exists():
     for path in sorted(rules_dir.glob("*.mdc")):
         targets.append((path, always_start, always_end, always_shell_block))
         targets.append((path, bootstrap_start, bootstrap_end, bootstrap_block))
+        maybe_request_owner(path)
         maybe_behavior(path)
 cursor_entry = repo_root / ".cursor" / "skills" / name / ("SKILL.md.template" if template_mode else "SKILL.md")
 targets.append((cursor_entry, bootstrap_start, bootstrap_end, bootstrap_block))
@@ -578,6 +635,50 @@ for path, start, end, block in targets:
     path.write_text(before + expected + after)
     changed = True
     print(f"synced {label(path)}")
+
+def frontmatter_field_span(text, field):
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return None
+    offset = len(lines[0])
+    for index in range(1, len(lines)):
+        line = lines[index]
+        if line.strip() == "---":
+            return None
+        if re.match(rf"^{re.escape(field)}\s*:", line):
+            start = offset
+            end_index = index + 1
+            while end_index < len(lines):
+                candidate = lines[end_index]
+                if candidate.strip() == "---" or (candidate.strip() and not candidate[0].isspace()):
+                    break
+                end_index += 1
+            end = sum(len(item) for item in lines[:end_index])
+            return start, end, text[start:end]
+        offset += len(line)
+    return None
+
+if cursor_entry.exists():
+    owner_text = skill_file.read_text()
+    cursor_text = cursor_entry.read_text()
+    owner_description = frontmatter_field_span(owner_text, "description")
+    cursor_description = frontmatter_field_span(cursor_text, "description")
+    if owner_description is None:
+        print(f"FAIL: {label(skill_file)} missing frontmatter description")
+        failed = True
+    elif cursor_description is None:
+        print(f"FAIL: {label(cursor_entry)} missing frontmatter description")
+        failed = True
+    elif cursor_description[2] == owner_description[2]:
+        print(f"OK: {label(cursor_entry)} description")
+    elif mode == "check":
+        print(f"DRIFT: {label(cursor_entry)} description differs from formal SKILL.md")
+        failed = True
+    else:
+        start, end, _ = cursor_description
+        cursor_entry.write_text(cursor_text[:start] + owner_description[2] + cursor_text[end:])
+        changed = True
+        print(f"synced {label(cursor_entry)} description")
 
 if failed:
     print("\nRun: bash skills/<name>/scripts/sync-routing.sh <name>")
