@@ -14,11 +14,11 @@ Use these tests before writing:
 
 One topic may activate both files, but the records have different shapes. Keep complete business truth in the leaf. Keep only a minimal business anchor and owner link in the Gotcha, followed by the implementation-specific symptom, cause, wrong shortcut, and prevention. Lift stable truth stranded in a Gotcha into the routed leaf; move classes, fields, endpoints, storage keys, and repair recipes out of a leaf without losing its normative meaning or provenance.
 
-## Plan Decision Source
+## Requirement Decision Source
 
-[`workflows/plan-feature.md` § User-Confirmed Decision Mainline](../plan-feature.md#user-confirmed-decision-mainline) owns Decision Delta capture and authority. Consume the relevant Plan Decision Context without recreating its schema: preserve the confirmed answer, authority, scope, load-bearing meaning, evidence, and supersession state. Unselected brainstorm candidates remain `proposed`.
+[`workflows/define-requirement.md` § Decision Authority And Source Fidelity](../define-requirement.md#decision-authority-and-source-fidelity) owns Decision Delta capture; [`protocol-blocks/change-contract.md` § Requirement Contract](../../protocol-blocks/change-contract.md#requirement-contract) owns runtime requirement authority and readiness. Consume the relevant Requirement source without recreating its schema: preserve the confirmed answer, authority, scope, load-bearing meaning, evidence, and supersession state. An implementation Plan carries only one-way Requirement Provenance. Unselected brainstorm candidates remain `proposed`.
 
-At design-to-implementation handoff, transfer stable confirmed normative meaning into the unique routed owner as `desired business truth` with Requirement Provenance. Keep separately evidenced `current implementation fact` and every known implementation gap explicit. A confirmed Plan bypasses only ordinary recording admission for its stable load-bearing business meaning; it still consumes the shared fidelity, reconciliation, activation, durability, synchronization, verification, and authority contract. A purely technical Plan creates no business record.
+Before technical planning/implementation handoff, transfer stable confirmed normative meaning into the unique routed owner as `desired business truth` with Requirement Provenance. Keep separately evidenced `current implementation fact` and every known implementation gap explicit. A confirmed Requirement bypasses only ordinary recording admission for its stable load-bearing business meaning; it still consumes the shared fidelity, reconciliation, activation, durability, synchronization, verification, and authority contract. A purely technical Plan creates no business record.
 
 ## Standalone Business-Model Input
 
@@ -36,6 +36,6 @@ Do not derive `desired business truth` from Bug symptoms, root cause, repaired b
 
 - [ ] Only user-confirmed normative meaning became `desired business truth`; implementation evidence remains `current implementation fact`.
 - [ ] The unique routed leaf owns complete macro truth and any Gotcha keeps only its distinct implementation failure plus a minimal owner link.
-- [ ] Plan or Modeling provenance preserves the confirmed source, authority, scope, and applicable supersession state.
+- [ ] Requirement or Modeling provenance preserves the confirmed source, authority, scope, and applicable supersession state.
 - [ ] Standalone modeling created no unnecessary PRD; confirmed gaps use one admitted dossier and remain explicit until implementation proof closes them.
 - [ ] Business-owner routing and affected consumers were synchronized, and implementation alignment was not claimed without code/test/runtime evidence.

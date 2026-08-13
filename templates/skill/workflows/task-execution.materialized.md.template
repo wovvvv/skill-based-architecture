@@ -4,12 +4,31 @@ Use this owner only when the target evidence shows dependent steps, pause/resume
 Task Anchor continuity, decision drift, or re-planning pressure shared by more
 than one admitted procedure.
 
+## Requirement And Binding Order
+
+For a request that adds or changes user-visible behavior, a business flow/state,
+or an external contract:
+
+1. Reach `requirement-ready`. A clear Requirement needs no ceremonial
+   confirmation. If a user-owned goal, scope, model/flow, rule/constraint,
+   permission, preservation, or acceptance choice remains, state the current
+   understanding and real risk/conflict, ask only the minimum normative
+   question, and stop before planning or mutation.
+2. Project only Goal, Done When, and material Boundaries into the Task Anchor.
+3. Prove the canonical owner, Current behavior, Current -> Target, affected
+   path, and material technical risks from project evidence until
+   `implementation-ready`. Do not ask the user for discoverable code facts.
+4. Only after `implementation-ready`, derive the Native Plan and permit
+   mutation/proof. The Requirement owns acceptance; tests and runtime/browser or
+   human checks are proof choices, not sources of desired meaning.
+
 ## Before Each Main Step
 
 1. Re-state the current Goal, remaining Done When evidence, and relevant boundary.
 2. Read only the evidence that can resolve the next step.
-3. Make one risk-sized action; if evidence changes the premise, pause and update
-   the Anchor/Plan before continuing.
+3. Make one risk-sized action only when the contract is implementation-ready;
+   if evidence changes desired meaning, return to Requirement Definition, and if
+   it changes technical ownership, rebind before updating the Plan.
 
 ## Recovery
 

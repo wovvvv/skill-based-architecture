@@ -1,18 +1,21 @@
 # Task Execution Protocol
 
-Use this after matching the task route when the task is not one clear action with one direct check. It controls this task's continuity; the matched Domain Workflow remains authoritative for task-specific procedure and mandatory gates. Classify by whether an explicit goal changes execution, not by tool-call or file count.
+Use this after matching the task route when continuity is needed or the request adds or changes user-visible behavior, a business flow/state, or an external contract. The matched Domain Workflow remains authoritative for task-specific procedure and mandatory gates. Classify by whether an explicit goal or requirement changes execution, not by tool-call, file, estimate, or elapsed-time count.
 
 ## Task Classifier
 
 | Class | Signal | Action |
 |---|---|---|
-| Simple | one clear action, one direct check, little room to drift | execute directly; do not display an Anchor or Plan |
-| Managed | dependent steps, meaningful boundaries, repeated verification, or material drift risk | establish a Task Anchor, use a concise Native Plan, and present only useful alignment |
-| Design | unresolved product/architecture choice, materially different interpretations, or irreversible decision | use `plan-feature.md`; after approval, convert its result into a Managed task |
+| Simple | one clear read-only or fixed-contract maintenance action, one direct check, no new desired behavior/contract, little room to drift | execute directly; do not display an Anchor or Plan |
+| Managed | a `requirement-ready` addition/change to user-visible behavior, business flow/state, or external contract; or dependent steps, meaningful boundaries, repeated verification, or material drift risk | establish a Task Anchor; after `implementation-ready`, use a concise Native Plan and present only useful alignment |
+| Requirement | unresolved desired goal, scope, model/flow, rule/constraint, permission, preservation, or acceptance | use `define-requirement.md`; do not create an implementation Plan |
+| Design | a technical architecture choice between implementations that preserve a ready Requirement | use `plan-feature.md`; after `implementation-ready`, convert its result into a Managed task |
+
+Apparent code locality never makes requirement-bearing work Simple. If a legitimate Simple task exposes new desired behavior, diagnosis or repeated repair, dependent owners, contract fan-out, or material drift risk, reclassify before more mutation, preserve current evidence, and build only the remaining Native Plan rather than asking the user to restate the task.
 
 ## Evidence and Knowledge Gate
 
-- Start with the selected workflow and the smallest source/runtime slice that can resolve the current decision. When desired meaning is not implementation-ready, let [`change-contract.md`](../protocol-blocks/change-contract.md) bind it; when only technical ownership is unresolved, consume [`source-localization.md`](../protocol-blocks/source-localization.md). Clear tasks keep the direct fast path. Expand one target at a time only when ownership is unclear, evidence conflicts, a contract/generated/shared boundary is crossed, a routed file names a needed leaf, or the current premise fails.
+- Start with the selected workflow and the smallest source/runtime slice that can resolve the current decision. Requirement-bearing changes always evaluate [`change-contract.md`](../protocol-blocks/change-contract.md); clear input may satisfy `requirement-ready` immediately without questions, while a normative gap enters [`define-requirement.md`](define-requirement.md). After readiness, create the Task Anchor projection, then consume [`source-localization.md`](../protocol-blocks/source-localization.md) for technical ownership and complete Implementation Binding. Fixed-contract Simple tasks keep the direct fast path. Expand one target at a time only when ownership is unclear, evidence conflicts, a contract/generated/shared boundary is crossed, a routed file names a needed leaf, or the current premise fails.
 - Do not read `domain-routing.yaml` at task startup. Read it immediately after workflow selection only for an explicit business-rule request or a governing Plan that already declares the applicable business-domain owner; for ambiguous work, read it only after minimal evidence exposes an unresolved business type/flow/state/boundary/invariant. Read every governing Plan directly through its workflow; a Plan's existence alone is not domain evidence. Keywords identify candidates, not activation. Clearly technical work skips the manifest.
 - A domain route appends knowledge and never replaces the selected workflow. Load one owner by default; add another only with explicit cross-domain evidence.
 - Treat `subagent-driven.md` as a cross-cutting modifier, never a first-workflow route. Read it only after the primary workflow and Task Anchor expose at least three plausible independent workstreams with useful execution overlap; task size or duration alone does not activate it.
@@ -22,11 +25,23 @@ Use this after matching the task route when the task is not one clear action wit
 
 ## Task Anchor
 
-Before the first Managed execution step, and always before mutation, freeze one risk-sized Done Contract in current-Session state: an observable Goal, Done When evidence, only material Boundaries such as scope, non-goals, preservation, and permission limits, the cheapest fitted validation set, and concrete escalation signals for wider reads or stronger proof. The frozen contract owns read breadth, validation depth, and the stop point. Re-anchor only when the user or evidence changes the frame; update the Task Anchor and remaining Native Plan before more mutation. Derive that Native Plan from the matched Domain Workflow. This is a decision aid, not another persistent artifact.
+After `requirement-ready` and before implementation-binding discovery, freeze one
+risk-sized Task Anchor in current-Session state: project the observable Goal,
+Done When acceptance, and only material Boundaries such as scope, non-goals,
+preservation, and permission limits from the Requirement Contract. Do not copy
+the full Requirement or add implementation steps. The Anchor governs the
+bounded localization/binding work that follows and the eventual stop point.
 
-Before verification begins, bind each material risk to the fitted evidence and its stop/escalation condition; the contract must state what result advances, returns, or widens the check.
+After source localization makes the Change Contract `implementation-ready`,
+derive the Native Plan from the matched Domain Workflow and Implementation
+Plan. The Native Plan owns only implementation/proof steps and live status; it
+cannot infer or edit the Requirement. Before the first mutation, map each
+material acceptance/risk to fitted evidence and its advance, return, stop, and
+escalation conditions. Re-anchor only when the user or evidence changes the
+Requirement frame, then rebind and replace the remaining Native Plan before
+more mutation. Neither Anchor nor Plan is another persistent artifact.
 
-For Design-derived work, retain every governing Plan path and relevant user-confirmed Decision Context. Replay the governing mainline before deriving or changing the Task Anchor; do not lose a rule, boundary, rationale, or acceptance condition. Read only decisions governing the current step; only business-bearing decisions require a routed business rule.
+For Design-derived work, retain every governing Requirement and Plan path. Replay relevant user-confirmed Requirement Decision Context before deriving or changing the Task Anchor, and replay only the Plan's technical decisions needed by the current step. Do not lose a rule, boundary, rationale, acceptance condition, or technical constraint. Only business-bearing decisions require a routed business rule.
 
 ### Composite Plan Handoff
 
@@ -41,7 +56,7 @@ Evaluate **Structured Brief first**. If any Structured condition matches, it win
 - **Structured Brief**: trigger when the task is long, complex, scope-sensitive, confirmation-dependent, or lacks a visible native Plan surface. The first user-facing task-start message MUST begin with separate Goal, Done When, material Boundaries, and Steps sections in the user's language. Steps must be numbered; do not collapse the brief into prose or render empty headings.
 - **Compact Alignment**: only when no Structured condition matches, use one compact natural-language alignment when useful. If the native Plan/Task surface is visible, do not repeat its steps in chat.
 
-Use the harness's native Plan/Task surface or a concise Session checklist for step state. This protocol does not create durable planning files or recover task state across Sessions. Proceed unless a real decision, authority boundary, scope expansion, or shared/irreversible action blocks.
+After `implementation-ready`, use the harness's native Plan/Task surface or a concise Session checklist for step state. Before that state, keep only the current Requirement/Anchor and bounded implementation-binding question; do not disguise discovery as an implementation Plan. This protocol does not create durable planning files or recover task state across Sessions. Proceed unless a real decision, authority boundary, scope expansion, or shared/irreversible action blocks.
 
 ## Workflow Boundary
 
@@ -74,7 +89,7 @@ After evidence proves the root cause, the current repair, and fitted red-to-gree
 3. Mark the step complete only when the resulting evidence satisfies that condition and either changes the next decision, is consumed by the next step, or satisfies remaining Done When evidence. Running a command, generating a file, receiving a successful exit code, writing code, spending effort, or a worker's claim is not completion evidence by itself.
 4. If evidence satisfies the condition, advance only after confirming the next step serves the Goal and respects Boundaries. If it contradicts the premise, return to the owning earlier step; if it is inconclusive, keep the step open and change the check or escalate under the declared condition.
 5. If evidence changes the premise, scope, ordering, or Done When, update the Anchor and remaining Plan before more mutation. Tell the user when the Goal itself must change.
-6. Never silently overwrite a load-bearing conclusion. Re-check every governing Plan's user-confirmed mainline, chosen approach, acceptance, Boundaries, and Task Anchor; obtain the business owner's confirmation before adopting a normative business judgment.
+6. Never silently overwrite a load-bearing conclusion. Re-check the governing Requirement mainline, acceptance, Boundaries, Task Anchor, and each Plan's technical choices; obtain the requirement/business owner's confirmation before adopting a normative judgment, and replan technical choices when only implementation evidence changes.
 
 Independent Subagents may work concurrently, but the main task keeps one integration/decision focus. Their outputs are candidate evidence until the main Agent reviews them and runs the owning step's check.
 
@@ -84,7 +99,7 @@ When code, tests, runtime evidence, review, or a proposed implementation conflic
 
 ## New Message Gate
 
-For each later user message: a refinement/correction updates the current Anchor and remaining Plan; a new independent outcome re-matches the route and replaces them; a status question reports Goal/current step/verified results without changing state; pause/stop leaves unverified steps incomplete. When the update records or summarizes user meaning, preserve the source before changing runtime state: already-clear wording stays verbatim, optional grammar/word-order cleanup cannot delete a clause or change its force, ownership, timing, uncertainty, reason, boundary, or status, and an Agent-derived summary cannot be the only normative record. Durable Plan capture follows [`plan-feature.md` § User-Confirmed Decision Mainline](plan-feature.md#user-confirmed-decision-mainline).
+For each later user message: a refinement/correction first updates the Requirement through [`define-requirement.md` § Decision Authority And Source Fidelity](define-requirement.md#decision-authority-and-source-fidelity), then re-projects the Anchor, rebinds implementation facts, and replaces the remaining Plan as needed; a new independent outcome re-matches the route and replaces them; a status question reports Goal/current step/verified results without changing state; pause/stop leaves unverified steps incomplete. Already-clear wording stays verbatim, optional grammar/word-order cleanup cannot delete a clause or change its force, ownership, timing, uncertainty, reason, boundary, or status, and an Agent-derived summary cannot be the only normative record.
 
 ## Exit To Closure
 

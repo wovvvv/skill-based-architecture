@@ -29,4 +29,4 @@ Establish current implementation facts from code, tests, configuration, contract
 - User-as-index: asking which file or module before checking the repository's source of truth.
 - Speculative plan: proposing phases or target architecture before the outcome and constraints are evidenced.
 - Hidden assumption: mutating on an unresolved product preference instead of requesting the minimum clarification.
-- Owner inversion: redefining Semantic Intent or source-localization stages here instead of consuming their blocker and returning one minimum question.
+- Owner inversion: redefining the Requirement Contract or source-localization stages here instead of consuming their blocker and returning one minimum question.

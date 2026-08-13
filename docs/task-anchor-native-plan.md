@@ -2,7 +2,7 @@
 
 ## 一句话介绍
 
-Task Anchor 是 skill-based architecture 中面向任务执行的一层轻量协议：每当 Session 中开始一个新的非简单任务，Agent 先明确本次任务的目标和完成标准，再使用当前工具原生的 Plan 能力拆解、推进和验证步骤，从而避免执行过程中偏离用户最初的目标。
+Task Anchor 是 skill-based architecture 中面向任务执行的一层轻量协议：每当 Session 中开始一个新的非简单任务，或请求新增/改变用户可见行为、业务流程/状态或外部契约时，Agent 先闭合需求，把确认后的 Goal、Done When 和必要 Boundaries 投影进 Anchor；再从代码中证明当前 owner、Current -> Target 和影响边界，达到 `implementation-ready` 后，才使用当前工具原生的 Plan 能力拆解、推进和验证步骤。
 
 它仍然属于 Skill 的行为约定，不是新的任务管理系统，也不替代项目已有的 Workflow。
 
@@ -63,7 +63,7 @@ Done When
 - 相关测试通过
 ```
 
-Goal 在任务执行期间应当相对稳定；Plan 可以根据新证据调整，但不能在没有说明的情况下偷偷改变 Goal。
+Requirement Definition 负责目标、规范性范围、会改变结果的模型与具体流程、规则/约束、保留行为、边界与可验证验收；Task Anchor 只把它投影为当前 Session 的 Goal / Done When / Boundaries。代码和运行证据随后负责证明 Current 行为、owner、Current -> Target、可行性与风险。Goal 在任务执行期间应当相对稳定；Plan 可以根据技术证据调整 owner、顺序、风险和证明方式，但不能在没有回到 Requirement Definition 的情况下改变 desired meaning，也不能用已有步骤或测试反向定义需求。
 
 这三个字段定义的是 Agent 在当前 Session 中必须维护的任务状态，不等于每次都要把同一套标签原样贴进对话。Task Anchor 是否建立，与它如何对用户展示，是两个独立问题。
 
@@ -86,22 +86,29 @@ Goal 在任务执行期间应当相对稳定；Plan 可以根据新证据调整�
 flowchart LR
     A["用户发起新任务"] --> B["Route 匹配"]
     B --> C["选择 Domain Workflow"]
-    A --> D["建立 Task Anchor"]
-    C --> E["实例化本次 Native Plan"]
-    D --> E
-    E --> F["执行当前步骤"]
-    F --> G["验证步骤证据"]
-    G -->|未通过| F
-    G -->|前提变化| H["更新后续 Plan"]
-    H --> F
-    G -->|全部完成| I["Task Closure"]
+    A --> D["Requirement Definition"]
+    D -->|requirement-ready| E["建立 Task Anchor"]
+    C --> F["Source Localization"]
+    E --> F
+    F --> G["Implementation Binding"]
+    G -->|implementation-ready| H["实例化本次 Native Plan"]
+    C --> H
+    H --> I["执行当前步骤"]
+    I --> J["验证步骤证据"]
+    J -->|未通过| I
+    J -->|技术前提变化| K["重新绑定并更新 Plan"]
+    K --> I
+    J -->|需求含义变化| D
+    J -->|全部完成| L["Task Closure 对照 Requirement 验收"]
 ```
 
 可以把 Workflow 和 Native Plan 理解为“模板”和“实例”的关系：
 
 ```text
+Requirement = 本次任务要达成的目标、规则与验收
+Task Anchor = Requirement 在当前 Session 的 Goal / Done When / Boundaries 投影
 Workflow = 某类任务的长期执行模板
-Native Plan = Workflow 针对本次具体任务生成的执行实例
+Native Plan = ready Requirement + proven binding + Workflow 针对本次任务生成的实现实例
 ```
 
 例如，`fix-bug` Workflow 可能规定：
@@ -135,13 +142,16 @@ Task Anchor 不应该给简单任务增加仪式成本。Agent 根据任务是�
 
 | 任务类型 | 典型信号 | 用户体验 |
 |---|---|---|
-| Simple | 一个明确动作、一个直接检查、几乎没有跑偏空间 | 不展示 Task Anchor 和 Plan，直接执行 |
-| Managed | 多个依赖步骤、明确限制、多轮验证或存在跑偏风险 | 建立 Task Anchor；默认自然语言对齐，按风险决定是否展示完整简报 |
-| Design | 目标、方案或架构存在关键歧义，或涉及不可逆决策 | 先讨论并确认设计，再形成执行计划 |
+| Simple | 一个明确的只读或恢复既定契约的维护动作、一个直接检查、不产生新的目标行为，几乎没有跑偏空间 | 不展示 Task Anchor 和 Plan，直接执行 |
+| Managed | 需求已就绪的用户可见行为/业务流程状态/外部契约新增或改变，或多个依赖步骤、明确限制、多轮验证、存在跑偏风险 | 建立 Task Anchor 和简洁 Native Plan；默认自然语言对齐，按风险决定是否展示完整简报 |
+| Requirement | 目标、范围、模型/流程、规则或验收存在规范性歧义 | 先展示当前理解、真实风险/冲突和最少问题；不写实现 Plan |
+| Design | 需求已确认，但实现架构存在关键技术选择或不可逆决策 | 基于 Current 证据比较保持同一需求的技术方案，再形成执行计划 |
 
-不使用“调用了多少次工具”“修改了多少个文件”作为机械阈值。真正的判断标准是：
+不使用“调用了多少次工具”“修改了多少个文件”“预计花多久”或“看起来是不是局部”作为机械阈值。清晰的一句话可以让需求直接就绪、无需追问，但只要它在定义新的用户可见行为、业务流程/状态或外部契约，就仍然至少属于 Managed；在 Current owner 和 Current -> Target 绑定完成后需要 Native Plan。真正的判断标准是：
 
 > 这个任务是否需要持续记住一个明确目标，才能避免执行过程中偏航？
+
+如果一个原本合理的 Simple 维护动作在调查中暴露了新目标行为、诊断/重复修复、多个依赖 owner、契约扩散或显著跑偏风险，Agent 应保留已经获得的证据，当场补建 Task Anchor 和剩余 Native Plan；用户不需要重新解释主线。
 
 ---
 
@@ -331,8 +341,9 @@ New Task
 各层职责保持单一：
 
 - Route 选择任务类型。
+- Requirement 定义目标和验收契约。
 - Task Anchor 固定当前目标和完成标准。
-- Native Plan 管理本次执行步骤和状态。
+- Native Plan 管理达成需求的本次执行步骤和状态；它是手段，不是需求 owner。
 - Domain Workflow 提供领域方法、强制门和检查要求。
 - Task Closure 判断目标是否完成并处理知识回流。
 

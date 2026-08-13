@@ -42,13 +42,20 @@ tasks:
       - rename X across the codebase
       - extract this interface, update all implementers
       - 这个 API 签名改了,所有 caller 也改一下
+  - id: define-requirement
+    labels: { en: Define or clarify desired behavior, zh: 定义 / 澄清需求与目标行为 }
+    workflow: workflows/define-requirement.md
+    trigger_examples:
+      - 先讨论需求,不要写 Plan 或代码
+      - 先帮我把这个需求问清楚
+      - brainstorm the desired behavior before planning
   - id: plan-feature
-    labels: { en: Plan a feature or design decision, zh: 规划功能 / 设计决策 }
+    labels: { en: Plan implementation for a confirmed requirement, zh: 基于已确认需求制定实现计划 }
     workflow: workflows/plan-feature.md
     trigger_examples:
-      - 先帮我把这个需求问清楚
-      - 这个功能比较大,先规划一下
-      - plan this feature before coding
+      - 需求已经确认,制定实现 Plan
+      - 基于这个需求规划怎么改代码
+      - plan the implementation for this confirmed requirement
   - id: profile-project
     labels: { en: Profile / refresh project understanding, zh: 梳理 / 刷新项目理解 }
     workflow: workflows/profile-project.md

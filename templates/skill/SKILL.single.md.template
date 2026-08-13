@@ -30,6 +30,13 @@ primary: true
      direct verification. Keep one unambiguous fallback for other requests. -->
 - Main task: inspect the smallest relevant project evidence, make the change,
   and run the repository-owned check before reporting completion.
+- Requirement-bearing change: first make goal, scope/preservation,
+  decision-bearing flow/rules, and observable acceptance concrete. If
+  incomplete, state the current understanding and real conflict and ask only
+  the minimum normative question. Once ready, project Goal/Done
+  When/Boundaries, prove the current owner and Current -> Target, and only then
+  derive a concise implementation Plan before mutation. Create no second
+  planning record or default Requirement file.
 - Other: identify the nearest applicable rule, make the smallest safe change,
   and state what remains unverified.
 

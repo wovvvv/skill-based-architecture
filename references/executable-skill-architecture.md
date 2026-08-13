@@ -19,9 +19,35 @@ step, and how much freedom can the agent safely have?
 | Medium | A preferred command or check exists, but parameters vary by task | Workflow prose plus inline shell or a small validator |
 | Low | Fragile sequence; fixed format/API; side effects; repeated exact logic | Script/CLI-first; consider this executable shape |
 
-Low freedom is only a pressure signal. It does not override the "at least two
-pressures" gate below; do not promote a skill just because a script would look
+Low freedom is only one half of an operation-level downshift and one signal for
+whole-Skill promotion. It never justifies a script because the result would look
 tidy.
+
+## Operation-Level Deterministic Downshift
+
+The Agent owns the goal, desired meaning, semantic parameters, target selection,
+authorization, alternative generation, exception interpretation, and escalation.
+A deterministic carrier owns only declared inputs, exact execution, stable
+outputs/errors, and idempotency behavior.
+
+Move one operation into a structured API, existing CLI, existing script, or a
+new minimal script only when both conditions hold:
+
+1. **Low freedom:** correctness depends on precision rather than open-ended
+   judgment, such as exact counting, structured parsing, repeatable transforms,
+   batch operations, idempotent replay, or fragile command assembly.
+2. **Real pressure:** the operation has repeated or carries demonstrated high
+   error pressure. A one-off, low-risk action with a direct cheap check stays on
+   the Agent path even when scripting is possible.
+
+Prefer the lightest existing carrier in that order. A new script is the last
+choice, not the definition of rigor. Exploration, diagnosis, product trade-offs,
+and semantic parameter choice remain outside the carrier. If new evidence
+invalidates an input premise, stable schema, target, authority, or expected
+result, return control to Agent judgment; do not hide the change behind blind
+retry or a hard-coded product choice. Downshifting one operation does not by
+itself promote the whole Skill to Executable shape, and no carrier expands the
+current task's operation or delivery authority.
 
 ## When To Use
 
@@ -88,6 +114,34 @@ Executable skills need contracts earlier than rule-only skills:
 - Every local config value has a source order and a safe missing-value behavior.
 - Every large or noisy external response has a way to inspect targeted fields
   without loading the whole payload into context.
+
+## Re-Readable Execution Evidence
+
+For a simple synchronous command, stdout and exit status may be sufficient when
+the command's own contract directly proves the requested result. When execution
+is long-running, asynchronous, backgrounded, noisy, terminal-truncated, or only
+submits work for later completion, the workflow must name an authoritative
+evidence source that can be read again. It may be a job/status API, test report,
+manifest, generated artifact, deployed runtime, schema/data readback, or another
+domain-owned state; it is not required to be a file.
+
+Before accepting the readback, verify every applicable dimension:
+
+1. **Execution identity:** this run, job, commit, input set, and requested target.
+2. **Authority and provenance:** the system/artifact that owns the claimed result,
+   not a precursor or copied summary.
+3. **Freshness:** produced or read after the final relevant input and not merely
+   an old success observed by a new command.
+4. **Completeness and semantic validity:** required content is present,
+   parseable, and satisfies the stable output contract.
+5. **Requested terminal state:** the user's outcome, not only accepted, queued,
+   started, pushed, uploaded, or another intermediate state.
+
+File existence, stdout text, and zero exit status remain useful signals, but no
+one of them is a universal success oracle. A stale, malformed, partial,
+unrelated, wrong-run, or non-terminal result keeps the step open. If no
+authoritative readback can prove the outcome, report `no verdict` or the exact
+unproven boundary instead of manufacturing completion.
 
 ## What Not To Promote
 

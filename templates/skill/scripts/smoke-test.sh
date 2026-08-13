@@ -913,6 +913,11 @@ project_root = Path(sys.argv[3]).resolve()
 workspace_root = Path(sys.argv[4]).resolve() if sys.argv[4] else project_root
 file_list = Path(sys.argv[5])
 self_hosting_root = sys.argv[6] == "1"
+skill_registry_root = (
+    skill_root.parent.parent
+    if skill_root.parent.name == "skills"
+    else project_root
+)
 files = sorted({
     Path(os.fsdecode(value)).resolve()
     for value in file_list.read_bytes().split(b"\0")
@@ -1124,8 +1129,8 @@ def resolve(src: Path, raw: str, markdown_link: bool) -> tuple[Path | None, str,
     else:
         plain = path_text.lstrip("./")
         if plain.startswith("skills/") and under(src, skill_root):
-            base = project_root
-            boundary = project_root
+            base = skill_registry_root
+            boundary = skill_registry_root
         elif plain.startswith(harness_prefixes):
             base = workspace_root
             boundary = workspace_root

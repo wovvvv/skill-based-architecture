@@ -421,20 +421,29 @@ For every new task:
 new_task_trigger = (
     "- **New task in same session** → always re-match the route from canonical "
     "`routing.yaml`. After a route change, read the new workflow; after compaction, "
-    "recover only the current workflow and decision-relevant evidence. Then execute "
-    "one clear action/check directly."
+    "recover only the current workflow and decision-relevant evidence. Only one clear "
+    "read-only or fixed-contract maintenance action/check with no new desired behavior "
+    "executes directly."
 )
 if execution_owner.exists():
     new_task_trigger += (
-        f" Otherwise follow `skills/{name}/workflows/task-execution.md` to establish "
-        "a Task Anchor, present only useful alignment, use the harness-native Plan "
-        "without repeating visible steps in chat, and run its compact Anchor Checkpoint "
+        " A request that adds or changes user-visible behavior, a business flow/state, "
+        f"or an external contract follows `skills/{name}/workflows/task-execution.md`, "
+        "first reaches requirement-ready; if desired meaning is incomplete, it returns "
+        "current understanding, real risk/conflict, and the minimum normative question "
+        "without an implementation Plan. It then establishes a Task Anchor, proves the "
+        "current owner and Current -> Target until implementation-ready, and only afterward "
+        "derives a concise harness-native Plan before mutation. Present only useful alignment, "
+        "do not repeat visible steps in chat, and run the compact Anchor Checkpoint "
         "before each main step."
     )
 else:
     new_task_trigger += (
-        " For larger work, keep the current goal and remaining verification state in "
-        "the harness-native Plan without creating a second planning record."
+        " A request that adds or changes user-visible behavior, a business flow/state, "
+        "or an external contract first makes the goal, scope/preservation, decision-bearing "
+        "flow/rules, and observable acceptance concrete. If incomplete, ask only the minimum "
+        "normative question; once ready, prove Current -> Target before deriving a concise "
+        "implementation Plan and create no second planning record."
     )
 new_task_trigger += (
     " This is Session recitation, not planning-file persistence. Can't tell if context "

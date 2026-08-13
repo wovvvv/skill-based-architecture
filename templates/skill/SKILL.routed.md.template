@@ -28,6 +28,15 @@ trigger examples, and intent, then follows only that route's workflow. Do not
 preload unrelated rules. After interruption or compaction, recover the current
 workflow and decision-relevant evidence before acting.
 
+Only one clear read-only or fixed-contract maintenance action/check with no new
+desired behavior executes directly. A request that adds or changes user-visible
+behavior, a business flow/state, or an external contract first reaches
+`requirement-ready`, projects Goal/Done When/Boundaries into a Task Anchor,
+proves the implementation owner and Current -> Target until
+`implementation-ready`, and only then uses a concise Native Plan before
+mutation. An incomplete Requirement returns understanding, real risk/conflict,
+and one minimum normative question rather than an implementation Plan.
+
 </always-applicable>
 
 <task-routing>

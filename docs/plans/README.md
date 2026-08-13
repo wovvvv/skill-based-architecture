@@ -1,10 +1,24 @@
-# Plan Decision Records And Archive
+# Implementation Plan Records And Archive
 
-Plans are current requirement/design and implementation-review contracts while `draft` or `executing`, then frozen snapshots after `done` or `abandoned`. They are not default task knowledge and are not full conversation transcripts.
+Plans are implementation-design and implementation-review contracts while
+`draft` or `executing`, then frozen snapshots after `done` or `abandoned`. They
+consume a `requirement-ready` source; they do not own, complete, narrow, or
+rewrite its goal, scope, model/flow, rules, constraints, preservation,
+permissions, or acceptance. They are not default task knowledge and are not
+full conversation transcripts.
 
 ## When A Plan File Exists
 
-Planning starts in the conversation plus the harness-native Plan. Complexity changes analysis depth, not materialization timing. Create a durable Plan only after [`plan-feature.md` § Artifact Pressure Gate](../../templates/skill/workflows/plan-feature.md#artifact-pressure-gate) admits it: the user explicitly requests an artifact, a load-bearing decision needs persistence/handoff, an independent consumer/reviewer/validator/lifecycle exists, a cross-module conflict needs one reconciled owner, or an integrated surface has become harder to use than an extracted owner.
+Requirement-bearing work first closes the desired outcome, authoritative scope,
+preserved behavior, decision-bearing model/flow/rules, boundaries, and
+observable acceptance through Requirement Definition. It then projects Goal,
+Done When, and material Boundaries into a Task Anchor and proves the current
+owner, Current -> Target, affected paths, and high-cost boundaries until
+`implementation-ready`. Only then may a Plan derive technical means and proof
+steps. Clear wording can reach requirement readiness without questions, but
+apparent implementation locality cannot skip this order.
+
+Durable planning starts only after that requirement formation. Complexity changes analysis depth, not materialization timing. Create a Plan file only after [`plan-feature.md` § Artifact Pressure Gate](../../templates/skill/workflows/plan-feature.md#artifact-pressure-gate) admits it: the user explicitly requests an artifact, a load-bearing decision needs persistence/handoff, an independent consumer/reviewer/validator/lifecycle exists, a cross-module conflict needs one reconciled owner, or an integrated surface has become harder to use than an extracted owner.
 
 A concrete problem or Complex/Large label does not automatically create a file. Create the smallest current carrier; every later sibling must pass the same gate independently.
 
@@ -20,7 +34,7 @@ Use a directory when the durable object is a named dossier, must collect multipl
 
 ```text
 docs/plans/YYYY-MM-DD-<slug>/
-├── prd.md          # requirement/decision synthesis and links
+├── prd.md          # implementation design entry + Requirement provenance
 └── <name>.<ext>    # only the independently consumed design/evidence/SQL surface
 ```
 
@@ -47,14 +61,23 @@ A durable Integrating Plan always uses a dossier with `prd.md` as its entry. It 
 
 Use [`_TEMPLATE.md`](_TEMPLATE.md) only after materialization is admitted. A useful Plan lets an implementer and reviewer reconstruct:
 
-- the concrete problem, scope, current owner/flow/state, and desired outcome;
-- current user-confirmed decisions with compact `Decision Context` when authority matters;
-- observable requirements and acceptance;
+- the governing Requirement source, authority, read-only target projection, and supersession state without redefining it;
+- current implementation facts, owner/flow/state, Current -> Target binding, and affected technical boundaries;
+- implementation decisions and genuine technical alternatives with their evidence;
 - Current -> Target design, semantic impact, activated risks, recovery, and proof when evidence makes them relevant;
+- the mapping from each Requirement acceptance criterion to its fitted proof;
 - executable `Files / Consumes / Produces / Acceptance` interfaces only after decomposition is stable;
-- genuine unresolved decisions, with resolved questions removed.
+- genuine unresolved technical decisions, with resolved questions removed.
 
-Headings are not the completeness unit. Add only warranted sections in a natural order. Alternatives appear only when genuinely different viable shapes or a load-bearing rejection exists. A created file, filled section list, long transcript, placeholder Task Breakdown, or successful command is not Plan readiness.
+Headings are not the completeness unit. The Requirement and its acceptance
+govern every later design and Task Interface; Plan steps and test code cannot
+backfill, narrow, or invent the target. A normative question that can change
+goal, scope, model/flow, rules, constraints, preservation, permission, or
+acceptance returns to Requirement Definition. Add only warranted sections in a
+natural order. Alternatives appear only when genuinely different technical
+shapes preserve the same Requirement. A created file, filled section list, long
+transcript, placeholder Task Breakdown, or successful command is not Plan
+readiness.
 
 ## Database-Structure Changes
 
@@ -78,9 +101,9 @@ no artifact -> draft -> executing -> final reconciliation -> done -> frozen
                          -> abandoned -> frozen, no distillation
 ```
 
-- **draft**: active design. Confirmed decisions are superseded explicitly, not silently rewritten.
-- **executing**: implementation is consuming the current mainline. At handoff, distill stable business-bearing meaning into its routed owner, initialize truthful `distilled_to:`, and pass the Plan path plus relevant decisions to Task Execution. Purely technical Plans create no business leaf.
-- **done**: delivery landed. Before changing status, reconcile later Decision Deltas, implementation evidence, activated destinations, and final `distilled_to:` targets.
+- **draft**: active implementation design consuming one named governing Requirement. Technical decisions may change; normative changes return to the Requirement owner.
+- **executing**: implementation is consuming the current Requirement mainline and Plan design. At handoff, distill stable business-bearing meaning through its Requirement-owned route, initialize truthful `distilled_to:`, and pass the Requirement plus Plan paths to Task Execution. Purely technical Plans create no business leaf.
+- **done**: delivery landed. Before changing status, reconcile later Requirement Decision Deltas, implementation evidence, activated destinations, and final `distilled_to:` targets.
 - **abandoned**: explain why in one short section. Do not distill an unchosen direction.
 
 For an Integrating Plan, final reconciliation reads every `consumes` owner directly, completes each affected Component's own reconciliation, then proves the cross-Plan contract and requested delivery. A required Component that is missing, abandoned, unresolved, still `draft`/`executing`, or replaced by an unconsumed successor blocks Integrating `done`.
@@ -120,7 +143,7 @@ Move only surviving, future-binding meaning into active owners:
 
 | Conclusion | Active owner |
 |---|---|
-| Stable user-confirmed business type/flow/state/boundary/invariant/reason | routed `references/business/<domain>.md` as desired business truth with Plan provenance |
+| Stable user-confirmed business type/flow/state/boundary/invariant/reason | routed `references/business/<domain>.md` as desired business truth with Requirement provenance |
 | Future task constraint | the routed `rules/` owner |
 | Costly repeatable failed approach | `references/gotchas.md` or routed domain pitfall owner |
 | Pure history and rationale for this delivery | frozen Plan only |

@@ -6,8 +6,8 @@ Copy this file to `workflows/profile-business-model.md`, adapt the paths, and ad
 
 | State | Action |
 |---|---|
-| No model, the gap affects the task, and no confirmed Plan owns stable business meaning | Explain what macro meaning is missing; ask whether to model now or continue without persistence |
-| Confirmed Plan reaches implementation handoff with stable business meaning but no model | Create the minimum routed owner; record desired truth and Plan provenance because handoff admission already passed |
+| No model, the gap affects the task, and no confirmed Requirement owns stable business meaning | Explain what macro meaning is missing; ask whether to model now or continue without persistence |
+| Confirmed Requirement reaches implementation handoff with stable business meaning but no model | Create the minimum routed owner; record desired truth and Requirement provenance because handoff admission already passed |
 | Existing model is locally unclear | Inspect code/tests; ask only the missing business question; update the file in place |
 | Newly confirmed desired truth is demonstrably unmet by current implementation | Write truth and gap into the leaf; create or reuse one draft gap dossier, continue the agreed modeling scope, then hand the complete gap set to Plan Feature |
 | Existing model conflicts with code/tests/runtime and has clear user-confirmed provenance | Treat the model as desired truth; route an implementation bug or [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate). Do not ask code and the confirmed model to compete for authority |
@@ -18,9 +18,9 @@ Copy this file to `workflows/profile-business-model.md`, adapt the paths, and ad
 
 ## User-Confirmed Input
 
-When this workflow asks a missing product/business question, first execute [`ambiguous-request-gate.md` § Implementation-Fact Question Gate](../protocol-blocks/ambiguous-request-gate.md#implementation-fact-question-gate), then use [`plan-feature.md` § Question Gate](plan-feature.md#question-gate). Close every decision-relevant trigger/entry, caller, write target or target branch/state, ordering/progression, guard/protection/failure, and UI/API ownership hop; trace distinct flows independently. Cross-check that evidence with existing user-confirmed answers. When they align and no decision-relevant normative ambiguity remains, accept the point and do not ask again. Never ask the user to choose an interface, branch, write target, protection rule, call order, or other current implementation fact. If the user says the answer is in code, stop the question, finish the trace, and state the implementation conclusion directly.
+When this workflow asks a missing product/business question, first execute [`ambiguous-request-gate.md` § Implementation-Fact Question Gate](../protocol-blocks/ambiguous-request-gate.md#implementation-fact-question-gate) and consume [`source-localization.md`](../protocol-blocks/source-localization.md) for every unresolved Current owner/path/flow fact. Close every decision-relevant trigger/entry, caller, write target or target branch/state, ordering/progression, guard/protection/failure, and UI/API ownership hop; trace distinct flows independently. Cross-check that evidence with existing user-confirmed answers. When they align and no decision-relevant normative ambiguity remains, accept the point and do not ask again. Only a remaining desired-meaning choice enters [`define-requirement.md`](define-requirement.md). Never ask the user to choose an interface, branch, write target, protection rule, call order, or other current implementation fact. If the user says the answer is in code, stop the question, finish the trace, and state the implementation conclusion directly.
 
-Ask only an unresolved normative ambiguity that could change the current decision, and ask the user to correct or complete the working conclusion rather than define an abstract concept from scratch. The user's clear direct answer, selection, rejection, or correction is the highest-authority input for that normative meaning. Standalone modeling writes stable, cross-implementation meaning directly into the routed leaf with conditions, reasons, boundaries/counterexamples, and compact Modeling Provenance when useful; it does not create a PRD or copy the transcript. If a feature/design Plan already exists, preserve the answer in its Decision Context. If the answer qualifies as a confirmed implementation gap, create or reuse the single draft gap dossier described below. Do not ask the user to reconfirm a clear answer.
+Ask only an unresolved normative ambiguity that could change the current decision, and ask the user to correct or complete the working conclusion rather than define an abstract concept from scratch. The user's clear direct answer, selection, rejection, or correction is the highest-authority input for that normative meaning. Preserve it through the Requirement Decision Delta owned by Requirement Definition and the runtime Requirement Contract; an existing Plan only consumes its provenance. Standalone modeling writes stable, cross-implementation meaning directly into the routed leaf with conditions, reasons, boundaries/counterexamples, and compact Modeling Provenance when useful; it does not create a PRD or copy the transcript. If the answer qualifies as a confirmed implementation gap, create or reuse the single draft gap dossier described below. Do not ask the user to reconfirm a clear answer.
 
 The answer defines `desired business truth`; code/tests/runtime prove `current implementation fact`. Current implementation may expose a gap but cannot silently overwrite the confirmed meaning.
 
@@ -41,7 +41,7 @@ When profiling a new product project:
 4. **Remove volatile detail** — drop classes, methods, endpoints, fields, config keys, UI behavior, one bug narrative, and one requirement's temporary decisions.
 5. **Draft evidence states** — separate `current implementation fact`, inferred meaning, user-confirmed `desired business truth`, and unknowns.
 6. **Brainstorm with the user** — first complete each relevant implementation flow separately through the Implementation-Fact Question Gate. State interfaces, write targets, branches/states, protection rules, call order, and progression directly; cross-check them against existing user-confirmed answers and accept aligned points without another question. Ask only unresolved normative ambiguity that could change the current decision, anchored in the Agent's working conclusion. Never turn modeling into an exhaustive questionnaire or a blank abstract-definition exercise.
-7. **Persist by task type** — use [`workflows/rule-update/business-truth.md`](rule-update/business-truth.md) directly. Standalone modeling writes stable desired truth into the routed business model with compact Modeling Provenance when useful and no PRD. Existing feature/design work uses its Plan and Requirement Provenance. A confirmed implementation gap writes truth and gap into the leaf immediately and uses the single draft intake below. Never delay the truth until code lands or imply the gap is already implemented.
+7. **Persist by task type** — use [`workflows/rule-update/business-truth.md`](rule-update/business-truth.md) directly. Standalone modeling writes stable desired truth into the routed business model with compact Modeling Provenance when useful and no PRD. Existing feature/design work uses its Requirement Provenance; its Plan consumes that source for implementation. A confirmed implementation gap writes truth and gap into the leaf immediately and uses the single draft intake below. Never delay the truth until code lands or imply the gap is already implemented.
 8. **Write the minimum sufficient file** — start with `references/business/<module>.md`; use only sections the module needs.
 9. **Run semantic read-back** — preserve the load-bearing definition, condition, boundary/counterexample, and reason. A fresh Agent must be able to reconstruct the same key decision.
 10. **Confirm macro meaning** — show the user the final durable meaning when creating the model or changing types, flow direction, states, or invariants.
@@ -51,9 +51,9 @@ When profiling a new product project:
 
 1. Apply the four admission conditions in [`business-global-model.md` § Confirmed implementation gap intake](../../../references/business-global-model.md#confirmed-implementation-gap-intake). If truth is unconfirmed, implementation evidence is missing, the difference is not explicit, or no implementation handoff is needed, keep it in the current conversation and do not create a PRD.
 2. On the first admitted gap, reuse an existing feature/design Plan or create one draft `docs/plans/YYYY-MM-DD-<domain>-implementation-gaps/prd.md`. Reuse it for all later gaps in the same agreed modeling scope; never create one PRD per gap.
-3. For each gap, preserve the user-confirmed Decision Context, `Authority: user-confirmed`, `Evidence / Source: current conversation`, current implementation evidence, explicit difference and impact, unique owner leaf, and Knowledge Impact. Write the confirmed truth and gap into the leaf at once.
+3. For each gap, preserve the user-confirmed Requirement Decision Context, `Authority: user-confirmed`, `Evidence / Source: current conversation`, current implementation evidence, explicit difference and impact, unique owner leaf, and Knowledge Impact. Write the confirmed truth and gap into the leaf at once.
 4. Continue the user's agreed modeling scope. Do not interrupt after each gap to start solution planning.
-5. When the scope is complete, show the deduplicated gap set, shared dependencies/root causes, impact boundaries, and recommended order; then hand the existing draft to [`plan-feature.md` § Modeling Gap Intake Handoff](plan-feature.md#modeling-gap-intake-handoff).
+5. When the scope is complete, show the deduplicated gap set, shared dependencies/root causes, impact boundaries, and recommended order; then hand its confirmed Requirement source and implementation evidence to [`plan-feature.md` § Intake Sequence](plan-feature.md#intake-sequence).
 6. If the user pauses, keep the dossier draft and stop. Do not claim a complete implementation Plan or begin implementation.
 
 ## Progressive Split
@@ -74,7 +74,7 @@ references/business/<module>/
 
 Each leaf owns one business submodule or decision surface. The index must select a leaf from task signals and carry no business body; a passive file list has no activation value. Create `overview.md` only when multiple submodules share domain-wide invariants that must not be duplicated.
 
-## Plan and Fix Bug Handoff
+## Requirement, Plan, and Fix Bug Handoff
 
 For business-sensitive work, compare in order:
 
@@ -82,7 +82,7 @@ For business-sensitive work, compare in order:
 2. architecture/rules/contracts — how design intends to realize it;
 3. code/tests/runtime — what is true now.
 
-Before modifying the Plan, reasoning about code, implementing, or reviewing, replay the relevant user-confirmed Decision Context and the routed model. A conflict invokes [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate); this workflow keeps only the immediate responsibility to pause the affected path and consult the user, not a second copy of the gate.
+Before modifying the Plan, reasoning about code, implementing, or reviewing, replay the relevant user-confirmed Requirement Decision Context and the routed model, then consume the Plan's technical decisions. A conflict with desired meaning invokes [`task-execution.md` § User Decision Drift Gate](task-execution.md#user-decision-drift-gate); this workflow keeps only the immediate responsibility to pause the affected path and consult the user, not a second copy of the gate.
 
 Classify a reported bug before changing code:
 
@@ -100,7 +100,7 @@ Obvious technical failures do not require business modeling unless the correct b
 - [ ] The live model distinguishes desired business truth from current implementation fact and exposes any known gap
 - [ ] Implementation details and one-off requirements were excluded
 - [ ] Nearby Gotchas were reconciled: the leaf owns stable business truth and Gotchas retain only implementation failure experience plus minimal owner links
-- [ ] Clear user answers retain their load-bearing meaning, reason, boundary, authority, and applicable leaf/Plan provenance without redundant reconfirmation
+- [ ] Clear user answers retain their load-bearing meaning, reason, boundary, authority, and applicable leaf/Requirement provenance without redundant reconfirmation
 - [ ] Ordinary standalone modeling created no PRD; confirmed gaps reused or created only one dossier for the agreed scope
 - [ ] Every product/business question followed the Implementation-Fact Question Gate: relevant flows were closed separately and no interface, write target, branch protection, call order, or state progression was presented as a user choice
 - [ ] Implementation evidence and existing user-confirmed answers were cross-checked; aligned or decision-irrelevant points were accepted without another question

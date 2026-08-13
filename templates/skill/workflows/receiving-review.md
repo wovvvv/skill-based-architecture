@@ -4,7 +4,7 @@ Use this when acting on user, reviewer, PR/MR, or agent review feedback. Evaluat
 
 ## Process
 
-1. Read the whole review before acting on any item. For Design-derived work, also read the source Plan's relevant user-confirmed Decision Context before accepting a change; for business-bearing work, read the routed business rule. Purely technical Design-derived work replays the source Plan without requiring a business model.
+1. Read the whole review before acting on any item. For Design-derived work, replay the governing Requirement Decision Context and the source Plan's relevant technical decisions before accepting a change; for business-bearing work, read the routed business rule. Purely technical Design-derived work consumes the Plan without requiring a business model.
 2. Restate each technical claim; clarify genuinely ambiguous feedback before editing.
 3. Verify every claim against current code, behavior, and constraints. Reviewers can be wrong or stale.
 4. Check whether the suggested change is warranted: inspect real usage and reject speculative “proper” implementations.
@@ -17,6 +17,6 @@ Push back when feedback breaks a real case, misses a binding constraint, has no 
 
 - Whole review was read first.
 - Every accepted/rejected item has code or runtime evidence.
-- Relevant user-confirmed Plan decisions were replayed when a source Plan exists; review-driven mainline drift has an explicit user resolution.
+- Relevant Requirement decisions and Plan technical choices were replayed; review-driven normative drift has an explicit user resolution.
 - No praise/apology substituted for verification.
 - Accepted changes were re-verified; rejected changes have concise evidence.

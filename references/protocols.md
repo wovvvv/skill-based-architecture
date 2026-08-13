@@ -22,7 +22,11 @@ independent load, routing, ownership, generation, or lifecycle reason. A simple
 workflow may keep its applicable execution, verification, AAR, and completion
 behavior inline; the catalog is not a universal file checklist.
 
-- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — the optional shared Managed-execution owner: Simple/Managed/Design classification, Task Anchor state with proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
+- [`task-execution.md`](../templates/skill/workflows/task-execution.md) — the optional shared Managed-execution owner: requirement-bearing feature intake, Simple/Managed/Design classification, Task Anchor state derived from `requirement-ready`, proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
+- [`define-requirement.md`](../templates/skill/workflows/define-requirement.md) - the independently selectable Requirement Definition interaction owner: evidence-backed current understanding, clear-requirement zero-question path, minimum normative clarification, requirement brainstorming, and source-faithful Decision Delta capture. It returns `requirement-ready`; it never creates implementation steps or mutates code.
+- [`change-contract.md`](../templates/skill/protocol-blocks/change-contract.md) - the sole runtime owner of Requirement Contract dimensions/authority/readiness and the later Implementation Binding state. It is Session state, not a route or required artifact.
+- [`source-localization.md`](../templates/skill/protocol-blocks/source-localization.md) - the technical-fact owner for Current behavior, canonical owner/change point, affected path, feasibility, cost, and risk. It can falsify a premise but cannot choose desired meaning.
+- [`plan-feature.md`](../templates/skill/workflows/plan-feature.md) - the implementation-design owner. It consumes a ready Requirement, Task Anchor projection, and proven Implementation Binding; it owns technical choices, impact/risk/recovery, acceptance-to-proof mapping, Task Interfaces, and optional durable Plan materialization.
 - [`task-closure.md`](../templates/skill/workflows/task-closure.md) — the optional independent completion owner (verified-failure outcome accounting, Task Closure Protocol, AAR, post-completion workflow proposal, Rationalizations, Red Flags); changing workflows link it only when Closure pressure admits a separate owner.
 - [`update-rules.md`](../templates/skill/workflows/update-rules.md) - compact shared durable-write contract and ambiguous-request dispatcher: input/destination classification, fidelity, reconciliation, activation, placement, synchronization, verification, and unchanged authority.
 - [`rule-update/business-truth.md`](../templates/skill/workflows/rule-update/business-truth.md), [`verified-failure.md`](../templates/skill/workflows/rule-update/verified-failure.md), [`knowledge-reconciliation.md`](../templates/skill/workflows/rule-update/knowledge-reconciliation.md), and [`workflow-distillation.md`](../templates/skill/workflows/rule-update/workflow-distillation.md) - independently loaded execution owners for user-confirmed business meaning, proven engineering prevention, ordinary knowledge correction/retirement, and accepted repeated workflows.
@@ -35,12 +39,20 @@ For a higher-level orientation and the minimal starter scaffold, see [`TEMPLATES
 Canonical source: [`templates/skill/workflows/task-execution.md`](../templates/skill/workflows/task-execution.md).
 
 When both owners are admitted, Task Execution sits after route selection and
-before Task Closure. One clear action with one direct check stays Simple; other
-tasks establish Task Anchor state and use the visible native Plan for step
-display rather than duplicating it in chat. Long, complex, scope-sensitive,
+before Task Closure. Only one clear read-only or fixed-contract maintenance
+action with one direct check and no new desired behavior stays Simple. Any
+request that adds or changes user-visible behavior, a business flow/state, or
+an external contract first reaches `requirement-ready`, then establishes Task
+Anchor state, proves Current -> Target and affected technical boundaries until
+`implementation-ready`, and only then derives a concise native Plan before
+mutation. The Requirement owns desired meaning and acceptance; the Anchor
+projects Goal/Done When/material Boundaries for the Session; the Plan is a
+revisable implementation means and cannot redefine either.
+Long, complex, scope-sensitive,
 confirmation-dependent, or no-native-Plan work escalates presentation while the
 state remains runtime state, not a fixed chat template. Design-derived work
-carries every governing Plan path and relevant user-confirmed Decision Context.
+carries every governing Requirement and Plan path plus relevant user-confirmed
+Requirement Decision Context.
 Composite execution identifies one Integrating owner, checks Component
 interfaces from their owners, and derives exactly one Native Plan/semantic
 `Current Task`; it adds no mirror status or runtime store. Each main step
@@ -135,6 +147,10 @@ Do not maintain a second question list here.
 Canonical semantics: [`templates/skill/workflows/rule-update/verified-failure.md` § Verified Failure Input](../templates/skill/workflows/rule-update/verified-failure.md#verified-failure-input). Task Execution owns the Session-only candidate and proof handoff; Fix Bug triggers the handoff immediately after red-to-green; Verified Failure owns durable meaning and authority; Closure checks that every proven failure has one completed outcome.
 
 Do not persist a raw message or first hypothesis. Once the root cause, repair, fitted proof, and stable future action are proven, write or reconcile that prevention directly in its nearest canonical rule, Gotcha, workflow, reference, or existing executable owner and activate it before the next mistake-prone action. The first proven actionable occurrence does not wait for a second occurrence, ordinary Recording Threshold, or final AAR. A transient failure with no stable future action receives no durable write and creates no candidate ledger, counter, chronology, Memory route, or database.
+
+Judge two independent failure classes. **Activation failure** means applicable prevention is already stored but is not reached or acted on before the protected action. **Learning-closure failure** means the first proven stable prevention is not reconciled into its canonical owner and activated during the current task. Evidence cannot substitute across the boundary: stored or newly written knowledge does not prove earlier activation, while one correct run does not prove durable learning for the next task.
+
+For a stable project tool/runtime/configuration precondition, activation means more than recording compatibility: the applicable testing/build workflow must select the project value and read back the effective environment before its first protected command. An unavailable precondition stops the check; a known-incompatible default or tool-initialization failure is not the intended red/green evidence. Exact versions and selectors remain in the downstream project owner, not this generic contract.
 
 Recurrence identity is the same proven root cause, applicability boundary, and prevention action; retries inside one unresolved task remain one occurrence. On a later independent recurrence, first test whether the prevention was reached and acted on. Repair missing/inert activation before adding prose. Strengthen to a machine gate only under Rule Update's local/reversible/authorized boundary; shared, costly, external, or higher-scope promotion still requires its existing authority.
 

@@ -77,31 +77,33 @@ tasks:
       - 用户说接口报错但没有命中 fix-bug
       - improve trigger_examples coverage
 
-  - id: product-direction
+  - id: define-requirement
     labels:
-      en: Decide SBA product direction or absorb a major capability
-      zh: 判断 SBA 产品方向或重大能力吸收
-    workflow: templates/skill/workflows/plan-feature.md
+      en: Define SBA requirements, product direction, or desired behavior
+      zh: 定义 SBA 需求、产品方向或目标行为
+    workflow: templates/skill/workflows/define-requirement.md
+    note: Read docs/sba-bible.md after workflow selection when the request concerns SBA product direction, capability admission, or constitutional behavior
     trigger_examples:
       - SBA 应该往什么方向发展
       - 讨论 SBA 的发展方向
+      - 先把 SBA 的需求和验收讨论清楚
+      - 只讨论需求,先不要写 Plan 或代码
       - 吸收一个外部项目
       - 增加一个重大机制
       - 这项能力该不该吸收
       - 看一下 SBA 的产品定位
-      - define SBA product direction
+      - define or clarify an SBA requirement
 
   - id: plan-feature
     labels:
-      en: Draft or maintain a plan
-      zh: 编写或维护计划
+      en: Draft or maintain an implementation plan from a confirmed requirement
+      zh: 基于已确认需求编写或维护实现计划
     workflow: templates/skill/workflows/plan-feature.md
     trigger_examples:
-      - 我们规划一下
-      - 制定一个 plan
+      - 需求已经确认,制定实现 plan
+      - 根据已确认需求规划怎么落地
       - 看看之前有没有相关 rules 或 pitfalls
-      - draft a plan
-      - scan related rules and gotchas
+      - draft an implementation plan from this requirement
 
   - id: distill-plan-conclusions
     labels:

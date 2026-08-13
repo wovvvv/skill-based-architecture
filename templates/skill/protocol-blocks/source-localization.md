@@ -8,7 +8,7 @@ Use this after the selected workflow needs a current implementation fact but can
 - Maintain one Session-only runtime map: interpretations, owner region, search root/filters/vocabulary, accepted and rejected evidence, unresolved question, and next action.
 
 ## Adaptive Evidence Funnel
-1. **Interpret** — consume the task outcome or Semantic Intent; keep materially different technical meanings and unknowns without reading source bodies.
+1. **Interpret** — consume the task outcome or ready Requirement Contract; keep materially different technical interpretations and unknowns without reading source bodies.
 2. **Bound the owner region** — use filtered directory/file names and an evidence-selected technical map when available; emit search roots, path/type filters, and query hypotheses.
 3. **Search deterministically** — let `rg` or a repository-native equivalent scan content tool-side; return bounded path/symbol/line candidates plus empty, noisy, truncated, filtered, or error state.
 4. **Trace selected source** — first expose only selected implementation fragments, then follow decision-bearing control/data/state/provenance/generated hops.
@@ -24,6 +24,6 @@ Each stage names its unresolved question, fitted evidence, output consumed next,
 ## Exit, Interface, And Lifetime
 - Consume desired outcome, preserved behavior, authority/exclusions, candidate owner region, search hypotheses, and falsification evidence from the calling workflow or [`change-contract.md`](change-contract.md).
 - Return current implementation facts: proven/unresolved owner, current behavior, change point, activated producer/consumer/state/contract/generated paths, contradictions, and residual technical uncertainty.
-- Source evidence may falsify Semantic Intent but cannot rewrite desired meaning; return semantic contradictions to the caller.
+- Source evidence may falsify a Current premise or expose a Requirement conflict, but it cannot rewrite desired meaning; return Requirement contradictions to the caller.
 - Keep stages internal by default; expose the compact conclusion, a required user decision/authorization checkpoint, or bounded evidence requested for audit.
 - Discard the runtime map after the task. Recover only the current owner hypothesis, search contract, decisive evidence/exclusions, unresolved question, and next action after compaction; ordinary localization creates no repository artifact.

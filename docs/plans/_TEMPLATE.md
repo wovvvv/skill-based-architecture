@@ -17,34 +17,55 @@ status: draft                          # draft | executing | done | abandoned
 
 > Use this template only after `plan-feature.md` § Artifact Pressure Gate admits a durable Plan. Delete instructions and unused optional sections. Do not pre-create sibling files.
 
+> Consume a `requirement-ready` source and proven Implementation Binding before deriving tasks. The Requirement owns desired outcome, authoritative scope, model/flow, rules, preserved behavior, boundaries, and acceptance; this Plan records revisable technical means and must not redefine the target to fit its steps.
+
 <!-- A true subplan is not an independent Plan: place it inside the parent dossier, use only `subplan_of: prd.md` frontmatter, omit independent date/status/distilled_to, and let the parent own lifecycle and Closure. -->
 
-## Problem And Scope
+## Governing Requirement
 
-State the concrete problem, desired outcome, current owner/flow/state, affected scope, and meaningful exclusions. Cite the smallest implementation evidence that changes the design.
+Name the Requirement source, authority, version/supersession state, and a
+source-faithful read-only projection of Goal, acceptance, and material
+Boundaries needed to review this design. Link the owner whenever one exists.
+Do not add or resolve normative meaning here; return any such gap to Requirement
+Definition and update this projection afterward.
+
+## Current Implementation Facts
+
+Record only evidence-backed current owners, flows/states/contracts, Current ->
+Target binding, affected producer/consumer paths, and technical boundaries that
+change the design. Keep desired meaning in the governing Requirement.
 
 <!-- Durable Integrating Plan: use a dossier `prd.md`, list independent Component paths in `consumes`, and synthesize only the common outcome, Component roles, dependency order, composition conflicts, integrated acceptance, authorization/delivery boundary, and final Closure. Do not mirror Component content or status. -->
 
 <!-- Database-structure change: before implementation, separately disclose the affected database object, change, compatibility/backfill, SQL artifact, execution owner, and authorization. Add one natural `.sql` sibling containing authoritative complete target DDL, forward schema/data update SQL, verification SQL, and safe rollback or explicit backup/stop/forward-repair recovery. The SQL artifact never grants DB-write authority. Delete this comment when no database structure changes. -->
 
-## Current Decisions
+## Implementation Decisions
 
-State the chosen current mainline and why. When a user answer carries normative authority, add compact `Decision Context`: trigger/question, faithful answer, `Authority: user-confirmed`, meaning/scope, Agent-derived consequences, and evidence source. Mark replaced decisions `superseded`; do not preserve routine acknowledgements or the investigation transcript.
+State the chosen technical design and why. Include only alternatives that are
+genuinely viable implementations of the same Requirement, plus impact, risk,
+compatibility/recovery, and the evidence that selected one. A choice that would
+change desired behavior, scope, flow meaning, rules, or acceptance is not a Plan decision and must return to Requirement Definition.
 
-## Requirements And Acceptance
+## Requirement Input And Proof Mapping
 
-List observable behavior and the evidence that will prove it. Requirements identify actor/scenario/invariant/boundary; acceptance proves outcomes rather than command execution alone.
+Reference each governing Requirement acceptance criterion without rewriting it,
+then map it to the cheapest truthful proof: red/green automated check, API or
+runtime readback, browser evidence, or human review. Proof code and commands are subordinate to acceptance; if they need an unstated expected result, return that
+question to Requirement Definition.
 
-## Open Questions
+## Technical Open Questions
 
-Keep only unresolved decisions that can change design, acceptance, risk, migration, or ownership. Write `None` when the Plan is ready; remove resolved questions from this section.
+Keep only unresolved implementation questions that preserve the governing
+Requirement but can change design, risk, migration, recovery, ownership, or
+proof implementation. Write `None` when the Plan is ready and remove resolved
+questions. Any question that can change Requirement meaning returns upstream.
 
 <!-- Add only when evidence warrants it; use natural headings, not this comment text. -->
 <!-- Current -> Target Design: owners, models, state/data/contract/lifecycle paths, preserved behavior. -->
 <!-- Change / Impact: semantic readers, writers, callers, copies, merges, deletes, UI/API/ops/tests. -->
 <!-- Risk Scenarios: scenario, invariant, failure, mechanism/boundary, recovery, proof, residual risk. -->
 <!-- Options: genuinely different viable shapes or a load-bearing rejected path only. -->
-<!-- Task Interfaces: for stable dependent tasks, Files / Consumes / Produces / observable Acceptance. -->
+<!-- Task Interfaces: derive only after implementation-ready; for stable dependent tasks, Files / Consumes / Produces / observable Acceptance. -->
 <!-- Synthesis: when independent siblings exist, link them and reconcile conflicts in the entry Plan. -->
 
 <!-- For abandoned Plans, replace the active body with: -->

@@ -35,11 +35,11 @@ Use these labels in the output. Do not blur them together.
 5. **Find recurring work** — identify common task types from scripts, tests, docs, issue language, or user examples. These feed canonical `routing.yaml` task routes, not the frontmatter description.
 6. **Find always-read candidates** — choose only 2-3 files whose rules apply to almost every task. Domain-specific and business-model files stay task-routed.
 7. **Choose structure tier** — classify the documentation shape as Single-file, Folder-light, or Full. Default to the lightest tier unless concrete line, recurrence, procedure, harness-sharing, or lesson-capture pressure exists.
-8. **Choose execution mode** — classify the skill as Rule-only, Assisted-executable, or Executable. Upgrade only when evidence shows external APIs/CLIs, side effects, repeated script logic, local config, or stable output contracts.
+8. **Choose execution mode** — classify the skill as Rule-only, Assisted-executable, or Executable. When evidence exposes an execution candidate, apply the admitted executable-architecture contract: downshift an operation only when low freedom and repeated/high-error pressure both exist; prefer a structured API, existing CLI, existing script, then a new minimal script. Keep goals, semantic parameters, exceptions, authority, and escalation with the Agent, and keep a one-off directly verifiable action on the direct path. Upgrade the whole Skill only when its separate executable-pressure gate passes.
 9. **Choose domain topology** — decide whether this is Single-skill or a Multi-skill candidate. Split only when trigger language and rule sets genuinely diverge.
 10. **Draft activation** — write a coarse `description` with real trigger phrases and activation conditions; do not enumerate every workflow.
 11. **Draft routing** — propose `routing.yaml` rows with labels, trigger examples, exactly one first workflow, and an `other` fallback. Task routes do not carry required-read bundles.
-12. **Draft validation** — list the commands or manual checks that prove ordinary changes are safe. For executable or high-risk routes, include contract/scenario-test candidates.
+12. **Draft validation** — list the commands or manual checks that prove ordinary changes are safe. For an admitted long-running, asynchronous, backgrounded, noisy, or terminal-truncated operation, name an authoritative re-readable result and the requested terminal state; validate run identity, provenance, freshness, completeness/semantic validity, and terminal state rather than file existence. For executable or high-risk routes, include contract/scenario-test candidates.
 13. **Mark unknowns** — keep unresolved facts visible instead of converting them into rules.
 
 ## Output Shape
@@ -73,6 +73,8 @@ preserved `User-confirmed desired truth` with its question/context and provenanc
 - [ ] Always Read defaults to empty; every proposed entry is proven necessary before workflow selection for every real task
 - [ ] Structure tier defaults to the lightest tier with evidence-backed upgrade pressure
 - [ ] Execution mode names concrete APIs, CLIs, side effects, scripts, local config, or output contracts when present
+- [ ] Every deterministic downshift has both low-freedom and real-pressure evidence, uses the lightest existing carrier, and preserves Agent judgment plus the one-off direct path
+- [ ] Every admitted long-running/asynchronous operation names authoritative current-run readback and requested terminal-state proof; stale/file-exists/intermediate evidence cannot pass
 - [ ] Domain topology explains trigger-language and rule-set pressure before recommending a split
 - [ ] Product projects: business-model candidates were proposed only with stable/cross-task/non-obvious evidence; "later" created no artifact
 - [ ] Unknowns remain labeled

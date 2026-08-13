@@ -624,6 +624,16 @@ add_plan_path() {
   PLAN_PATHS+=("$path")
 }
 
+planned_path() {
+  local wanted="$1" item
+  if [[ ${#PLAN_PATHS[@]} -gt 0 ]]; then
+    for item in "${PLAN_PATHS[@]}"; do
+      [[ "$item" == "$wanted" ]] && return 0
+    done
+  fi
+  return 1
+}
+
 route_for_signal() {
   local id="$1"
   append_unique ROUTE_IDS "$id"
@@ -846,6 +856,12 @@ $(if [[ ${#PRESERVE_FILES[@]} -gt 0 ]]; then for preserved in "${PRESERVE_FILES[
 
 - Project task: inspect the relevant evidence, make one risk-sized change or
   check, and run the repository-owned verification before reporting the result.
+- Requirement-bearing change: first reach \`requirement-ready\`; if desired
+  meaning is incomplete, state the current understanding and real conflict and
+  ask only the minimum normative question. Project Goal, Done When, and material
+  Boundaries into a Task Anchor, prove the current owner and Current -> Target
+  until \`implementation-ready\`, and only then derive an implementation Plan,
+  mutate, and prove the Requirement's observable acceptance.
 - Other: identify the nearest project rule, keep the change minimal, and state
   any unresolved evidence instead of guessing.
 
@@ -944,6 +960,12 @@ For every new task, read [routing.yaml](routing.yaml), match exactly one route,
 and follow only its workflow. After interruption or compaction, recover the
 current workflow and decision-relevant evidence before acting.
 
+Requirement-bearing routes preserve this order: \`requirement-ready\` -> Task
+Anchor -> proven Current -> Target and \`implementation-ready\` -> Native Plan ->
+mutation/proof. A clear Requirement needs no ceremonial confirmation; an
+incomplete one stops with current understanding, real risk/conflict, and the
+minimum normative question.
+
 </always-applicable>
 
 <task-routing>
@@ -967,14 +989,14 @@ No recurring gotcha owner is loaded unless the current evidence selects one.
 - Does not own unrelated repositories, historical tasks, credentials, or
   implicit follow-up delivery.
 EOF
-  if [[ "$MANAGED_PRESSURE" -eq 1 ]]; then
+  if planned_path "skills/$NAME/workflows/task-execution.md"; then
     cat >> "$destination" <<'EOF'
 
 For dependent, interrupted, or decision-drift work, read the [Managed Task
 Execution owner](workflows/task-execution.md) before the next main step.
 EOF
   fi
-  if [[ "$CLOSURE_PRESSURE" -eq 1 ]]; then
+  if planned_path "skills/$NAME/workflows/task-closure.md"; then
     cat >> "$destination" <<'EOF'
 
 When a changing task reaches its completion boundary, read the [Task Closure
@@ -1045,11 +1067,18 @@ matches this task. Keep the route-specific facts in the owning project files.
 ## Procedure
 
 1. Read the smallest project evidence that can decide the next action.
-2. Bind the requested outcome to the current owner before mutating.
-3. Make one risk-sized change or check, then run the repository-owned fitted
-   validation command.
-4. If evidence contradicts the premise, pause the affected path and re-localize
-   instead of widening scope.
+2. For a request that changes desired behavior, first reach
+   \`requirement-ready\`. Clear wording needs no additional confirmation; when a
+   normative choice remains, state the current understanding and real
+   risk/conflict, ask only the minimum question, and stop before planning or
+   mutation.
+3. Project Goal, Done When, and material Boundaries into a Task Anchor. Prove
+   the current owner, Current -> Target, affected path, and material risks until
+   \`implementation-ready\`.
+4. Only then derive the implementation Plan, make one risk-sized change or
+   check, and run the repository-owned fitted validation command.
+5. If evidence contradicts desired meaning, return to Requirement Definition;
+   if it changes technical ownership, re-localize instead of widening scope.
 
 ## Completion
 
@@ -1065,13 +1094,13 @@ EOF
 Read [Change Discipline](../rules/change-discipline.md) immediately before the
 first mutation.
 EOF
-    if [[ "$MANAGED_PRESSURE" -eq 1 ]]; then
+    if planned_path "skills/$NAME/workflows/task-execution.md"; then
       cat >> "$stage/skills/$NAME/$destination" <<'EOF'
 Read [Managed Task Execution](task-execution.md) only for dependent,
 interrupted, or decision-drift work.
 EOF
     fi
-    if [[ "$CLOSURE_PRESSURE" -eq 1 ]]; then
+    if planned_path "skills/$NAME/workflows/task-closure.md"; then
       cat >> "$stage/skills/$NAME/$destination" <<'EOF'
 Read [Task Closure](task-closure.md) only when a changing task reaches its
 completion boundary.
@@ -1083,6 +1112,75 @@ EOF
   fi
 }
 
+render_requirement_workflow() {
+  local destination="$1" title="$2"
+  mkdir -p "$(dirname "$stage/skills/$NAME/$destination")"
+  cat > "$stage/skills/$NAME/$destination" <<EOF
+# $title
+
+## Use When
+
+Use this procedure when the requested result is to discuss, brainstorm,
+clarify, correct, or confirm desired behavior before implementation planning.
+
+## Requirement Definition
+
+1. Preserve clear user wording and its authority. Evaluate only dimensions that
+   can change this result: goal; scope, non-goals, and preservation;
+   decision-bearing model/flow/state/order/interaction; rules and constraints;
+   and observable, falsifiable acceptance. This is not a fixed questionnaire.
+2. Inspect only the smallest project evidence that can resolve the current
+   uncertainty. Discover Current owners, paths, behavior, feasibility, cost,
+   and risk from the project instead of asking the user for technical facts.
+3. Separate confirmed desired meaning, Current facts, assumptions, real
+   risks/conflicts, and remaining normative choices. Code may falsify a premise
+   but cannot choose desired product meaning.
+4. If every activated user-owned choice is closed, return
+   \`requirement-ready\` without another confirmation turn. Otherwise present the
+   current understanding, name the real risk/conflict, ask the minimum normative
+   question, and stop.
+
+## Boundary
+
+Acceptance belongs to the Requirement; tests, browser/runtime checks, and human
+review are later proof choices. This procedure does not produce an
+implementation Plan, Task Breakdown, code mutation, or proof command. Create no
+default Requirement file, question log, or second planning record.
+EOF
+}
+
+render_plan_workflow() {
+  local destination="$1" title="$2"
+  mkdir -p "$(dirname "$stage/skills/$NAME/$destination")"
+  cat > "$stage/skills/$NAME/$destination" <<EOF
+# $title
+
+## Use When
+
+Use this procedure to derive an implementation Plan from an already confirmed
+Requirement. Desired-behavior discussion returns to Requirement Definition.
+
+## Planning Sequence
+
+1. Consume a named \`requirement-ready\` source without rewriting its goal,
+   scope, flow/model, rules/constraints, preservation, or acceptance.
+2. Project Goal, Done When, and material Boundaries into a Task Anchor.
+3. Prove the canonical owner, Current behavior, Current -> Target, affected
+   path, and material technical risks from project evidence.
+4. Reach \`implementation-ready\` before deriving technical options, Task
+   Interfaces, implementation order, or proof commands.
+5. Map Requirement acceptance to the cheapest truthful proof, then return the
+   implementation Plan. If a test needs an unstated expected result, return that
+   question to Requirement Definition.
+
+## Boundary
+
+The Plan is a revisable implementation means and does not execute mutation.
+Ordinary planning creates no persistent artifact unless explicit handoff,
+review, recovery, conflict, or lifecycle pressure requires one.
+EOF
+}
+
 route_metadata() {
   local id="$1" index
   ROUTE_LABEL_EN="Project task"
@@ -1092,8 +1190,9 @@ route_metadata() {
   case "$id" in
     fix-bug) ROUTE_LABEL_EN="Fix project bugs"; ROUTE_LABEL_ZH="修复项目问题"; ROUTE_TRIGGER_EN="fix a bug in $NAME"; ROUTE_TRIGGER_ZH="修复 $NAME 的问题" ;;
     change-managed) ROUTE_LABEL_EN="Change project behavior"; ROUTE_LABEL_ZH="修改项目行为"; ROUTE_TRIGGER_EN="change $NAME behavior"; ROUTE_TRIGGER_ZH="修改 $NAME 的功能" ;;
+    define-requirement) ROUTE_LABEL_EN="Define project requirements"; ROUTE_LABEL_ZH="定义或澄清项目需求"; ROUTE_TRIGGER_EN="clarify the desired $NAME behavior"; ROUTE_TRIGGER_ZH="先讨论 $NAME 的需求" ;;
     refactor-fanout) ROUTE_LABEL_EN="Refactor project usage"; ROUTE_LABEL_ZH="重构项目用法"; ROUTE_TRIGGER_EN="refactor $NAME usage"; ROUTE_TRIGGER_ZH="重构 $NAME 的调用" ;;
-    plan-feature) ROUTE_LABEL_EN="Plan a project feature"; ROUTE_LABEL_ZH="规划项目功能"; ROUTE_TRIGGER_EN="plan a $NAME feature"; ROUTE_TRIGGER_ZH="规划 $NAME 功能" ;;
+    plan-feature) ROUTE_LABEL_EN="Plan confirmed requirement implementation"; ROUTE_LABEL_ZH="规划已确认需求的实现"; ROUTE_TRIGGER_EN="plan the confirmed $NAME requirement"; ROUTE_TRIGGER_ZH="基于已确认需求规划 $NAME 实现" ;;
     receiving-review) ROUTE_LABEL_EN="Handle project review"; ROUTE_LABEL_ZH="处理项目评审"; ROUTE_TRIGGER_EN="review the $NAME change"; ROUTE_TRIGGER_ZH="处理 $NAME 的评审意见" ;;
     update-rules) ROUTE_LABEL_EN="Update project rules"; ROUTE_LABEL_ZH="更新项目规则"; ROUTE_TRIGGER_EN="update $NAME rules"; ROUTE_TRIGGER_ZH="更新 $NAME 规则" ;;
     update-upstream) ROUTE_LABEL_EN="Refresh project from upstream"; ROUTE_LABEL_ZH="同步项目上游"; ROUTE_TRIGGER_EN="refresh $NAME from upstream"; ROUTE_TRIGGER_ZH="同步 $NAME 上游" ;;
@@ -1232,6 +1331,39 @@ render_fitted_conformance() {
       echo "    must_contain:"
       echo "      - 'Task scope does not automatically grant external write authority for databases, deployments, configuration, or shared systems; obtain explicit authorization before performing such writes.'"
     fi
+    for id in ${ROUTE_IDS[@]+"${ROUTE_IDS[@]}"}; do
+      case "$id" in
+        define-requirement)
+          echo "  - file: workflows/define-requirement.md"
+          echo "    must_contain:"
+          echo "      - '## Requirement Definition'"
+          echo "      - 'return \`requirement-ready\` without another confirmation turn'"
+          echo "      - 'current understanding, name the real risk/conflict, ask the minimum normative question, and stop'"
+          echo "      - 'does not produce an implementation Plan, Task Breakdown, code mutation, or proof command'"
+          echo "    must_not_contain:"
+          echo "      - 'Make one risk-sized change'"
+          ;;
+        plan-feature)
+          echo "  - file: workflows/plan-feature.md"
+          echo "    must_contain_in_order:"
+          echo "      - 'Consume a named \`requirement-ready\` source'"
+          echo "      - 'Project Goal, Done When, and material Boundaries into a Task Anchor'"
+          echo "      - 'Reach \`implementation-ready\` before deriving technical options'"
+          echo "      - 'return the implementation Plan'"
+          echo "    must_not_contain:"
+          echo "      - 'Make one risk-sized change'"
+          ;;
+        change-managed)
+          echo "  - file: workflows/change-managed.md"
+          echo "    must_contain_in_order:"
+          echo "      - '\`requirement-ready\`'"
+          echo "      - 'Task Anchor'"
+          echo "      - '\`implementation-ready\`'"
+          echo "      - 'derive the implementation Plan'"
+          echo "      - 'make one risk-sized change'"
+          ;;
+      esac
+    done
   } > "$conformance"
 }
 
@@ -1300,7 +1432,11 @@ render_light_routes() {
     route_metadata "$id"
     title="$ROUTE_LABEL_EN"
     destination="workflows/$id.md"
-    render_light_workflow "$destination" "$title"
+    case "$id" in
+      define-requirement) render_requirement_workflow "$destination" "$title" ;;
+      plan-feature) render_plan_workflow "$destination" "$title" ;;
+      *) render_light_workflow "$destination" "$title" ;;
+    esac
   done
   render_light_workflow "workflows/other.md" "Other project task"
 }

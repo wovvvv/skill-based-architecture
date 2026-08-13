@@ -795,6 +795,670 @@ YAML
   [[ "$output" == *"required_files items must be mappings"* ]]
 )
 
+# A stable runtime precondition is behavioral only when its activation,
+# selection, and effective-runtime readback all precede the protected command.
+# Presence-only assertions would accept the same prose after the red-test step.
+check_ordered_precondition_contract() (
+  set -euo pipefail
+  local tmp skill manifest checker owner output status base_owner mutation schema_case
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  skill="$tmp/skills/precondition-contract"
+  manifest="$skill/conformance.yaml"
+  checker="$ROOT/templates/skill/scripts/check-version-conformance.sh"
+  owner="$skill/workflows/test.md"
+  base_owner="$tmp/test.base.md"
+  mkdir -p "$skill/workflows"
+
+  cat > "$base_owner" <<'MARKDOWN'
+# Test Workflow
+
+## Runtime Preflight
+
+Read the project toolchain owner before constructing a test command.
+Select the required runtime.
+Read back the effective runtime used by the build tool.
+
+## Red Test
+
+Run the first protected test command.
+MARKDOWN
+  cp "$base_owner" "$owner"
+  cat > "$manifest" <<'YAML'
+required_sections:
+  - file: workflows/test.md
+    must_contain_in_order:
+      - "## Runtime Preflight"
+      - "Read the project toolchain owner"
+      - "Select the required runtime"
+      - "Read back the effective runtime"
+      - "## Red Test"
+      - "Run the first protected test command"
+YAML
+
+  output="$(bash "$checker" "$skill" --conformance "$manifest")"
+  [[ "$output" == *"0 failed"* ]]
+
+  for mutation in activation selection readback; do
+    cp "$base_owner" "$owner"
+    case "$mutation" in
+      activation)
+        sed -i.bak '/Read the project toolchain owner/d' "$owner"
+        ;;
+      selection)
+        sed -i.bak '/Select the required runtime/d' "$owner"
+        ;;
+      readback)
+        sed -i.bak '/Read back the effective runtime/d' "$owner"
+        ;;
+    esac
+    rm -f "$owner.bak"
+    set +e
+    output="$(bash "$checker" "$skill" --conformance "$manifest" 2>&1)"
+    status=$?
+    set -e
+    [[ "$status" -eq 1 && "$output" == *"MISSING ordered phrase"* ]] || {
+      printf '%s\n' "$output" >&2
+      echo "ordered precondition accepted missing $mutation" >&2
+      return 1
+    }
+  done
+
+  cat > "$owner" <<'MARKDOWN'
+# Test Workflow
+
+## Red Test
+
+Run the first protected test command.
+
+## Runtime Preflight
+
+Read the project toolchain owner before constructing a test command.
+Select the required runtime.
+Read back the effective runtime used by the build tool.
+MARKDOWN
+  set +e
+  output="$(bash "$checker" "$skill" --conformance "$manifest" 2>&1)"
+  status=$?
+  set -e
+  [[ "$status" -eq 1 && "$output" == *"OUT OF ORDER"* ]] || {
+    printf '%s\n' "$output" >&2
+    echo "ordered precondition accepted a preflight after the protected command" >&2
+    return 1
+  }
+
+  cat > "$owner" <<'MARKDOWN'
+# Quoted Scalar Contract
+
+Say "hello": # now
+Bob's runtime
+MARKDOWN
+  cat > "$manifest" <<'YAML'
+required_sections:
+  - must_contain_in_order:
+      - "Say \"hello\": # now"
+      - 'Bob''s runtime'
+    file: workflows/test.md
+YAML
+  output="$(bash "$checker" "$skill" --conformance "$manifest")"
+  [[ "$output" == *"2"*"passed, 0 failed"* ]] || {
+    printf '%s\n' "$output" >&2
+    echo "ordered manifest did not decode quoted YAML scalars or honor a later file key" >&2
+    return 1
+  }
+
+  for schema_case in empty empty_flow inline_flow; do
+    case "$schema_case" in
+      empty)
+        cat > "$manifest" <<'YAML'
+required_sections:
+  - file: workflows/test.md
+    must_contain_in_order:
+YAML
+        ;;
+      empty_flow)
+        cat > "$manifest" <<'YAML'
+required_sections:
+  - file: workflows/test.md
+    must_contain_in_order: []
+YAML
+        ;;
+      inline_flow)
+        cat > "$manifest" <<'YAML'
+required_sections:
+  - file: workflows/test.md
+    must_contain_in_order: ["DOES NOT EXIST", "Bob's runtime"]
+YAML
+        ;;
+    esac
+    set +e
+    output="$(bash "$checker" "$skill" --conformance "$manifest" 2>&1)"
+    status=$?
+    set -e
+    [[ "$status" -eq 2 && "$output" == *"conformance schema error"* \
+      && "$output" == *"must be a non-empty block sequence"* ]] || {
+      printf '%s\n' "$output" >&2
+      echo "ordered manifest accepted $schema_case without an ordered assertion" >&2
+      return 1
+    }
+  done
+
+  printf '\377\376\000' > "$owner"
+  cat > "$manifest" <<'YAML'
+required_sections:
+  - file: workflows/test.md
+    must_contain_in_order:
+      - "runtime"
+YAML
+  set +e
+  output="$(bash "$checker" "$skill" --conformance "$manifest" 2>&1)"
+  status=$?
+  set -e
+  [[ "$status" -eq 1 && "$output" == *"ordered check error"* \
+    && "$output" == *"UnicodeDecodeError"* && "$output" == *"Results:"* \
+    && "$output" == *"Conformance check failed."* \
+    && "$output" != *"Traceback"* ]] || {
+    printf '%s\n' "$output" >&2
+    echo "ordered scan error did not reach a stable failure summary" >&2
+    return 1
+  }
+)
+
+# Stored prevention and first-occurrence learning close different failure
+# boundaries. Each class, plus the non-substitution rule between their proof,
+# must remain independently mutation-protected.
+check_independent_verified_failure_classes() (
+  set -euo pipefail
+  local tmp skill manifest checker owner base_owner output status mutation
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  skill="$tmp/skills/failure-classes"
+  manifest="$skill/conformance.yaml"
+  checker="$ROOT/templates/skill/scripts/check-version-conformance.sh"
+  owner="$skill/workflows/rule-update/verified-failure.md"
+  base_owner="$tmp/verified-failure.base.md"
+  mkdir -p "$skill/workflows/rule-update"
+  cp "$ROOT/templates/skill/workflows/rule-update/verified-failure.md" "$base_owner"
+  cp "$base_owner" "$owner"
+
+  cat > "$manifest" <<'YAML'
+required_sections:
+  - file: workflows/rule-update/verified-failure.md
+    must_contain:
+      - "**Activation failure** - applicable prevention already exists"
+      - "**Learning-closure failure** - the first occurrence has already proved a stable prevention"
+      - "Their evidence is not interchangeable"
+      - "Evaluate and close both classes separately whenever both are present"
+YAML
+
+  output="$(bash "$checker" "$skill" --conformance "$manifest")"
+  [[ "$output" == *"4"*"passed, 0 failed"* ]] || {
+    printf '%s\n' "$output" >&2
+    echo "verified failure class baseline did not satisfy all independent assertions" >&2
+    return 1
+  }
+
+  for mutation in activation learning_closure proof_boundary; do
+    cp "$base_owner" "$owner"
+    case "$mutation" in
+      activation)
+        sed -i.bak '/\*\*Activation failure\*\*/d' "$owner"
+        ;;
+      learning_closure)
+        sed -i.bak '/\*\*Learning-closure failure\*\*/d' "$owner"
+        ;;
+      proof_boundary)
+        sed -i.bak '/Their evidence is not interchangeable/d' "$owner"
+        ;;
+    esac
+    rm -f "$owner.bak"
+    set +e
+    output="$(bash "$checker" "$skill" --conformance "$manifest" 2>&1)"
+    status=$?
+    set -e
+    [[ "$status" -eq 1 && "$output" == *"MISSING"* ]] || {
+      printf '%s\n' "$output" >&2
+      echo "verified failure class mutation accepted missing $mutation" >&2
+      return 1
+    }
+  done
+)
+
+# Requirement Definition, Implementation Planning, and deterministic downshift
+# protect separate decisions. A broad presence check can stay green after a
+# responsibility moves back into Plan Feature or one phase is reordered, so
+# delete every load-bearing clause and inject the dangerous ownership/order
+# regressions independently.
+check_requirement_plan_separation_and_bounded_execution_contract() (
+  set -euo pipefail
+  local tmp skill manifest checker requirement_owner plan_owner task_owner
+  local contract_owner change_owner executable_owner output check_status
+  local mutation owner needle replacement
+  local base_requirement base_plan base_task base_contract base_change base_executable
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  skill="$tmp/skills/requirement-execution-contract"
+  manifest="$skill/conformance.yaml"
+  checker="$ROOT/templates/skill/scripts/check-version-conformance.sh"
+  requirement_owner="$skill/workflows/define-requirement.md"
+  plan_owner="$skill/workflows/plan-feature.md"
+  task_owner="$skill/workflows/task-execution.md"
+  contract_owner="$skill/protocol-blocks/change-contract.md"
+  change_owner="$skill/workflows/change-managed.md"
+  executable_owner="$skill/references/executable-skill-architecture.md"
+  base_requirement="$tmp/define-requirement.base.md"
+  base_plan="$tmp/plan-feature.base.md"
+  base_task="$tmp/task-execution.base.md"
+  base_contract="$tmp/change-contract.base.md"
+  base_change="$tmp/change-managed.base.md"
+  base_executable="$tmp/executable-skill-architecture.base.md"
+  mkdir -p "$skill/workflows" "$skill/protocol-blocks" "$skill/references"
+  cp "$ROOT/templates/skill/workflows/define-requirement.md" "$base_requirement"
+  cp "$ROOT/templates/skill/workflows/plan-feature.md" "$base_plan"
+  cp "$ROOT/templates/skill/workflows/task-execution.md" "$base_task"
+  cp "$ROOT/templates/skill/protocol-blocks/change-contract.md" "$base_contract"
+  cp "$ROOT/templates/skill/workflows/change-managed.md" "$base_change"
+  cp "$ROOT/references/executable-skill-architecture.md" "$base_executable"
+  cp "$base_requirement" "$requirement_owner"
+  cp "$base_plan" "$plan_owner"
+  cp "$base_task" "$task_owner"
+  cp "$base_contract" "$contract_owner"
+  cp "$base_change" "$change_owner"
+  cp "$base_executable" "$executable_owner"
+
+  cat > "$manifest" <<'YAML'
+required_files:
+  - path: workflows/define-requirement.md
+    reason: Requirement Definition interaction owner.
+  - path: workflows/plan-feature.md
+    reason: Implementation Plan owner.
+  - path: workflows/task-execution.md
+    reason: Task Anchor and Native Plan runtime owner.
+  - path: protocol-blocks/change-contract.md
+    reason: Requirement Contract and Implementation Binding state owner.
+  - path: workflows/change-managed.md
+    reason: Feature implementation consumer.
+  - path: references/executable-skill-architecture.md
+    reason: Bounded deterministic execution owner.
+required_sections:
+  - file: workflows/define-requirement.md
+    must_contain:
+      - "This workflow produces `requirement-ready`, not an implementation Plan"
+      - "ask the minimum normative question needed to choose among those meanings"
+      - "Code may constrain or falsify a premise; it cannot choose desired"
+      - "Requirement Definition does not derive implementation steps"
+      - "normative question; never return an implementation Plan or mutation"
+    must_not_contain:
+      - "## Question Gate"
+      - "## Decision Mainline"
+  - file: workflows/plan-feature.md
+    must_contain:
+      - "It is not the Requirement Definition owner"
+      - "If later evidence changes desired meaning, return to Requirement Definition"
+      - "The proof implementation is subordinate to acceptance"
+      - "Then let Task Execution derive the Native Plan"
+    must_contain_in_order:
+      - "Consume the Requirement"
+      - "Project the Task Anchor"
+      - "Prove implementation facts"
+      - "Reach `implementation-ready`"
+      - "derive technical design, Task Interfaces, proof implementation"
+    must_not_contain:
+      - "## Question Gate"
+      - "## Decision Mainline"
+  - file: workflows/task-execution.md
+    must_contain:
+      - "Apparent code locality never makes requirement-bearing work Simple"
+      - "reclassify before more mutation"
+      - "After `requirement-ready` and before implementation-binding discovery"
+      - "After source localization makes the Change Contract `implementation-ready`"
+  - file: protocol-blocks/change-contract.md
+    must_contain:
+      - "desired goal and observable user/business outcome"
+      - "scope, non-goals, preserved behavior, and permission boundary"
+      - "decision-bearing actor/trigger, model/object relationship, concrete flow"
+      - "rules, defaults, constraints, failure meaning, and compatibility behavior"
+      - "observable, falsifiable acceptance that can reject a wrong result"
+      - "Bind Current -> Target without changing the Requirement"
+      - "creates the Task Anchor after `requirement-ready`, but creates the Native Plan"
+      - "only after `implementation-ready`; the Plan consumes rather than defines the"
+    must_contain_in_order:
+      - "requirement-incomplete -> requirement-ready"
+      - "localization-required/owner-proven"
+      - "binding-incomplete -> implementation-ready"
+  - file: workflows/change-managed.md
+    must_contain_in_order:
+      - "complete Requirement Definition"
+      - "project its Task Anchor"
+      - "after `implementation-ready` derive the Native Plan"
+      - "before mutation"
+  - file: references/executable-skill-architecture.md
+    must_contain:
+      - "1. **Low freedom:**"
+      - "2. **Real pressure:**"
+      - "The Agent owns the goal, desired meaning, semantic parameters, target selection"
+      - "A one-off, low-risk action with a direct cheap check stays on"
+      - "1. **Execution identity:**"
+      - "2. **Authority and provenance:**"
+      - "3. **Freshness:**"
+      - "4. **Completeness and semantic validity:**"
+      - "5. **Requested terminal state:**"
+      - "the user's outcome, not only accepted, queued"
+YAML
+
+  output="$(bash "$checker" "$skill" --conformance "$manifest")"
+  [[ "$output" == *"0 failed"* ]] || {
+    printf '%s\n' "$output" >&2
+    echo "requirement/Plan separation and bounded-execution baseline did not pass" >&2
+    return 1
+  }
+
+  for mutation in \
+    requirement_goal \
+    requirement_scope \
+    requirement_model_flow \
+    requirement_rules \
+    requirement_acceptance \
+    incomplete_no_guess \
+    current_vs_desired \
+    anchor_projection \
+    implementation_ready_ordering \
+    plan_return \
+    test_subordinate \
+    requirement_no_mutation \
+    plan_question_gate \
+    plan_decision_mainline \
+    plan_order_reversal \
+    feature_not_simple \
+    in_place_reclassification \
+    low_freedom \
+    real_pressure \
+    agent_judgment \
+    one_off_direct \
+    readback_identity \
+    readback_authority \
+    readback_freshness \
+    readback_completeness \
+    readback_terminal \
+    intermediate_not_terminal; do
+    cp "$base_requirement" "$requirement_owner"
+    cp "$base_plan" "$plan_owner"
+    cp "$base_task" "$task_owner"
+    cp "$base_contract" "$contract_owner"
+    cp "$base_change" "$change_owner"
+    cp "$base_executable" "$executable_owner"
+    replacement=""
+    case "$mutation" in
+      requirement_goal)
+        owner="$contract_owner"
+        needle="desired goal and observable user/business outcome"
+        ;;
+      requirement_scope)
+        owner="$contract_owner"
+        needle="scope, non-goals, preserved behavior, and permission boundary"
+        ;;
+      requirement_model_flow)
+        owner="$contract_owner"
+        needle="decision-bearing actor/trigger, model/object relationship, concrete flow"
+        ;;
+      requirement_rules)
+        owner="$contract_owner"
+        needle="rules, defaults, constraints, failure meaning, and compatibility behavior"
+        ;;
+      requirement_acceptance)
+        owner="$contract_owner"
+        needle="observable, falsifiable acceptance that can reject a wrong result"
+        ;;
+      incomplete_no_guess)
+        owner="$requirement_owner"
+        needle="ask the minimum normative question needed to choose among those meanings"
+        ;;
+      current_vs_desired)
+        owner="$contract_owner"
+        needle="Bind Current -> Target without changing the Requirement"
+        ;;
+      anchor_projection)
+        owner="$task_owner"
+        needle='After `requirement-ready` and before implementation-binding discovery'
+        ;;
+      implementation_ready_ordering)
+        owner="$contract_owner"
+        needle='only after `implementation-ready`; the Plan consumes rather than defines the'
+        ;;
+      plan_return)
+        owner="$plan_owner"
+        needle="If later evidence changes desired meaning, return to Requirement Definition"
+        ;;
+      test_subordinate)
+        owner="$plan_owner"
+        needle="The proof implementation is subordinate to acceptance"
+        ;;
+      requirement_no_mutation)
+        owner="$requirement_owner"
+        needle="normative question; never return an implementation Plan or mutation"
+        ;;
+      plan_question_gate)
+        owner="$plan_owner"
+        needle="## Question Gate"
+        replacement=$'\n## Question Gate\n\nPlan Feature asks and resolves normative questions.\n'
+        ;;
+      plan_decision_mainline)
+        owner="$plan_owner"
+        needle="## Decision Mainline"
+        replacement=$'\n## Decision Mainline\n\nPlan Feature records user-owned desired meaning.\n'
+        ;;
+      plan_order_reversal)
+        owner="$plan_owner"
+        needle="Consume the Requirement"
+        replacement="__ORDER_REVERSAL__"
+        ;;
+      feature_not_simple)
+        owner="$task_owner"
+        needle="Apparent code locality never makes requirement-bearing work Simple"
+        ;;
+      readiness_before_native_plan)
+        owner="$plan_owner"
+        needle='Task Breakdown, task interfaces, and mutation stay absent until `requirement-ready`'
+        ;;
+      native_plan_vs_durable)
+        owner="$plan_owner"
+        needle="durable materialization still requires Artifact Pressure"
+        ;;
+      in_place_reclassification)
+        owner="$task_owner"
+        needle="reclassify before more mutation"
+        ;;
+      low_freedom)
+        owner="$executable_owner"
+        needle="1. **Low freedom:**"
+        ;;
+      real_pressure)
+        owner="$executable_owner"
+        needle="2. **Real pressure:**"
+        ;;
+      agent_judgment)
+        owner="$executable_owner"
+        needle="The Agent owns the goal, desired meaning, semantic parameters, target selection"
+        ;;
+      one_off_direct)
+        owner="$executable_owner"
+        needle="A one-off, low-risk action with a direct cheap check stays on"
+        ;;
+      readback_identity)
+        owner="$executable_owner"
+        needle="1. **Execution identity:**"
+        ;;
+      readback_authority)
+        owner="$executable_owner"
+        needle="2. **Authority and provenance:**"
+        ;;
+      readback_freshness)
+        owner="$executable_owner"
+        needle="3. **Freshness:**"
+        ;;
+      readback_completeness)
+        owner="$executable_owner"
+        needle="4. **Completeness and semantic validity:**"
+        ;;
+      readback_terminal)
+        owner="$executable_owner"
+        needle="5. **Requested terminal state:**"
+        ;;
+      intermediate_not_terminal)
+        owner="$executable_owner"
+        needle="the user's outcome, not only accepted, queued"
+        ;;
+    esac
+    if [[ "$mutation" == "plan_question_gate" || "$mutation" == "plan_decision_mainline" ]]; then
+      printf '%s' "$replacement" >> "$owner"
+    elif [[ "$mutation" == "plan_order_reversal" ]]; then
+      MUTATION_NEEDLE="$needle" MUTATION_REPLACEMENT="$replacement" perl -0pi -e \
+        's/\Q$ENV{MUTATION_NEEDLE}\E/$ENV{MUTATION_REPLACEMENT}/' "$owner"
+      perl -0pi -e \
+        's/Reach `implementation-ready`/__ORDER_READY__/; s/__ORDER_REVERSAL__/Reach `implementation-ready`/; s/__ORDER_READY__/Consume the Requirement/' \
+        "$owner"
+    else
+      MUTATION_NEEDLE="$needle" perl -0pi -e 's/\Q$ENV{MUTATION_NEEDLE}\E//' "$owner"
+      if grep -qF -- "$needle" "$owner"; then
+        echo "mutation setup failed to remove $mutation" >&2
+        return 1
+      fi
+    fi
+    set +e
+    output="$(bash "$checker" "$skill" --conformance "$manifest" 2>&1)"
+    check_status=$?
+    set -e
+    [[ "$check_status" -eq 1 ]] || {
+      printf '%s\n' "$output" >&2
+      echo "requirement/Plan/execution mutation accepted $mutation" >&2
+      return 1
+    }
+  done
+)
+
+# The canonical materializer must preserve the phase split without exporting the
+# complete author scaffold. Exercise every fitted carrier and verify both local
+# reference integrity and route-specific mutation/Plan prohibitions.
+check_requirement_materialization_matrix() (
+  set -euo pipefail
+  local tmp scaffold smoke checker output status
+  local direct_root folder_root routed_root plan_root broad_root control_root
+  local direct_skill folder_skill routed_skill plan_skill broad_skill control_skill
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  scaffold="$ROOT/scripts/scaffold-downstream.sh"
+  smoke="$ROOT/templates/skill/scripts/smoke-test.sh"
+  checker="$ROOT/templates/skill/scripts/check-version-conformance.sh"
+
+  assert_in_order() {
+    local file="$1" content phrase
+    shift
+    content="$(<"$file")"
+    for phrase in "$@"; do
+      [[ "$content" == *"$phrase"* ]] || {
+        echo "$file missing ordered phase: $phrase" >&2
+        return 1
+      }
+      content="${content#*"$phrase"}"
+    done
+  }
+
+  assert_path_contract() {
+    local root="$1" name="$2" result
+    result="$(cd "$root" && bash "$smoke" "$name" --phase 7 --workspace-root "$root")"
+    [[ "$result" == *"Local links, inline paths, and heading fragments resolve"* ]] || {
+      printf '%s\n' "$result" >&2
+      echo "$name materialization has a broken local reference" >&2
+      return 1
+    }
+  }
+
+  direct_root="$tmp/direct"
+  folder_root="$tmp/folder"
+  routed_root="$tmp/routed"
+  plan_root="$tmp/plan"
+  broad_root="$tmp/broad"
+  control_root="$tmp/broad-control"
+  mkdir -p "$direct_root" "$folder_root" "$routed_root" "$plan_root" "$broad_root" "$control_root"
+
+  bash "$scaffold" --target "$direct_root" --name direct-requirement \
+    --summary "Direct requirement carrier" --apply >/dev/null
+  direct_skill="$direct_root/skills/direct-requirement"
+  [[ -f "$direct_skill/SKILL.md" && ! -e "$direct_skill/routing.yaml" && ! -d "$direct_skill/workflows" ]]
+  assert_in_order "$direct_skill/SKILL.md" \
+    'requirement-ready' 'Task Anchor' 'implementation-ready' 'implementation Plan' 'mutate'
+  assert_path_contract "$direct_root" direct-requirement
+
+  cat > "$tmp/folder.json" <<'JSON'
+{"version":1,"tasks":[{"id":"change-managed","labels":{"en":"Change behavior","zh":"修改行为"},"trigger_examples":["change behavior","修改行为"]}]}
+JSON
+  bash "$scaffold" --target "$folder_root" --name folder-requirement \
+    --summary "Folder-light direct requirement carrier" --evidence "$tmp/folder.json" --apply >/dev/null
+  folder_skill="$folder_root/skills/folder-requirement"
+  [[ -f "$folder_skill/workflows/project-task.md" && ! -e "$folder_skill/routing.yaml" && ! -e "$folder_skill/workflows/define-requirement.md" ]]
+  assert_in_order "$folder_skill/workflows/project-task.md" \
+    'requirement-ready' 'Task Anchor' 'implementation-ready' 'implementation Plan' 'make one risk-sized change'
+  assert_path_contract "$folder_root" folder-requirement
+
+  cat > "$tmp/routed.json" <<'JSON'
+{"version":1,"tasks":[{"id":"define-requirement","labels":{"en":"Define requirement","zh":"明确需求"},"trigger_examples":["define requirement","明确需求"]},{"id":"change-managed","labels":{"en":"Change behavior","zh":"修改行为"},"trigger_examples":["change behavior","修改行为"],"managed":true}]}
+JSON
+  bash "$scaffold" --target "$routed_root" --name routed-requirement \
+    --summary "Folder-light routed requirement carrier" --evidence "$tmp/routed.json" --apply >/dev/null
+  routed_skill="$routed_root/skills/routed-requirement"
+  grep -qF -- 'id: define-requirement' "$routed_skill/routing.yaml"
+  grep -qF -- 'id: change-managed' "$routed_skill/routing.yaml"
+  grep -qF -- 'does not produce an implementation Plan, Task Breakdown, code mutation, or proof command' \
+    "$routed_skill/workflows/define-requirement.md"
+  ! grep -qF -- 'Make one risk-sized change' "$routed_skill/workflows/define-requirement.md"
+  assert_in_order "$routed_skill/workflows/change-managed.md" \
+    'requirement-ready' 'Task Anchor' 'implementation-ready' 'implementation Plan' 'make one risk-sized change'
+  [[ ! -e "$routed_skill/workflows/task-execution.md" ]]
+  ! rg -q 'task-execution\.md|task-closure\.md' "$routed_skill/SKILL.md" "$routed_root/AGENTS.md"
+  assert_path_contract "$routed_root" routed-requirement
+
+  cat > "$tmp/plan.json" <<'JSON'
+{"version":1,"tasks":[{"id":"define-requirement","labels":{"en":"Define requirement","zh":"明确需求"},"trigger_examples":["define requirement","明确需求"]},{"id":"plan-feature","labels":{"en":"Plan implementation","zh":"规划实现"},"trigger_examples":["plan implementation","规划实现"]}]}
+JSON
+  bash "$scaffold" --target "$plan_root" --name plan-requirement \
+    --summary "Folder-light implementation Plan carrier" --evidence "$tmp/plan.json" --apply >/dev/null
+  plan_skill="$plan_root/skills/plan-requirement"
+  assert_in_order "$plan_skill/workflows/plan-feature.md" \
+    'requirement-ready' 'Task Anchor' 'implementation-ready' 'implementation Plan'
+  grep -qF -- 'does not execute mutation' "$plan_skill/workflows/plan-feature.md"
+  ! grep -qF -- 'Make one risk-sized change' "$plan_skill/workflows/plan-feature.md"
+  assert_path_contract "$plan_root" plan-requirement
+
+  cat > "$tmp/broad.json" <<'JSON'
+{"version":1,"tasks":[{"id":"define-requirement","labels":{"en":"Define requirement","zh":"明确需求"},"trigger_examples":["define requirement","明确需求"]},{"id":"change-managed","labels":{"en":"Change behavior","zh":"修改行为"},"trigger_examples":["change behavior","修改行为"],"managed":true},{"id":"plan-feature","labels":{"en":"Plan implementation","zh":"规划实现"},"trigger_examples":["plan implementation","规划实现"]}],"maintenance_pressure":{"validation":true}}
+JSON
+  bash "$scaffold" --target "$broad_root" --name broad-requirement \
+    --summary "Broad admitted requirement carrier" --evidence "$tmp/broad.json" --apply >/dev/null
+  broad_skill="$broad_root/skills/broad-requirement"
+  [[ -f "$broad_skill/workflows/define-requirement.md" && -f "$broad_skill/conformance.yaml" ]]
+  output="$(bash "$checker" "$broad_skill" --conformance "$broad_skill/conformance.yaml")"
+  [[ "$output" == *"0 failed"* ]]
+  mv "$broad_skill/workflows/define-requirement.md" "$tmp/define-requirement.missing"
+  set +e
+  output="$(bash "$checker" "$broad_skill" --conformance "$broad_skill/conformance.yaml" 2>&1)"
+  status=$?
+  set -e
+  mv "$tmp/define-requirement.missing" "$broad_skill/workflows/define-requirement.md"
+  [[ "$status" -eq 1 && "$output" == *"workflows/define-requirement.md <- MISSING"* ]]
+  assert_path_contract "$broad_root" broad-requirement
+
+  cat > "$tmp/control.json" <<'JSON'
+{"version":1,"tasks":[{"id":"change-managed","labels":{"en":"Change behavior","zh":"修改行为"},"trigger_examples":["change behavior","修改行为"],"managed":true},{"id":"plan-feature","labels":{"en":"Plan implementation","zh":"规划实现"},"trigger_examples":["plan implementation","规划实现"]},{"id":"receiving-review","labels":{"en":"Receive review","zh":"处理评审"},"trigger_examples":["receive review","处理评审"]}],"maintenance_pressure":{"validation":true}}
+JSON
+  bash "$scaffold" --target "$control_root" --name broad-control \
+    --summary "Broad control without requirement route" --evidence "$tmp/control.json" --apply >/dev/null
+  control_skill="$control_root/skills/broad-control"
+  [[ ! -e "$control_skill/workflows/define-requirement.md" ]]
+  ! grep -qF -- 'id: define-requirement' "$control_skill/routing.yaml"
+  ! grep -qF -- 'workflows/define-requirement.md' "$control_skill/conformance.yaml"
+  assert_path_contract "$control_root" broad-control
+)
+
 # Evidence input: valid local Markdown references include one path-like inline
 # code span, one heading fragment, fenced example paths, and placeholder/glob
 # examples. Expected: the valid fixture passes; deleting the inline target and
@@ -1220,6 +1884,8 @@ description: >
 MARKDOWN
 
   output="$(cd "$harness" && bash "$smoke" primary --phase 7 --workspace-root "$tmp")"
+  [[ "$output" == *"Local links, inline paths, and heading fragments resolve"* ]]
+  output="$(cd "$primary" && bash "$smoke" . --phase 7 --workspace-root "$tmp")"
   [[ "$output" == *"Local links, inline paths, and heading fragments resolve"* ]]
 )
 
@@ -1673,6 +2339,30 @@ if check_scalar_required_files_are_rejected; then
   pass "scalar required_files manifests are rejected as schema errors"
 else
   fail "scalar required_files can still bypass file-existence checks"
+fi
+
+if check_ordered_precondition_contract; then
+  pass "runtime preconditions must activate, select, and read back before the protected command"
+else
+  fail "presence-only conformance can still accept a late or incomplete runtime precondition"
+fi
+
+if check_independent_verified_failure_classes; then
+  pass "activation and learning-closure failures retain independent proof and completion boundaries"
+else
+  fail "one JDK failure class can still mask or substitute for the other"
+fi
+
+if check_requirement_plan_separation_and_bounded_execution_contract; then
+  pass "Requirement Definition, Implementation Plan separation, bounded downshift, and terminal readback are independently mutation-protected"
+else
+  fail "requirement/Plan ownership, ordering, or deterministic-execution clauses can regress without a fitted contract failure"
+fi
+
+if check_requirement_materialization_matrix; then
+  pass "direct, Folder-light, routed, Plan, and broad carriers preserve fitted requirement/Plan separation without broken references"
+else
+  fail "a fitted downstream carrier can over-materialize, mutate during requirement discussion, reorder Plan phases, or emit broken references"
 fi
 
 if check_inline_paths_and_heading_fragments; then
