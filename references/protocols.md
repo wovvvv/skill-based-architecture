@@ -54,9 +54,11 @@ confirmation-dependent, or no-native-Plan work escalates presentation while the
 state remains runtime state, not a fixed chat template. Design-derived work
 carries every governing Requirement and Plan path plus relevant user-confirmed
 Requirement Decision Context.
-Composite execution identifies one Integrating owner, checks Component
-interfaces from their owners, and derives exactly one Native Plan/semantic
-`Current Task`; it adds no mirror status or runtime store. Each main step
+Composite execution starts from one common governing Requirement projection;
+Task Execution projects exactly one Integrating Task Anchor, checks each
+Component's Requirement-owned meaning/boundary/acceptance separately from its
+Plan-owned technical interface/order/proof, and derives exactly one Native
+Plan/semantic `Current Task` only after implementation readiness. It adds no mirror status or runtime store. Each main step
 refreshes the applicable decision and evidence boundary through an Anchor
 Checkpoint. A simple workflow without the shared owner keeps only the compact
 execution behavior it needs.
@@ -65,7 +67,7 @@ Workflow owns the reusable domain procedure; the visible native Plan for step di
 remains the harness surface for the current runtime instance rather than a second
 workflow definition.
 
-If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. Composite conflicts return to the narrowest owner: Integrating for order/legal adapters/integrated proof, Component for its meaning or interface. Schema-structure work also pauses application mutation until the Plan's explicit impact checkpoint, authoritative baseline, dedicated SQL artifact, execution owner, and authorization boundary are ready. This reference does not duplicate either gate's complete procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
+If implementation conflicts with that mainline, invoke the canonical [`task-execution.md` § User Decision Drift Gate](../templates/skill/workflows/task-execution.md#user-decision-drift-gate) immediately. Composite normative conflicts return to Requirement Definition and the affected Requirement owner; technical interface/adapter/order/proof/delivery conflicts return to the affected Component Plan or Integrating Plan owner. Schema-structure work also pauses application mutation until the Plan's explicit impact checkpoint, authoritative baseline, dedicated SQL artifact, execution owner, and authorization boundary are ready. This reference does not duplicate either gate's complete procedure. Before verification, bind material risk to fitted evidence and a stop/escalation condition; stop when that evidence proves the contract rather than treating test count as evidence quality.
 
 The separation is load-bearing when those owners are split: Workflow owns the
 reusable domain procedure and mandatory gates; Task Anchor owns this task's

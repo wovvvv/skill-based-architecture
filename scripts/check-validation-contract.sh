@@ -1032,9 +1032,10 @@ YAML
 check_requirement_plan_separation_and_bounded_execution_contract() (
   set -euo pipefail
   local tmp skill manifest checker requirement_owner plan_owner task_owner
-  local contract_owner change_owner executable_owner output check_status
+  local contract_owner change_owner executable_owner composite_owner delivery_owner output check_status
   local mutation owner needle replacement
   local base_requirement base_plan base_task base_contract base_change base_executable
+  local base_composite base_delivery
   tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' EXIT
   skill="$tmp/skills/requirement-execution-contract"
@@ -1046,12 +1047,16 @@ check_requirement_plan_separation_and_bounded_execution_contract() (
   contract_owner="$skill/protocol-blocks/change-contract.md"
   change_owner="$skill/workflows/change-managed.md"
   executable_owner="$skill/references/executable-skill-architecture.md"
+  composite_owner="$skill/protocol-blocks/composite-plan-execution.md"
+  delivery_owner="$skill/protocol-blocks/external-delivery-verification.md"
   base_requirement="$tmp/define-requirement.base.md"
   base_plan="$tmp/plan-feature.base.md"
   base_task="$tmp/task-execution.base.md"
   base_contract="$tmp/change-contract.base.md"
   base_change="$tmp/change-managed.base.md"
   base_executable="$tmp/executable-skill-architecture.base.md"
+  base_composite="$tmp/composite-plan-execution.base.md"
+  base_delivery="$tmp/external-delivery-verification.base.md"
   mkdir -p "$skill/workflows" "$skill/protocol-blocks" "$skill/references"
   cp "$ROOT/templates/skill/workflows/define-requirement.md" "$base_requirement"
   cp "$ROOT/templates/skill/workflows/plan-feature.md" "$base_plan"
@@ -1059,12 +1064,16 @@ check_requirement_plan_separation_and_bounded_execution_contract() (
   cp "$ROOT/templates/skill/protocol-blocks/change-contract.md" "$base_contract"
   cp "$ROOT/templates/skill/workflows/change-managed.md" "$base_change"
   cp "$ROOT/references/executable-skill-architecture.md" "$base_executable"
+  cp "$ROOT/templates/skill/protocol-blocks/composite-plan-execution.md" "$base_composite"
+  cp "$ROOT/templates/skill/protocol-blocks/external-delivery-verification.md" "$base_delivery"
   cp "$base_requirement" "$requirement_owner"
   cp "$base_plan" "$plan_owner"
   cp "$base_task" "$task_owner"
   cp "$base_contract" "$contract_owner"
   cp "$base_change" "$change_owner"
   cp "$base_executable" "$executable_owner"
+  cp "$base_composite" "$composite_owner"
+  cp "$base_delivery" "$delivery_owner"
 
   cat > "$manifest" <<'YAML'
 required_files:
@@ -1080,6 +1089,10 @@ required_files:
     reason: Feature implementation consumer.
   - path: references/executable-skill-architecture.md
     reason: Bounded deterministic execution owner.
+  - path: protocol-blocks/composite-plan-execution.md
+    reason: Requirement-governed technical composition owner.
+  - path: protocol-blocks/external-delivery-verification.md
+    reason: Requirement-bound requested artifact verification owner.
 required_sections:
   - file: workflows/define-requirement.md
     must_contain:
@@ -1166,6 +1179,25 @@ required_sections:
       - "4. **Completeness and semantic validity:**"
       - "5. **Requested terminal state:**"
       - "the user's outcome, not only accepted, queued"
+  - file: protocol-blocks/composite-plan-execution.md
+    must_contain:
+      - "common governing Requirement projection"
+      - "Task Execution alone projects that Requirement into one Integrating Task Anchor"
+      - "read its governing Requirement or Requirement projection for Goal, meaning, invariant, boundary, and acceptance"
+      - "Read its Component Plan only for technical decisions"
+      - "conflict returns to Requirement Definition and the affected Requirement owner"
+      - "this protocol neither creates that Anchor nor defines the common outcome or integrated acceptance"
+    must_not_contain:
+      - "multiple independently authoritative Plans"
+      - "Component meaning, invariant, boundary, accepted interface, or local acceptance returns to that Component's Design owner"
+      - "one Integrating Task Anchor and one Native Plan cover the common outcome and integrated acceptance"
+  - file: protocol-blocks/external-delivery-verification.md
+    must_contain:
+      - "current explicit user request and the Governing Requirement, as projected into the active Task Anchor"
+      - "Plans may attach only an already-bound item's technical identity"
+      - "Plan cannot add, omit, narrow, or modify an artifact or requested terminal state"
+    must_not_contain:
+      - "active Task Anchor, and every governing Plan"
 YAML
 
   output="$(bash "$checker" "$skill" --conformance "$manifest")"
@@ -1213,13 +1245,19 @@ YAML
     readback_freshness \
     readback_completeness \
     readback_terminal \
-    intermediate_not_terminal; do
+    intermediate_not_terminal \
+    delivery_plan_authority \
+    composite_plan_authority \
+    composite_design_owner_return \
+    composite_creates_anchor; do
     cp "$base_requirement" "$requirement_owner"
     cp "$base_plan" "$plan_owner"
     cp "$base_task" "$task_owner"
     cp "$base_contract" "$contract_owner"
     cp "$base_change" "$change_owner"
     cp "$base_executable" "$executable_owner"
+    cp "$base_composite" "$composite_owner"
+    cp "$base_delivery" "$delivery_owner"
     replacement=""
     case "$mutation" in
       requirement_goal)
@@ -1389,12 +1427,36 @@ YAML
         owner="$executable_owner"
         needle="the user's outcome, not only accepted, queued"
         ;;
+      delivery_plan_authority)
+        owner="$delivery_owner"
+        needle="active Task Anchor, and every governing Plan"
+        replacement=$'\nDerive the set only from the current explicit user request, active Task Anchor, and every governing Plan.\n'
+        ;;
+      composite_plan_authority)
+        owner="$composite_owner"
+        needle="multiple independently authoritative Plans"
+        replacement=$'\nLoad this protocol only when one outcome consumes multiple independently authoritative Plans.\n'
+        ;;
+      composite_design_owner_return)
+        owner="$composite_owner"
+        needle="Component meaning, invariant, boundary, accepted interface, or local acceptance returns to that Component's Design owner"
+        replacement=$'\nComponent meaning, invariant, boundary, accepted interface, or local acceptance returns to that Component\x27s Design owner.\n'
+        ;;
+      composite_creates_anchor)
+        owner="$composite_owner"
+        needle="one Integrating Task Anchor and one Native Plan cover the common outcome and integrated acceptance"
+        replacement=$'\n- `ready`: one Integrating Task Anchor and one Native Plan cover the common outcome and integrated acceptance.\n'
+        ;;
     esac
     if [[ "$mutation" == "plan_question_gate" || "$mutation" == "plan_decision_mainline" || \
           "$mutation" == "old_absolute_no_requirement_file" || \
           "$mutation" == "plan_borrowed_requirement_persistence" || \
           "$mutation" == "plan_prd_technical_owner" || \
-          "$mutation" == "technical_evidence_edits_anchor" ]]; then
+          "$mutation" == "technical_evidence_edits_anchor" || \
+          "$mutation" == "delivery_plan_authority" || \
+          "$mutation" == "composite_plan_authority" || \
+          "$mutation" == "composite_design_owner_return" || \
+          "$mutation" == "composite_creates_anchor" ]]; then
       printf '%s' "$replacement" >> "$owner"
     elif [[ "$mutation" == "plan_order_reversal" ]]; then
       MUTATION_NEEDLE="$needle" MUTATION_REPLACEMENT="$replacement" perl -0pi -e \

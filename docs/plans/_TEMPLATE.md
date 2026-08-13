@@ -38,7 +38,7 @@ Record only evidence-backed current owners, flows/states/contracts, Current ->
 Target binding, affected producer/consumer paths, and technical boundaries that
 change the design. Keep desired meaning in the governing Requirement.
 
-<!-- Durable Integrating Plan: use `design.md` as the Plan entry, list independent Component paths in `consumes`, and synthesize only Component roles, dependency order, implementation composition conflicts, integrated proof, authorization/delivery boundary, and final Closure. Do not mirror Component content, status, Requirement meaning, or acceptance. -->
+<!-- Durable Integrating Plan: use `design.md` as the Plan entry, link the common Governing Requirement, list independent Component Plan paths in `consumes`, and synthesize only technical roles, dependency order, implementation composition conflicts, integrated proof, authorization/delivery mechanics, and final Closure. Requirement owners retain the common outcome, Component meaning/boundaries, and acceptance. Do not mirror Component content, status, Requirement meaning, or acceptance. -->
 
 <!-- Database-structure change: before implementation, separately disclose the affected database object, change, compatibility/backfill, SQL artifact, execution owner, and authorization. Add one natural `.sql` sibling containing authoritative complete target DDL, forward schema/data update SQL, verification SQL, and safe rollback or explicit backup/stop/forward-repair recovery. The SQL artifact never grants DB-write authority. Delete this comment when no database structure changes. -->
 

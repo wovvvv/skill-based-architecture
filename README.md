@@ -137,7 +137,7 @@ This is a result-oriented lifecycle, not a fixed ceremony. Simple and read-only 
 | **See enough information** | Distinguish user intent, business meaning, architecture contracts, code facts, runtime evidence, and historical conclusions; stop reading when the current decision is resolved |
 | **Judge without a standard answer** | Make tradeoffs explicit, compare real alternatives, request only the smallest missing normative decision, and replan when evidence changes |
 | **Coordinate reliable execution** | Give workflows, tools, and optional workers clear scope, inputs, outputs, forbidden areas, and review evidence while the main Agent retains final responsibility |
-| **Finish the exact request** | Prove only the deliverables and terminal states bound by the current request, Task Anchor, and governing Plan; do not import historical or adjacent work into completion |
+| **Finish the exact request** | Prove only the deliverables and terminal states bound by the current request and governing Requirement as projected into the Task Anchor; Plans only identify and order technical delivery for those already-bound artifacts |
 
 These are product principles, not claims that a longer checklist is always better. The full decision boundary is in the [SBA Bible](docs/sba-bible.md).
 
@@ -211,7 +211,7 @@ No. Sub-agents are optional accelerators, not a setup requirement. If delegation
 
 **What exactly counts as complete?**
 
-Only the current task's bound deliverables and requested terminal states count. Historical tasks, adjacent repositories, and implied follow-up work stay outside completion unless the user, Task Anchor, or a governing Plan explicitly includes them. Intermediate states never impersonate the requested end state.
+Only deliverables and requested terminal states bound by the current user request and governing Requirement, as projected into the Task Anchor, count. Historical tasks, adjacent repositories, and implied follow-up work stay outside completion unless the current request or Requirement explicitly includes them. A Plan may identify targets, ordering, and readback for an already-bound artifact, but cannot add or alter the artifact or terminal state. Intermediate states never impersonate the requested end state.
 
 **Does SBA replace the official minimal Skill format?**
 

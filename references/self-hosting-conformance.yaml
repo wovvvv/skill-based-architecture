@@ -34,12 +34,15 @@ required_sections:
       - "changes the execution mode, not the requested result"
       - "Structural checks do not prove that every previous instruction survived semantically"
       - "a pushed branch is not an MR or PR"
+      - "governing Requirement as projected into the Task Anchor"
+      - "cannot add or alter the artifact or terminal state"
     must_not_contain:
       - "Codex is the exception"
       - "you have to authorize it explicitly"
       - "silently skip the delegation step"
       - "planned evidence-driven materializer remains roadmap work"
       - "not a shipped capability"
+      - "Task Anchor, and governing Plan"
 
   - file: README.zh-CN.md
     must_contain:
@@ -54,12 +57,15 @@ required_sections:
       - "只会改变执行方式，不会改变请求结果"
       - "结构检查不能证明每一条旧规则都完成了语义迁移"
       - "已 push 的分支不等于 MR/PR"
+      - "governing Requirement 绑定、并由 Task Anchor 投影"
+      - "不得新增或修改交付物及终态"
     must_not_contain:
       - "Codex 是例外"
       - "都要**显式授权**"
       - "静默跳过委派步骤"
       - "仍是 roadmap 工作"
       - "不是已经交付的能力"
+      - "Task Anchor 或 governing Plan"
 
   # SKILL.md teaches the activation contract — every principle below has a
   # downstream counterpart that propagates via templates/skill/SKILL.md.template.
@@ -119,9 +125,11 @@ required_sections:
       - "不得用测试数量代替证据质量"
       - "跨 harness 兼容应当优雅降级"
       - "SBA 负责吸收工程复杂度"
-      - "Agent 的完成承诺只覆盖当前任务明确绑定的交付物及其请求终态"
+      - "Agent 的完成承诺只覆盖当前用户请求和 governing Requirement 明确绑定、并由 Task Anchor 投影的交付物及其请求终态"
       - "历史任务、相邻仓库和隐含后续流程"
       - "不得用中间状态冒充目标终态"
+      - "Plan 只能为已绑定交付物补充 repository/system owner"
+      - "不得新增、遗漏、缩窄或修改交付物及请求终态"
       - "需求是根，是目标与验收契约；Plan 从需求长出来，只拥有达成它的实现细节"
       - "清晰原话可以零问题达到 `requirement-ready`"
       - "验收标准属于需求，红测、自动化测试、浏览器/运行读回与人工确认只是 Plan 选择的证明方式"
@@ -355,6 +363,9 @@ required_sections:
       - "If technical evidence changes only the implementation premise or ordering"
       - "do not edit the Anchor"
       - "Requirement Definition and re-project the Anchor only after the Requirement"
+      - "Task Execution first projects that Requirement into exactly one Integrating Task Anchor"
+      - "Requirement-owned meaning/boundary/acceptance separately from Plan-owned interfaces/order/proof"
+      - "Only after `implementation-ready` does Task Execution derive one Integrating Native Plan"
     must_contain_in_order:
       - "After `requirement-ready` and before implementation-binding discovery"
       - "After source localization makes the Change Contract `implementation-ready`"
@@ -368,13 +379,23 @@ required_sections:
       - "plan_role"
       - "Re-anchor only when the user or evidence changes the Requirement frame"
       - "If evidence changes the premise, scope, ordering, or Done When, update the Anchor"
+      - "multiple independently authoritative Plans"
 
   - file: templates/skill/protocol-blocks/composite-plan-execution.md
     must_contain:
       - "# Composite Plan Execution"
-      - "one truthful Integrating owner"
-      - "one Integrating Task Anchor and one Native Plan"
+      - "common governing Requirement projection"
+      - "Task Execution alone projects that Requirement into one Integrating Task Anchor"
+      - "read its governing Requirement or Requirement projection for Goal, meaning, invariant, boundary, and acceptance"
+      - "Read its Component Plan only for technical decisions"
+      - "conflict returns to Requirement Definition and the affected Requirement owner"
+      - "technical interface, adapter, ordering, risk, proof, or delivery conflict returns"
+      - "this protocol neither creates that Anchor nor defines the common outcome or integrated acceptance"
       - "Session-only composition creates no durable graph artifact"
+    must_not_contain:
+      - "multiple independently authoritative Plans"
+      - "Component meaning, invariant, boundary, accepted interface, or local acceptance returns to that Component's Design owner"
+      - "one Integrating Task Anchor and one Native Plan cover the common outcome and integrated acceptance"
 
   - file: templates/skill/protocol-blocks/user-decision-drift.md
     must_contain:
@@ -551,15 +572,19 @@ required_sections:
       - "### Synchronization and Verification"
       - "## Ambiguous Request Dispatcher"
       - "Select exactly one execution owner"
+      - "frozen Requirement provenance"
+      - "frozen Plan technical provenance"
     must_not_contain:
       - "## Business Leaf and Gotcha Ownership"
       - "## Verified Failure Input"
       - "## Ordinary Recording Threshold"
       - "## Accepted Workflow-Distillation Input"
+      - "frozen Plan provenance"
 
   - file: templates/skill/workflows/rule-update/business-truth.md
     must_contain:
       - "## Business Leaf and Gotcha Ownership"
+      - "Requirement implementation handoff"
       - "## Requirement Decision Source"
       - "define-requirement.md#decision-authority-and-source-fidelity"
       - "change-contract.md#requirement-contract"
@@ -571,6 +596,7 @@ required_sections:
     must_not_contain:
       - "`covered/no-write`"
       - "## Accepted Workflow-Distillation Input"
+      - "from Plan handoff"
 
   - file: templates/skill/workflows/rule-update/verified-failure.md
     must_contain:
@@ -640,17 +666,26 @@ required_sections:
     must_contain:
       - "# Plan And Knowledge Closure"
       - "Replay each relevant user-confirmed Requirement Decision Context"
+      - "read each Component from its canonical Requirement and Plan owners"
+      - "Component Requirement's Decision Delta, boundary, and acceptance"
+      - "Component Plan's technical decisions, fresh proof, delivery responsibility, and durable technical distillation"
       - "Reconcile later Requirement Decision Deltas"
       - "Plan Leaf Reconciliation before implementation handoff"
       - "preserve one-way Requirement Provenance"
       - "consume rather than redefine that meaning"
       - "Run Knowledge Reciprocity"
       - "Calibrate `distilled_to:`"
+      - "integrated result satisfies the common governing Requirement projection and its acceptance"
+      - "Integrating Plan supplies only consumed technical interfaces, ordering, proof, and delivery responsibility"
+      - "cannot create or revise the common outcome or integrated acceptance"
 
   - file: templates/skill/protocol-blocks/external-delivery-verification.md
     must_contain:
       - "# External Delivery Verification"
       - "## Requested Artifact Set"
+      - "current explicit user request and the Governing Requirement, as projected into the active Task Anchor"
+      - "Plans may attach only an already-bound item's technical identity"
+      - "Plan cannot add, omit, narrow, or modify an artifact or requested terminal state"
       - "Historical tasks, adjacent repositories or systems"
       - "create no ledger, database, or persistent status file"
       - "Before answering an aggregate status question"
@@ -659,6 +694,8 @@ required_sections:
       - "approval can satisfy an approval request but cannot satisfy a merge request"
       - "Verify the real artifact rather than a precursor"
       - "`verified`, `blocked`, `stale`, or `premise-changed`"
+    must_not_contain:
+      - "active Task Anchor, and every governing Plan"
 
   - file: templates/skill/workflows/subagent-auxiliary.md
     must_contain:
@@ -698,11 +735,14 @@ required_sections:
       - "Plan steps and test code cannot"
       - "returns to Requirement Definition"
       - "### Plan Composition"
+      - "common Requirement-governed outcome"
+      - "Governing Requirements remain the normative authorities"
       - "Can this Plan still independently complete, freeze, and be directly consumed later?"
       - "one-way `consumes`"
       - "`subplan_of: prd.md`"
       - "one harness-native Plan and one active mainline"
       - "Promote an existing truthful owner into that dossier before creating a third Plan"
+      - "integrated result against the common Requirement acceptance"
       - "## Database-Structure Changes"
       - "complete target-state DDL derived from the authoritative current schema"
       - "forward schema update SQL plus required DML/backfill/data correction"

@@ -89,6 +89,18 @@ The archive file has the same format and is read on demand if a downstream agent
     protect Requirement dimensions, no-guess handoff, Current-versus-desired
     authority, Anchor projection, `implementation-ready` ordering, Plan return
     behavior, proof subordination, and the absence of Plan owner inversion.
+  - External delivery derives artifacts and requested terminal states only from
+    the current user request and Governing Requirement as projected into the
+    Task Anchor. Plans may identify, order, and read back only already-bound
+    artifacts. Composite execution likewise reads Component meaning,
+    boundaries, and acceptance from Requirements while Plans own only technical
+    interfaces, adapters, ordering, risk, proof, and delivery mechanics; Task
+    Execution alone projects the Integrating Anchor and later derives its
+    Native Plan.
+  - Rule Update names Requirement implementation handoff as the normative
+    source and separates frozen Requirement provenance from frozen Plan
+    technical provenance. Controlled owner-inversion mutations reject the old
+    delivery and Composite Plan authority claims independently.
 - Why it matters: the earlier requirement-first rule still left requirement
   brainstorming and implementation design inside one Plan workflow. That made
   it possible for a Plan or test to silently complete missing product meaning,
@@ -283,7 +295,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 - Upstream commit: pending in this working tree
 - Changed areas:
-  - `protocol-blocks/external-delivery-verification.md` now binds a Session-only requested artifact set when delivery spans multiple artifacts, repositories, or systems, or when the user asks an aggregate completion question. Each item keeps its own owner, requested terminal state, authoritative readback, and typed result; aggregate completion covers only the current request, Task Anchor, and governing Plans.
+  - `protocol-blocks/external-delivery-verification.md` now binds a Session-only requested artifact set when delivery spans multiple artifacts, repositories, or systems, or when the user asks an aggregate completion question. Each item keeps its own owner, requested terminal state, authoritative readback, and typed result; aggregate completion covers only the current request and Governing Requirement as projected into the Task Anchor. A Plan may only supply technical identity, ordering, and readback for an already-bound artifact.
   - `workflows/task-closure.md` consumes that bounded set and requires every requested artifact to reach its exact terminal state. Local readiness, commit, push, MR/PR, approval, merge, assembly, deploy, and publication remain distinct states; neighboring or historical work cannot enter completion implicitly.
   - Template and self-hosting conformance protect the requested-artifact boundary, exact-state verification, and the existing guarantee that optional subagent dispatch degrades to the same bounded inline work without weakening the workflow or its checks.
   - `docs/sba-bible.md` records the stable completion-scope principle. `README.md` and `README.zh-CN.md` were rebuilt around the ordinary-user journey, executable safeguards, and an explicit separation between the current full-scaffold implementation and the draft evidence-driven materializer.
@@ -319,9 +331,9 @@ The archive file has the same format and is read on demand if a downstream agent
 - Changed areas:
   - `workflows/update-rules.md` is now the compact shared durable-write contract and ambiguous-request dispatcher. It keeps classification, source/authority fidelity, targeted reconciliation, action-changing activation, placement/generalization, synchronization, verification, and unchanged authority, but no longer embeds every typed procedure.
   - `workflows/rule-update/` adds four independently loaded owners: `business-truth.md`, `verified-failure.md`, `knowledge-reconciliation.md`, and `workflow-distillation.md`. Known callers enter the applicable owner directly; only an input such as `记录一下` whose type is still unknown enters the dispatcher first.
-  - Plan handoff, standalone business modeling, Fix Bug, Task Execution, Task Closure, documentation maintenance, Gotcha guidance, and protocol summaries now link to the typed owner at the lifecycle boundary where its evidence exists.
+  - Requirement implementation handoff, standalone business modeling, Fix Bug, Task Execution, Task Closure, documentation maintenance, Gotcha guidance, and protocol summaries now link to the typed owner at the lifecycle boundary where its evidence exists.
   - Template and self-hosting conformance plus self-scenarios assert complete branch semantics, direct links, negative cross-branch loading, the shared activation/authority contract, and the nested workflow paths. No second index, routing manifest, Memory store, candidate ledger, mode, or user-visible configuration was added.
-- Why it matters: the previous 23 KB owner forced a proven JDK/Mockito failure to load business modeling and workflow-distillation rules, while a business Plan handoff loaded recurrence and enforcement semantics. The new shape preserves the same decisions and authority while each normal journey loads only the shared contract plus its one typed owner.
+- Why it matters: the previous 23 KB owner forced a proven JDK/Mockito failure to load business modeling and workflow-distillation rules, while a Requirement implementation handoff loaded recurrence and enforcement semantics. The new shape preserves the same decisions and authority while each normal journey loads only the shared contract plus its one typed owner.
 - Downstream refresh guidance: adapt from the downstream's current Rule Update owner rather than replacing it wholesale. Preserve project-specific business leaves, Plan reconciliation, code-root ownership, cross-app paths, promotion boundaries, canonical-source provenance, assembly commands, and fitted verification. Add only the typed owners the project actually admits; update known callers to direct links; keep ambiguous explicit recording on `update-rules.md`; generate/install through the canonical owner and verify real consumers instead of hand-editing installed copies.
 
 ## 2026-08-04 - Post-completion proactive workflow distillation

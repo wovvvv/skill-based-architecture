@@ -90,6 +90,9 @@ required_sections:
       - "If technical evidence changes only the implementation premise or ordering"
       - "do not edit the Anchor"
       - "Requirement Definition and re-project the Anchor only after the Requirement"
+      - "Task Execution first projects that Requirement into exactly one Integrating Task Anchor"
+      - "Requirement-owned meaning/boundary/acceptance separately from Plan-owned interfaces/order/proof"
+      - "Only after `implementation-ready` does Task Execution derive one Integrating Native Plan"
     must_contain_in_order:
       - "After `requirement-ready` and before implementation-binding discovery"
       - "After source localization makes the Change Contract `implementation-ready`"
@@ -100,16 +103,25 @@ required_sections:
       - "Plan: <concise task-specific steps"
       - "Re-anchor only when the user or evidence changes the Requirement frame"
       - "If evidence changes the premise, scope, ordering, or Done When, update the Anchor"
+      - "multiple independently authoritative Plans"
 
   - file: protocol-blocks/composite-plan-execution.md
     must_contain:
       - "# Composite Plan Execution"
-      - "one truthful Integrating owner"
+      - "common governing Requirement projection"
+      - "Task Execution alone projects that Requirement into one Integrating Task Anchor"
       - "`done` is frozen"
       - "missing, `abandoned`, replaced, or unauthorized inputs block"
-      - "Component meaning, invariant, boundary, accepted interface"
-      - "one Integrating Task Anchor and one Native Plan"
+      - "read its governing Requirement or Requirement projection for Goal, meaning, invariant, boundary, and acceptance"
+      - "Read its Component Plan only for technical decisions"
+      - "conflict returns to Requirement Definition and the affected Requirement owner"
+      - "technical interface, adapter, ordering, risk, proof, or delivery conflict returns"
+      - "this protocol neither creates that Anchor nor defines the common outcome or integrated acceptance"
       - "Session-only composition creates no durable graph artifact"
+    must_not_contain:
+      - "multiple independently authoritative Plans"
+      - "Component meaning, invariant, boundary, accepted interface, or local acceptance returns to that Component's Design owner"
+      - "one Integrating Task Anchor and one Native Plan cover the common outcome and integrated acceptance"
 
   - file: protocol-blocks/user-decision-drift.md
     must_contain:
@@ -320,12 +332,13 @@ required_sections:
     must_contain:
       - "# Plan And Knowledge Closure"
       - "enumerate every one-way `consumes` edge"
-      - "read each Component from its canonical owner"
-      - "A `done` Component is frozen"
-      - "no required Component may remain `draft` or `executing`"
+      - "read each Component from its canonical Requirement and Plan owners"
+      - "A `done` Component Plan is frozen"
+      - "no required Component Plan may remain `draft` or `executing`"
       - "a true `subplan_of` shares its parent's lifecycle"
-      - "an independent Component retains its own lifecycle"
-      - "Decision Delta, local acceptance, fresh proof, delivery responsibility, and durable distillation"
+      - "an independent Component Plan retains its own lifecycle"
+      - "Component Requirement's Decision Delta, boundary, and acceptance"
+      - "Component Plan's technical decisions, fresh proof, delivery responsibility, and durable technical distillation"
       - "Replay each relevant user-confirmed Requirement Decision Context"
       - "desired business truth"
       - "current implementation fact"
@@ -334,7 +347,9 @@ required_sections:
       - "consume rather than redefine that meaning"
       - "it is not the first place to compress or write the user-confirmed mainline"
       - "Run Knowledge Reciprocity"
-      - "integrated acceptance, and delivery responsibility"
+      - "integrated result satisfies the common governing Requirement projection and its acceptance"
+      - "Integrating Plan supplies only consumed technical interfaces, ordering, proof, and delivery responsibility"
+      - "cannot create or revise the common outcome or integrated acceptance"
       - "Calibrate `distilled_to:`"
       - "cannot declare readiness or completion"
 
@@ -343,6 +358,9 @@ required_sections:
       - "# External Delivery Verification"
       - "never grants it or declares task completion"
       - "## Requested Artifact Set"
+      - "current explicit user request and the Governing Requirement, as projected into the active Task Anchor"
+      - "Plans may attach only an already-bound item's technical identity"
+      - "Plan cannot add, omit, narrow, or modify an artifact or requested terminal state"
       - "Historical tasks, adjacent repositories or systems"
       - "create no ledger, database, or persistent status file"
       - "Before answering an aggregate status question"
@@ -355,6 +373,8 @@ required_sections:
       - "Return `premise-changed` when the requested artifact, target, authority, or delivery scope/premise changed"
       - "Retry only the external boundary"
       - "`verified`, `blocked`, `stale`, or `premise-changed`"
+    must_not_contain:
+      - "active Task Anchor, and every governing Plan"
 
   - file: protocol-blocks/workflow-distillation-proposal.md
     must_contain:
@@ -384,15 +404,19 @@ required_sections:
       - "## Ambiguous Request Dispatcher"
       - "Select exactly one execution owner"
       - "No authority expanded"
+      - "frozen Requirement provenance"
+      - "frozen Plan technical provenance"
     must_not_contain:
       - "## Business Leaf and Gotcha Ownership"
       - "## Verified Failure Input"
       - "## Ordinary Recording Threshold"
       - "## Accepted Workflow-Distillation Input"
+      - "frozen Plan provenance"
 
   - file: workflows/rule-update/business-truth.md
     must_contain:
       - "Shared Durable-Write Contract"
+      - "Requirement implementation handoff"
       - "## Business Leaf and Gotcha Ownership"
       - "A Gotcha is not a general implementation reference or a second business-model owner"
       - "## Requirement Decision Source"
@@ -410,6 +434,7 @@ required_sections:
       - "`covered/no-write`"
       - "## Ordinary Recording Threshold"
       - "## Accepted Workflow-Distillation Input"
+      - "from Plan handoff"
 
   - file: workflows/rule-update/verified-failure.md
     must_contain:

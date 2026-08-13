@@ -122,11 +122,12 @@ A new implementation Plan never uses `prd.md` as its technical or lifecycle owne
 Add another sibling only when it independently changes a technical decision,
 task boundary, risk treatment, proof, or required handoff.
 
-When several authoritative Plans compose one outcome, distinguish dependency
-from `subplan_of`. Materialize an Integrating Plan only for real composition
-recovery/handoff/review/conflict/authorization/proof pressure. It records
-one-way `consumes` edges and the integrated outcome/order/conflict/proof without
-mirroring Component content or live status.
+When one Requirement-governed outcome composes several independently maintained
+implementation Plans, distinguish dependency from `subplan_of`. Materialize an
+Integrating Plan only for real composition recovery/handoff/review/conflict/
+authorization/proof pressure. It records one-way `consumes` edges and only the
+technical roles/order/conflicts/proof without mirroring Component content,
+Requirement meaning or acceptance, or live status.
 
 ## Database-Change Artifact Gate
 

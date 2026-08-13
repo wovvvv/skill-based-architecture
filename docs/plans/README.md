@@ -90,7 +90,7 @@ separate owners.
 
 ### Plan Composition
 
-A reference or dependency does not by itself make a composite Plan. Composition exists when multiple independently authoritative Plans must share execution order, conflict handling, integrated proof, authorization, delivery, or final Closure under one outcome.
+A reference or dependency does not by itself make a composite Plan. Composition exists when one common Requirement-governed outcome needs technical work from multiple independently maintained Plans to share execution order, conflict handling, integrated proof, authorization, delivery, or final Closure. Governing Requirements remain the normative authorities for every Component and the common outcome.
 
 Use this independence test before nesting a Plan:
 
@@ -102,10 +102,10 @@ Use this independence test before nesting a Plan:
 Composite execution remains Session-only by default, with one harness-native Plan and one active mainline. Plan count alone never creates another file. Materialize only when the composition itself has concrete persistence pressure such as independent recovery, review, conflict resolution, cross-repository delivery, authorization, integrated proof, or final Closure.
 
 A durable Integrating Plan uses `design.md` as its Plan entry and points to its
-Governing Requirement or Requirements. It owns Component roles, dependency
-order, implementation composition conflicts, authorization/delivery boundary,
-integrated proof, and final Closure without copying Component bodies, status,
-or Requirement acceptance. Promote an existing truthful owner into that dossier before creating a third Plan. A frozen Plan may undergo path and graph-metadata correction only when its existing content already owns the composition semantics; any new normative or implementation decision requires a successor in the owner that changed.
+Governing Requirement or Requirements. It owns Component technical roles,
+dependency order, implementation composition conflicts, authorization/delivery
+mechanics, integrated proof, and final Closure without copying Component
+bodies, status, Requirement meaning, or acceptance. Promote an existing truthful owner into that dossier before creating a third Plan. A frozen Plan may undergo path and graph-metadata correction only when its existing content already owns the technical composition semantics; any new normative or implementation decision requires a successor in the owner that changed.
 
 ## Semantic Contract
 
@@ -165,7 +165,7 @@ no artifact -> draft -> executing -> final reconciliation -> done -> frozen
 - **done**: delivery landed. Before changing status, reconcile later Requirement Decision Deltas, implementation evidence, activated destinations, and final `distilled_to:` targets.
 - **abandoned**: explain why in one short section. Do not distill an unchosen direction.
 
-For an Integrating Plan, final reconciliation reads every `consumes` owner directly, completes each affected Component's own reconciliation, then proves the cross-Plan contract and requested delivery. A required Component that is missing, abandoned, unresolved, still `draft`/`executing`, or replaced by an unconsumed successor blocks Integrating `done`.
+For an Integrating Plan, final reconciliation reads every Component Requirement and `consumes` Plan owner directly, completes each affected owner's reconciliation, then proves the integrated result against the common Requirement acceptance and requested delivery. A required Component that is missing, abandoned, unresolved, still `draft`/`executing`, or replaced by an unconsumed successor blocks Integrating `done`.
 
 Frozen Plans are read-only audit history. Outside direct implementation/review lineage, they are reached by explicit path, provenance link, `git log docs/plans/`, or archive search, not by default routing.
 

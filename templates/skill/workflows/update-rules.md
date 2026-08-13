@@ -23,7 +23,8 @@ Then choose the nearest durable destination before reading a broad evidence stor
 - stable project-specific macro business types/flows/states/boundaries/invariants -> routed `references/business/<domain>.md`;
 - costly non-obvious implementation failure -> `references/gotchas.md` or a routed domain pitfall file;
 - cross-cutting Agent contract failure -> `references/behavior-failures.md`;
-- frozen Plan provenance -> `docs/plans/`, while load-bearing conclusions also enter an active destination;
+- frozen Requirement provenance -> its Requirement archive owner, while load-bearing normative meaning also enters the active business/rule owner;
+- frozen Plan technical provenance -> `docs/plans/`, while load-bearing technical conclusions also enter an active destination;
 - personal preference useful only to this user -> the harness memory system, not project skill docs.
 
 Inspect only the destination family selected by the evidence; never preload both `references/gotchas.md` and `references/behavior-failures.md`.

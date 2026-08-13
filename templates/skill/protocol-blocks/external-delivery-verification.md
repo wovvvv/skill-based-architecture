@@ -4,7 +4,7 @@ Load this protocol only when the user requested commit, push, MR/PR, deploy, pub
 
 ## Requested Artifact Set
 
-Before delivery or status readback, bind a session-only requested artifact set when the current task requests two or more external/shared artifacts, spans more than one repository or system owner, or the user asks an aggregate completion question such as "is everything done?" Derive the set only from the current explicit user request, active Task Anchor, and every governing Plan. Historical tasks, adjacent repositories or systems, touched tools, and likely follow-on work do not enter the set unless one of those current authorities explicitly includes them. A changed or conflicting artifact, owner, terminal state, or scope returns `premise-changed` for rebinding through Task Closure or Task Execution.
+Before delivery or status readback, bind a session-only requested artifact set when the current task requests two or more external/shared artifacts, spans more than one repository or system owner, or the user asks an aggregate completion question such as "is everything done?" Derive its artifacts and requested terminal states only from the current explicit user request and the Governing Requirement, as projected into the active Task Anchor. Plans may attach only an already-bound item's technical identity (repository/system owner, source, target, ref, or version), delivery ordering, and authoritative readback; a Plan cannot add, omit, narrow, or modify an artifact or requested terminal state. Historical tasks, adjacent repositories or systems, touched tools, and likely follow-on work do not enter the set unless the current user request or Governing Requirement explicitly includes them. A changed or conflicting artifact, owner, terminal state, or scope returns `premise-changed` for Requirement Definition and Task Execution to rebind before delivery.
 
 Each item records only its natural artifact label, owning repository/system, requested terminal state, authoritative readback, and current typed result. The set is runtime state only: create no ledger, database, or persistent status file. For a single artifact, Verify step 1 is the compact equivalent and no set needs to be presented.
 
@@ -28,5 +28,6 @@ Rationalizations to reject:
 
 - “The branch was pushed, so the requested MR probably exists.” Verify the actual MR/PR.
 - “The MR was approved, so the requested merge is complete.” Read the actual merge state.
-- “A neighboring repository was involved, so its likely follow-on artifact is also part of this task.” Only current authorities bind the requested set.
+- “The Plan mentions another delivery, so it is part of completion.” A Plan can identify and order only artifacts already bound by the user request and Governing Requirement.
+- “A neighboring repository was involved, so its likely follow-on artifact is also part of this task.” Only the user request and Governing Requirement bind the requested set.
 - “A login/network retry means every local test must run again.” Re-run only the blocked boundary unless an input changed.

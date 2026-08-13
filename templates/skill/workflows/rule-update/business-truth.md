@@ -1,6 +1,6 @@
 # Business Truth Reconciliation
 
-Use this owner for user-confirmed desired business meaning from Plan handoff, standalone business modeling, an admitted confirmed implementation gap, or an explicit user business statement during Fix Bug. Before a persistent change or no-write decision, consume [`workflows/update-rules.md` § Shared Durable-Write Contract](../update-rules.md#shared-durable-write-contract) once for classification, fidelity, reconciliation, activation, placement, synchronization, verification, and authority.
+Use this owner for user-confirmed desired business meaning from a Requirement implementation handoff, standalone business modeling, an admitted confirmed implementation gap, or an explicit user business statement during Fix Bug. Before a persistent change or no-write decision, consume [`workflows/update-rules.md` § Shared Durable-Write Contract](../update-rules.md#shared-durable-write-contract) once for classification, fidelity, reconciliation, activation, placement, synchronization, verification, and authority.
 
 ## Business Leaf and Gotcha Ownership
 

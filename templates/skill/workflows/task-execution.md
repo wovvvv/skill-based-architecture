@@ -50,7 +50,7 @@ For Design-derived work, retain every governing Requirement and Plan path. Repla
 
 ### Composite Plan Handoff
 
-When one outcome consumes multiple independently authoritative Plans, read [`composite-plan-execution.md`](../protocol-blocks/composite-plan-execution.md) before mutation. It validates Component inputs and returns either one Integrating owner, Task Anchor, and Native Plan or a precise block/return owner. This kernel retains the invariant that Components never create competing runtime anchors, step stores, or semantic `Current Task` entries.
+When one outcome governed by a common Requirement projection consumes technical work from multiple independently maintained Component Plans, Task Execution first projects that Requirement into exactly one Integrating Task Anchor, then reads [`composite-plan-execution.md`](../protocol-blocks/composite-plan-execution.md) before mutation. The protocol validates Requirement-owned meaning/boundary/acceptance separately from Plan-owned interfaces/order/proof and returns technical integration readiness or a precise Requirement/Plan owner to revisit. Only after `implementation-ready` does Task Execution derive one Integrating Native Plan. Components never create competing runtime anchors, step stores, or semantic `Current Task` entries.
 
 ### Presentation Gate
 
@@ -113,4 +113,4 @@ For each later user message: a refinement/correction first updates the Requireme
 
 ## Exit To Closure
 
-Enter `task-closure.md` only when every non-delivery Plan step is verified, local acceptance evidence is present, Boundaries were respected, each triggered conditional protocol returned a resolved outcome, and every verified failure has a Rule Update learning outcome. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure decides readiness/completion and conditionally loads specialized proof owners; it does not finish implementation work, diagnose root cause, or grant delivery authority.
+Enter `task-closure.md` only when every non-delivery Plan step is verified, local evidence for the governing Requirement acceptance is present, Boundaries were respected, each triggered conditional protocol returned a resolved outcome, and every verified failure has a Rule Update learning outcome. Any remaining Done When evidence must be explicitly delivery-dependent and named. Closure decides readiness/completion and conditionally loads specialized proof owners; it does not finish implementation work, diagnose root cause, or grant delivery authority.
