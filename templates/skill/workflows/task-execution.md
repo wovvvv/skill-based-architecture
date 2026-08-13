@@ -37,9 +37,14 @@ derive the Native Plan from the matched Domain Workflow and Implementation
 Plan. The Native Plan owns only implementation/proof steps and live status; it
 cannot infer or edit the Requirement. Before the first mutation, map each
 material acceptance/risk to fitted evidence and its advance, return, stop, and
-escalation conditions. Re-anchor only when the user or evidence changes the
-Requirement frame, then rebind and replace the remaining Native Plan before
-more mutation. Neither Anchor nor Plan is another persistent artifact.
+escalation conditions. Technical evidence that changes only Current facts,
+owner, implementation premise, or ordering re-localizes, rebinds, and replans
+without editing the Anchor. Evidence that conflicts with desired meaning or
+would change Goal, Done When, scope, preservation, permission, or acceptance
+returns to Requirement Definition; only after the authoritative Requirement is
+updated and reaches `requirement-ready` again may Task Execution re-project the
+Anchor and replace the remaining Native Plan. Neither Anchor nor Plan is
+another persistent artifact.
 
 For Design-derived work, retain every governing Requirement and Plan path. Replay relevant user-confirmed Requirement Decision Context before deriving or changing the Task Anchor, and replay only the Plan's technical decisions needed by the current step. Do not lose a rule, boundary, rationale, acceptance condition, or technical constraint. Only business-bearing decisions require a routed business rule.
 
@@ -88,7 +93,12 @@ After evidence proves the root cause, the current repair, and fitted red-to-gree
 2. Run the Anchor Checkpoint, then name the current step's unresolved question, the evidence that could resolve or falsify it, and the advance/return condition before acting.
 3. Mark the step complete only when the resulting evidence satisfies that condition and either changes the next decision, is consumed by the next step, or satisfies remaining Done When evidence. Running a command, generating a file, receiving a successful exit code, writing code, spending effort, or a worker's claim is not completion evidence by itself.
 4. If evidence satisfies the condition, advance only after confirming the next step serves the Goal and respects Boundaries. If it contradicts the premise, return to the owning earlier step; if it is inconclusive, keep the step open and change the check or escalate under the declared condition.
-5. If evidence changes the premise, scope, ordering, or Done When, update the Anchor and remaining Plan before more mutation. Tell the user when the Goal itself must change.
+5. If technical evidence changes only the implementation premise or ordering,
+   update Implementation Binding and the remaining Plan before more mutation;
+   do not edit the Anchor. If it would change Goal, scope, Done When,
+   preservation, permission, acceptance, or other desired meaning, return to
+   Requirement Definition and re-project the Anchor only after the Requirement
+   is authoritative and `requirement-ready` again.
 6. Never silently overwrite a load-bearing conclusion. Re-check the governing Requirement mainline, acceptance, Boundaries, Task Anchor, and each Plan's technical choices; obtain the requirement/business owner's confirmation before adopting a normative judgment, and replan technical choices when only implementation evidence changes.
 
 Independent Subagents may work concurrently, but the main task keeps one integration/decision focus. Their outputs are candidate evidence until the main Agent reviews them and runs the owning step's check.

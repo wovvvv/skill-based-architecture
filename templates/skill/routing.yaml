@@ -48,6 +48,7 @@ tasks:
     trigger_examples:
       - 先讨论需求,不要写 Plan 或代码
       - 先帮我把这个需求问清楚
+      - 先形成或更新 PRD Requirement,不要写实现 Plan 或代码
       - brainstorm the desired behavior before planning
   - id: plan-feature
     labels: { en: Plan implementation for a confirmed requirement, zh: 基于已确认需求制定实现计划 }

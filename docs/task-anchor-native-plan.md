@@ -65,6 +65,8 @@ Done When
 
 Requirement Definition 负责目标、规范性范围、会改变结果的模型与具体流程、规则/约束、保留行为、边界与可验证验收；Task Anchor 只把它投影为当前 Session 的 Goal / Done When / Boundaries。代码和运行证据随后负责证明 Current 行为、owner、Current -> Target、可行性与风险。Goal 在任务执行期间应当相对稳定；Plan 可以根据技术证据调整 owner、顺序、风险和证明方式，但不能在没有回到 Requirement Definition 的情况下改变 desired meaning，也不能用已有步骤或测试反向定义需求。
 
+Requirement 与 Implementation Plan 默认都只保留在 Session，并分别接受自己的 Artifact Pressure Gate。用户明确要求 PRD/Requirement，或 Requirement 自己有独立恢复、交接、评审、验证、冲突或生命周期 reader 时，可以先形成最小 Governing Requirement，并停在独立的 `requirement-ready` 交付；这不要求、也不允许顺带创建实现 Plan。只有实现设计另有持久压力时，才创建独立 Plan，并由它单向链接 Requirement。Requirement 不反向维护 Plan 状态，Plan 也不复制或补全 Requirement。
+
 这三个字段定义的是 Agent 在当前 Session 中必须维护的任务状态，不等于每次都要把同一套标签原样贴进对话。Task Anchor 是否建立，与它如何对用户展示，是两个独立问题。
 
 ---
@@ -87,7 +89,9 @@ flowchart LR
     A["用户发起新任务"] --> B["Route 匹配"]
     B --> C["选择 Domain Workflow"]
     A --> D["Requirement Definition"]
+    D -->|Requirement artifact pressure| M["可选 Governing Requirement / PRD"]
     D -->|requirement-ready| E["建立 Task Anchor"]
+    M -.规范性 authority.-> E
     C --> F["Source Localization"]
     E --> F
     F --> G["Implementation Binding"]
@@ -96,9 +100,9 @@ flowchart LR
     H --> I["执行当前步骤"]
     I --> J["验证步骤证据"]
     J -->|未通过| I
-    J -->|技术前提变化| K["重新绑定并更新 Plan"]
+    J -->|Current / owner / 顺序变化| K["重新绑定并更新 Plan"]
     K --> I
-    J -->|需求含义变化| D
+    J -->|Goal / scope / Done When / acceptance 变化| D
     J -->|全部完成| L["Task Closure 对照 Requirement 验收"]
 ```
 
@@ -251,7 +255,7 @@ Checkpoint 默认是 Agent 的内部执行动作。只有状态发生有意义�
 
 ### 1. Goal 相对稳定，Plan 可以变化
 
-调查发现原假设不成立时，应更新后续步骤；如果目标本身需要变化，则明确告诉用户，而不是静默改变任务含义。
+调查只改变 Current facts、实现 owner、可行性、风险、顺序、恢复或证明方式时，更新 Implementation Binding 和后续 Plan，Task Anchor 保持不变。如果证据会改变 Goal、规范性 scope、preservation、permission、Done When、acceptance 或 desired meaning，不能直接改 Anchor 来适配实现：先回 Requirement Definition，必要时更新 Governing Requirement；它再次达到 `requirement-ready` 后，才重新投影 Anchor 并重写 Plan。
 
 ### 2. 同一时间只有一个主步骤正在执行
 
@@ -267,7 +271,7 @@ Checkpoint 默认是 Agent 的内部执行动作。只有状态发生有意义�
 
 ### 5. 前提变化时先更新 Plan
 
-当新证据改变根因、范围、顺序或完成标准时，先更新剩余计划，再继续修改。不要继续执行已过期的步骤。
+当新证据只改变技术根因、owner、影响、顺序或证明方式时，先更新剩余计划，再继续修改。若变化触及 Requirement 含义、范围或完成标准，则先返回 Requirement Definition；Plan 无权自行吸收这一变化。不要继续执行已过期的步骤。
 
 ### 6. Closure 对照 Task Anchor 验收
 
@@ -332,7 +336,9 @@ New Task
 ```text
 New Task
 → Route
+→ Requirement Definition
 → Task Anchor
+→ Implementation Binding
 → Native Plan
 → Domain Workflow
 → Task Closure
@@ -342,8 +348,10 @@ New Task
 
 - Route 选择任务类型。
 - Requirement 定义目标和验收契约。
+- 可选 Governing Requirement/PRD 在自身 Artifact Pressure Gate 命中时持久拥有规范性语义；Requirement-only 交付可在这里完成。
 - Task Anchor 固定当前目标和完成标准。
-- Native Plan 管理达成需求的本次执行步骤和状态；它是手段，不是需求 owner。
+- Implementation Binding 证明 Current -> Target、owner 和影响边界。
+- Native Plan 管理达成需求的本次执行步骤和状态；它是手段，不是需求 owner。可选持久 Plan 只单向消费 Governing Requirement。
 - Domain Workflow 提供领域方法、强制门和检查要求。
 - Task Closure 判断目标是否完成并处理知识回流。
 

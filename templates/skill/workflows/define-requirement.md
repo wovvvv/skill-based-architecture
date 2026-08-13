@@ -4,8 +4,9 @@ Use this workflow when the requested deliverable is to understand, discuss,
 brainstorm, correct, or confirm desired behavior before implementation planning.
 Ordinary feature and behavior-change workflows may enter it internally when
 their requirement is incomplete; the user never has to re-route or restate the
-request. This workflow produces `requirement-ready`, not an implementation Plan,
-Task Breakdown, code mutation, or proof command.
+request. This workflow produces `requirement-ready` and, only under its own
+Artifact Pressure Gate, the Governing Requirement artifact. It never produces
+an implementation Plan, Task Breakdown, code mutation, or proof command.
 
 [`change-contract.md`](../protocol-blocks/change-contract.md) is the sole owner of Requirement Contract dimensions, authority, readiness, and return states.
 This workflow owns only the evidence and interaction needed to complete that
@@ -36,7 +37,8 @@ contract.
 When explicit input already closes every activated user-owned choice, record
 the source-faithful Requirement Contract and return `requirement-ready`
 immediately. Do not require the user to reply with a ceremonial confirmation.
-Do not create a Requirement file, Task Anchor, or Plan here.
+Keep it Session-only unless the Artifact Pressure Gate below admits a Governing
+Requirement. Do not create a Task Anchor or implementation Plan here.
 
 ### Incomplete Requirement
 
@@ -60,6 +62,14 @@ different desired contracts. A technical option belongs here only when the
 user is choosing a product or architecture constraint that changes behavior,
 scope, or acceptance.
 
+Discuss one load-bearing normative topic at a time. For a genuinely unresolved
+topic, present the current understanding, decisive factual evidence and
+constraints, material risk or trade-off, the Agent's recommendation, and at
+most one minimum normative question. Make the content detailed enough for the
+decision; do not replace it with a three-line summary or batch confirmation
+list. When the Requirement is already clear, ask no question and manufacture no
+alternative.
+
 Class names, storage layout, framework choice, task ordering, test framework,
 and other ordinary implementation means belong to
 [`plan-feature.md`](plan-feature.md) after `implementation-ready`. If a technical
@@ -82,9 +92,40 @@ reason, or rejected direction. Label any interpretation as Agent-derived and
 subordinate. When durable capture is admitted, apply
 [`maintain-docs.md` § Source-Preserving User Input](maintain-docs.md#source-preserving-user-input).
 
+## Requirement Artifact Pressure Gate
+
+Keep the Requirement Contract in the current Session by default. Create or
+update the smallest Governing Requirement only when the user explicitly asks
+for a Requirement/PRD artifact, or when an independent reader, review,
+recovery, validator, lifecycle, or handoff must consume the desired contract.
+Complexity, activity, implementation size, or a clear Requirement alone is not
+pressure.
+
+Reuse an authoritative existing issue, PRD, accepted decision, or Requirement
+instead of duplicating it. Before any new write, prove the destination is the
+real project code root and follow its local Requirement archive contract; if
+either is unresolved, stop the write rather than placing product truth in a
+meta-repository, wrong checkout, or invented taxonomy. Create only the natural
+single file or dossier entry that the proven reader needs.
+
+The artifact owns source/authority, desired goal, scope and preservation,
+decision-bearing model/flow, rules and constraints, observable acceptance, and
+confirmed or superseded normative decisions. Label supporting Current facts as
+implementation evidence. Exclude Current -> Target implementation design, Task
+Breakdown, task ordering, proof commands, and live step status. Writing the
+Requirement does not enter Plan Feature or authorize mutation.
+
+A later durable implementation Plan links to and consumes this owner one way.
+Physical co-location may use separate files when the local archive supports it,
+but Plan Feature cannot copy, narrow, resolve, or update the Governing
+Requirement. A normative change returns here, updates the Requirement through
+its authority, reaches `requirement-ready` again, and only then refreshes Plan
+projections.
+
 ## Handoff
 
-Return the source/authority, activated desired contract, known exclusions and
+Return the source/authority and, when admitted, the Governing Requirement path;
+then return the activated desired contract, known exclusions and
 preservation, observable acceptance, current facts versus assumptions, and any
 resolved/superseded decisions through the runtime Change Contract. Task
 Execution may then project Goal, Done When, and material Boundaries into a Task
@@ -92,5 +133,6 @@ Anchor. Requirement Definition does not derive implementation steps.
 
 [workflow-state:requirements]
 Resolve only desired meaning. Return `requirement-ready` or one minimum
-normative question; never return an implementation Plan or mutation.
+normative question; an admitted Governing Requirement is still not an
+implementation Plan or mutation.
 [/workflow-state:requirements]

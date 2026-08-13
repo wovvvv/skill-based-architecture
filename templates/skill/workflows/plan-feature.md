@@ -101,12 +101,26 @@ load-bearing decision needs recovery/handoff, an independent consumer/reviewer/
 validator/lifecycle exists, or a cross-module conflict needs one reconciled
 owner. Complexity or activity alone is not pressure.
 
-Create the smallest owner: one `docs/plans/YYYY-MM-DD-<slug>.md` for a focused
-record, or a dossier `prd.md` only when it already needs independently readable
-siblings. A durable Plan names and consumes its governing Requirement; physical
-co-location never transfers Requirement authority to the Plan. Add `design.md`
-or another sibling only when it independently changes a technical decision,
-task boundary, risk treatment, or proof.
+An explicit request to create or update only the Requirement/PRD stays in
+Requirement Definition and never borrows this Gate. When a durable Governing
+Requirement already exists, link and consume it without copying or editing it.
+If durable Plan pressure also gives the desired contract an independent
+reader/recovery/review/lifecycle need but no durable Requirement owner exists,
+return to Requirement Definition to materialize that owner first; then create
+the Plan as a separate one-way consumer.
+
+A durable Plan names and consumes its governing Requirement. Create the
+smallest Plan owner. When the authoritative Requirement remains an
+external or Session source and no dossier is warranted, use one
+`docs/plans/YYYY-MM-DD-<slug>.md` for the focused technical record. When a
+durable Governing Requirement exists, or Plan pressure first required
+Requirement Definition to materialize one, use separate dossier carriers:
+`prd.md` owns the Requirement and `design.md` owns the Implementation Plan.
+`design.md` declares `requirement: prd.md`, links that owner in its body, and
+consumes it one way. A Requirement-only dossier may stop at `prd.md`.
+A new implementation Plan never uses `prd.md` as its technical or lifecycle owner.
+Add another sibling only when it independently changes a technical decision,
+task boundary, risk treatment, proof, or required handoff.
 
 When several authoritative Plans compose one outcome, distinguish dependency
 from `subplan_of`. Materialize an Integrating Plan only for real composition
@@ -117,11 +131,12 @@ mirroring Component content or live status.
 ## Database-Change Artifact Gate
 
 A database-structure change independently requires a dossier and naturally
-named `.sql` sibling before implementation approval. Show a separate checkpoint
-naming database/table, target change, compatibility/backfill, SQL path,
-execution owner, and authorization boundary. Derive SQL from the real schema
-and dialect; include forward change, read-only verification, and safe rollback
-or explicit recovery. The artifact never grants database-write authority.
+named `.sql` sibling before implementation approval. Its `prd.md` Requirement,
+`design.md` Plan, and SQL surface remain separate owners under the same one-way
+contract. Show a separate checkpoint naming database/table, target change,
+compatibility/backfill, SQL path, execution owner, and authorization boundary.
+Derive SQL from the real schema and dialect; include forward change, read-only verification, and safe rollback or explicit recovery.
+The artifact never grants database-write authority.
 
 ## Plan Contract And Handoff
 
@@ -148,6 +163,8 @@ decisions, not live step status. For business-bearing work, send confirmed busin
   gaps return to Requirement Definition and technical gaps to localization.
 - Every proof traces to Requirement acceptance; test code creates no expected
   product behavior.
+- Requirement-only artifact delivery never enters this workflow, and a durable
+  Plan links its Governing Requirement without copying or modifying it.
 - No fake alternative, stale question, authority mixing, placeholder task,
   duplicated conclusion, or unjustified artifact remains.
 

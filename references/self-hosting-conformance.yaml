@@ -346,8 +346,15 @@ required_sections:
       - "After source localization makes the Change Contract `implementation-ready`"
       - "derive the Native Plan"
       - "cannot infer or edit the Requirement"
+      - "Technical evidence that changes only Current facts"
+      - "without editing the Anchor"
+      - "returns to Requirement Definition; only after the authoritative Requirement is"
+      - "updated and reaches `requirement-ready` again"
       - "Already-clear wording stays verbatim"
       - "an Agent-derived summary cannot be the only normative record"
+      - "If technical evidence changes only the implementation premise or ordering"
+      - "do not edit the Anchor"
+      - "Requirement Definition and re-project the Anchor only after the Requirement"
     must_contain_in_order:
       - "After `requirement-ready` and before implementation-binding discovery"
       - "After source localization makes the Change Contract `implementation-ready`"
@@ -359,6 +366,8 @@ required_sections:
       - "component_status"
       - "integration_status"
       - "plan_role"
+      - "Re-anchor only when the user or evidence changes the Requirement frame"
+      - "If evidence changes the premise, scope, ordering, or Done When, update the Anchor"
 
   - file: templates/skill/protocol-blocks/composite-plan-execution.md
     must_contain:
@@ -384,7 +393,8 @@ required_sections:
   - file: templates/skill/workflows/define-requirement.md
     must_contain:
       - "# Requirement Definition Workflow"
-      - "produces `requirement-ready`, not an implementation Plan"
+      - "produces `requirement-ready` and, only under its own"
+      - "Artifact Pressure Gate, the Governing Requirement artifact"
       - "sole owner of Requirement Contract dimensions, authority, readiness, and return states"
       - "## Intake And Evidence"
       - "Evaluate only the Requirement Contract dimensions activated by this request"
@@ -392,24 +402,37 @@ required_sections:
       - "### Clear Requirement"
       - "the source-faithful Requirement Contract and return `requirement-ready`"
       - "Do not require the user to reply with a ceremonial confirmation"
-      - "Do not create a Requirement file, Task Anchor, or Plan here"
+      - "Keep it Session-only unless the Artifact Pressure Gate below admits a Governing"
       - "### Incomplete Requirement"
       - "present the current understanding in concrete outcome terms"
       - "ask the minimum normative question needed"
       - "stop before implementation planning, Task Breakdown, or mutation"
       - "Do not fill a gap with an \"implementation assumption\""
       - "## Brainstorm Boundary"
+      - "Discuss one load-bearing normative topic at a time"
+      - "material risk or trade-off, the Agent's recommendation"
+      - "When the Requirement is already clear, ask no question"
       - "ordinary implementation means belong to"
       - "## Decision Authority And Source Fidelity"
       - "Keep a clear user statement verbatim as `User source`"
+      - "## Requirement Artifact Pressure Gate"
+      - "update the smallest Governing Requirement only when the user explicitly asks"
+      - "independent reader, review"
+      - "Complexity, activity, implementation size, or a clear Requirement alone is not"
+      - "real project code root and follow its local Requirement archive contract"
+      - "Exclude Current -> Target implementation design"
+      - "Requirement does not enter Plan Feature or authorize mutation"
+      - "A later durable implementation Plan links to and consumes this owner one way"
+      - "Plan Feature cannot copy, narrow, resolve, or update the Governing"
       - "## Handoff"
       - "Requirement Definition does not derive implementation steps"
     must_not_contain:
       - "## Technical Design Slices"
       - "## Proof Design"
-      - "## Artifact Pressure Gate"
       - "Make one risk-sized change"
       - "run the repository-owned fitted validation command"
+      - "Do not create a Requirement file, Task Anchor, or Plan here"
+      - "Requirement-only PRD uses Plan Feature's Artifact Pressure Gate"
 
   - file: templates/skill/workflows/plan-feature.md
     must_contain:
@@ -437,12 +460,24 @@ required_sections:
       - "after `implementation-ready`, the harness-native"
       - "Complexity or activity alone is not pressure"
       - "A durable Plan names and consumes its governing Requirement"
+      - "An explicit request to create or update only the Requirement/PRD stays in"
+      - "Requirement Definition and never borrows this Gate"
+      - "return to Requirement Definition to materialize that owner first"
+      - "use separate dossier carriers"
+      - "`prd.md` owns the Requirement and `design.md` owns the Implementation Plan"
+      - "`design.md` declares `requirement: prd.md`"
+      - "A Requirement-only dossier may stop at `prd.md`"
+      - "A new implementation Plan never uses `prd.md` as its technical or lifecycle owner"
       - "## Database-Change Artifact Gate"
+      - "Its `prd.md` Requirement,"
+      - "`design.md` Plan, and SQL surface remain separate owners"
       - "The artifact never grants database-write authority"
       - "## Plan Contract And Handoff"
       - "A durable implementation Plan is a revisable technical contract"
       - "must not redefine Goal, scope, model/flow, rules"
       - "Every proof traces to Requirement acceptance"
+      - "Requirement-only artifact delivery never enters this workflow"
+      - "without copying or modifying it"
       - "[workflow-state:planning]"
     must_contain_in_order:
       - "Consume the Requirement"
@@ -456,10 +491,13 @@ required_sections:
       - "canonical owner of Decision Delta"
       - "automatically enter a detailed user-facing brainstorm"
       - "docs/sba-bible.md"
+      - "or a dossier `prd.md` only when it already needs independently readable"
+      - "otherwise `prd.md` or the existing one-file Plan"
       - "plan_role"
       - "consumed_by"
       - "component_status"
       - "integration_status"
+      - "Requirement-only PRD uses Plan Feature's Artifact Pressure Gate"
 
   - file: templates/skill/workflows/plan-large.md
     must_contain:
@@ -469,7 +507,11 @@ required_sections:
       - "Keep tightly coupled angles together"
       - "Never create one file per lens"
       - "conversation when no artifact is justified"
+      - "or `design.md` when a durable Requirement dossier exists"
+      - "`prd.md` remains the Governing Requirement and never becomes the Large Plan synthesis"
       - "Do not dispatch broad “scan the subsystem” work before that boundary"
+    must_not_contain:
+      - "otherwise `prd.md` or the existing one-file Plan"
 
   - file: templates/skill/workflows/profile-business-model.md.example
     must_contain:
@@ -477,7 +519,11 @@ required_sections:
       - "Reconcile leaf / Gotcha ownership"
       - "Implementation-Fact Question Gate"
       - "## Confirmed Implementation Gap Collection and Handoff"
+      - "reuse an authoritative Governing Requirement for the same scope"
+      - "separate `design.md` consumer instead of putting technical Plan content in `prd.md`"
       - "Continue the user's agreed modeling scope"
+      - "Plan Feature may write implementation design only to the separate Plan carrier"
+      - "keep the Requirement draft and stop"
       - "--workspace-root <workspace-root>"
 
   - file: templates/skill/workflows/fix-bug.md

@@ -50,11 +50,11 @@ When profiling a new product project:
 ## Confirmed Implementation Gap Collection and Handoff
 
 1. Apply the four admission conditions in [`business-global-model.md` § Confirmed implementation gap intake](../../../references/business-global-model.md#confirmed-implementation-gap-intake). If truth is unconfirmed, implementation evidence is missing, the difference is not explicit, or no implementation handoff is needed, keep it in the current conversation and do not create a PRD.
-2. On the first admitted gap, reuse an existing feature/design Plan or create one draft `docs/plans/YYYY-MM-DD-<domain>-implementation-gaps/prd.md`. Reuse it for all later gaps in the same agreed modeling scope; never create one PRD per gap.
+2. On the first admitted gap, reuse an authoritative Governing Requirement for the same scope or create one draft `docs/plans/YYYY-MM-DD-<domain>-implementation-gaps/prd.md`. Reuse it for all later gaps in the same agreed modeling scope; never create one PRD per gap. An existing Implementation Plan links to this owner, and later Plan pressure creates or reuses the separate `design.md` consumer instead of putting technical Plan content in `prd.md`.
 3. For each gap, preserve the user-confirmed Requirement Decision Context, `Authority: user-confirmed`, `Evidence / Source: current conversation`, current implementation evidence, explicit difference and impact, unique owner leaf, and Knowledge Impact. Write the confirmed truth and gap into the leaf at once.
 4. Continue the user's agreed modeling scope. Do not interrupt after each gap to start solution planning.
-5. When the scope is complete, show the deduplicated gap set, shared dependencies/root causes, impact boundaries, and recommended order; then hand its confirmed Requirement source and implementation evidence to [`plan-feature.md` § Intake Sequence](plan-feature.md#intake-sequence).
-6. If the user pauses, keep the dossier draft and stop. Do not claim a complete implementation Plan or begin implementation.
+5. When the scope is complete, show the deduplicated gap set, shared dependencies/root causes, impact boundaries, and recommended order; then hand its confirmed Requirement source and implementation evidence to [`plan-feature.md` § Intake Sequence](plan-feature.md#intake-sequence). Plan Feature may write implementation design only to the separate Plan carrier.
+6. If the user pauses, keep the Requirement draft and stop. Do not claim a complete implementation Plan or begin implementation.
 
 ## Progressive Split
 

@@ -4,6 +4,7 @@
 
 - [Meta-Workflow Templates](#meta-workflow-templates)
 - [Task Execution Protocol](#task-execution-protocol)
+- [Requirement And Plan Artifact Ownership](#requirement-and-plan-artifact-ownership)
 - [Task Closure Protocol](#task-closure-protocol)
 - [Verified Failure Learning](#verified-failure-learning)
 - [Proactive Workflow Distillation](#proactive-workflow-distillation)
@@ -23,10 +24,10 @@ workflow may keep its applicable execution, verification, AAR, and completion
 behavior inline; the catalog is not a universal file checklist.
 
 - [`task-execution.md`](../templates/skill/workflows/task-execution.md) — the optional shared Managed-execution owner: requirement-bearing feature intake, Simple/Managed/Design classification, Task Anchor state derived from `requirement-ready`, proportional presentation, harness-native Plan, per-step Anchor Checkpoints, verified-failure Session handoff, user-confirmed Plan-mainline replay, immediate implementation-drift stop gate, evidence-backed advancement, and replan/new-message gates.
-- [`define-requirement.md`](../templates/skill/workflows/define-requirement.md) - the independently selectable Requirement Definition interaction owner: evidence-backed current understanding, clear-requirement zero-question path, minimum normative clarification, requirement brainstorming, and source-faithful Decision Delta capture. It returns `requirement-ready`; it never creates implementation steps or mutates code.
+- [`define-requirement.md`](../templates/skill/workflows/define-requirement.md) - the independently selectable Requirement Definition interaction owner: evidence-backed current understanding, clear-requirement zero-question path, minimum normative clarification, requirement brainstorming, source-faithful Decision Delta capture, and its own optional Requirement Artifact Pressure Gate. It may complete a requested Requirement-only PRD at `requirement-ready`; it never creates implementation steps or mutates code.
 - [`change-contract.md`](../templates/skill/protocol-blocks/change-contract.md) - the sole runtime owner of Requirement Contract dimensions/authority/readiness and the later Implementation Binding state. It is Session state, not a route or required artifact.
 - [`source-localization.md`](../templates/skill/protocol-blocks/source-localization.md) - the technical-fact owner for Current behavior, canonical owner/change point, affected path, feasibility, cost, and risk. It can falsify a premise but cannot choose desired meaning.
-- [`plan-feature.md`](../templates/skill/workflows/plan-feature.md) - the implementation-design owner. It consumes a ready Requirement, Task Anchor projection, and proven Implementation Binding; it owns technical choices, impact/risk/recovery, acceptance-to-proof mapping, Task Interfaces, and optional durable Plan materialization.
+- [`plan-feature.md`](../templates/skill/workflows/plan-feature.md) - the implementation-design owner. It consumes a ready Requirement, Task Anchor projection, and proven Implementation Binding; it owns technical choices, impact/risk/recovery, acceptance-to-proof mapping, Task Interfaces, and its own optional Plan Artifact Pressure Gate. It never materializes or edits the Governing Requirement on the Plan's behalf.
 - [`task-closure.md`](../templates/skill/workflows/task-closure.md) — the optional independent completion owner (verified-failure outcome accounting, Task Closure Protocol, AAR, post-completion workflow proposal, Rationalizations, Red Flags); changing workflows link it only when Closure pressure admits a separate owner.
 - [`update-rules.md`](../templates/skill/workflows/update-rules.md) - compact shared durable-write contract and ambiguous-request dispatcher: input/destination classification, fidelity, reconciliation, activation, placement, synchronization, verification, and unchanged authority.
 - [`rule-update/business-truth.md`](../templates/skill/workflows/rule-update/business-truth.md), [`verified-failure.md`](../templates/skill/workflows/rule-update/verified-failure.md), [`knowledge-reconciliation.md`](../templates/skill/workflows/rule-update/knowledge-reconciliation.md), and [`workflow-distillation.md`](../templates/skill/workflows/rule-update/workflow-distillation.md) - independently loaded execution owners for user-confirmed business meaning, proven engineering prevention, ordinary knowledge correction/retirement, and accepted repeated workflows.
@@ -79,6 +80,38 @@ cannot replace the Workflow or weaken a gate. New independent tasks re-route
 and replace the old Anchor/Plan; refinements update the current one.
 
 For the user-facing design and examples, see [`docs/task-anchor-native-plan.md`](../docs/task-anchor-native-plan.md).
+
+## Requirement And Plan Artifact Ownership
+
+Requirement and Implementation Plan state remain Session-only by default. Each
+has an independent Artifact Pressure Gate; complexity, file count, task duration,
+or pressure on the other artifact is not sufficient.
+
+Requirement Definition may create or update the smallest Governing Requirement
+when the user explicitly asks for a Requirement/PRD, or when the Requirement
+itself has an independent recovery, handoff, review, validator, conflict, or
+lifecycle reader. That artifact may complete as a standalone
+`requirement-ready` deliverable. It owns only source and authority, desired goal,
+scope and preservation, decision-bearing model/flow, rules and constraints,
+observable acceptance, and confirmed or superseded normative decisions. It
+must not contain Current -> Target implementation design, task breakdown/order,
+proof commands, or live execution status.
+
+Plan Feature applies its own gate only after `implementation-ready`. A durable
+Plan links to and consumes the Governing Requirement one way; it does not mirror,
+complete, narrow, reinterpret, or replace the Requirement. If Plan persistence
+reveals that the Requirement also needs an independent owner, return to
+Requirement Definition, create or update that owner first, reach
+`requirement-ready` again, and only then materialize the Plan. Requirement-only
+delivery never enters this branch.
+
+Technical evidence has two distinct effects. Evidence that changes Current
+facts, implementation owner, feasibility, impact, risk, ordering, recovery, or
+proof updates Implementation Binding and the Plan while leaving the Task Anchor
+unchanged. Evidence that would change Goal, normative scope, preservation,
+permission, Done When, acceptance, or desired meaning returns to Requirement
+Definition. Only after the Requirement is ready again may Task Execution
+re-project the Anchor and derive a revised Plan.
 
 ## Task Closure Protocol
 

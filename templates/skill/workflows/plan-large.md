@@ -41,7 +41,7 @@ Expand only risks activated by evidence, but do not compress them to labels. Eve
 
 ## Synthesis
 
-Maintain one current synthesis in the active carrier: conversation when no artifact is justified, otherwise `prd.md` or the existing one-file Plan. It states the chosen path, Current -> Target change, conflicts resolved across perspectives, material risks/proof, and genuine blockers. Link only independently justified siblings; a sibling absent from Synthesis is not part of the Plan, and a Synthesis claim without evidence is ungrounded.
+Maintain one current synthesis in the active Plan carrier: conversation when no artifact is justified, the existing one-file Plan when its Requirement remains external or Session-owned, or `design.md` when a durable Requirement dossier exists. `prd.md` remains the Governing Requirement and never becomes the Large Plan synthesis. The synthesis states the chosen path, Current -> Target change, conflicts resolved across perspectives, material risks/proof, and genuine blockers. Link only independently justified siblings; a sibling absent from Synthesis is not part of the Plan, and a Synthesis claim without evidence is ungrounded.
 
 Before approval or freeze, diff overlapping claims, verify each link supports its sentence, remove resolved Open Questions, and convert stable decomposition into `Files / Consumes / Produces / Acceptance`. Contradictory evidence reopens the owning Design Slice instead of preserving document completeness.
 

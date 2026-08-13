@@ -158,6 +158,25 @@ check_scenario \
   "plan-feature" \
   "templates/skill/workflows/plan-feature.md"
 
+check_scenario \
+  "self-hosting Requirement-only PRD delivery" \
+  "references/self-hosting-routing.yaml" \
+  "先形成或更新 PRD Requirement,不要写实现 Plan 或代码" \
+  "define-requirement" \
+  "templates/skill/workflows/define-requirement.md"
+
+check_scenario \
+  "downstream Requirement-only PRD delivery" \
+  "templates/skill/routing.yaml" \
+  "先形成或更新 PRD Requirement,不要写实现 Plan 或代码" \
+  "define-requirement" \
+  "workflows/define-requirement.md"
+
+assert_not_contains \
+  "$(task_block references/self-hosting-routing.yaml plan-feature)$(task_block templates/skill/routing.yaml plan-feature)" \
+  "先形成或更新 PRD Requirement,不要写实现 Plan 或代码" \
+  "Requirement-only PRD does not route through Plan Feature"
+
 assert_not_contains \
   "$(task_block references/self-hosting-routing.yaml plan-feature)" \
   "templates/skill/workflows/update-rules.md" \
@@ -250,6 +269,21 @@ assert_contains "$requirement_definition" "name only evidence-backed risk, confl
 assert_contains "$requirement_definition" "ask the minimum normative question needed" "Requirement Definition minimum-question boundary"
 assert_contains "$requirement_definition" "stop before implementation planning, Task Breakdown, or mutation" "Requirement Definition mutation stop"
 assert_contains "$requirement_definition" "Requirement brainstorming explores outcomes, actors, models, flows" "Requirement Definition brainstorm scope"
+assert_contains "$requirement_definition" "Discuss one load-bearing normative topic at a time" "Requirement Definition one-topic brainstorm"
+assert_contains "$requirement_definition" "material risk or trade-off, the Agent's recommendation" "Requirement Definition decision-ready brainstorm"
+assert_contains "$requirement_definition" "When the Requirement is already clear, ask no question" "Requirement Definition clear no-question path"
+assert_contains "$requirement_definition" "## Requirement Artifact Pressure Gate" "Requirement Definition owns durable Requirement pressure"
+assert_contains "$requirement_definition" "Keep the Requirement Contract in the current Session by default" "Requirement Definition Session-only default"
+assert_contains "$requirement_definition" "update the smallest Governing Requirement only when the user explicitly asks" "Requirement Definition explicit PRD pressure"
+assert_contains "$requirement_definition" "independent reader, review" "Requirement Definition independent consumer pressure"
+assert_contains "$requirement_definition" "Complexity, activity, implementation size, or a clear Requirement alone is not" "Requirement Definition rejects size-only persistence"
+assert_contains "$requirement_definition" "real project code root and follow its local Requirement archive contract" "Requirement Definition code-root guard"
+assert_contains "$requirement_definition" "Exclude Current -> Target implementation design" "Requirement artifact excludes implementation design"
+assert_contains "$requirement_definition" "Requirement does not enter Plan Feature or authorize mutation" "Requirement artifact does not borrow Plan or mutation"
+assert_contains "$requirement_definition" "A later durable implementation Plan links to and consumes this owner one way" "Plan consumes durable Requirement one way"
+assert_contains "$requirement_definition" "Plan Feature cannot copy, narrow, resolve, or update the Governing" "Plan cannot edit Governing Requirement"
+assert_not_contains "$requirement_definition" "Do not create a Requirement file, Task Anchor, or Plan here" "Requirement Definition rejects old absolute no-file rule"
+assert_not_contains "$requirement_definition" "Requirement-only PRD uses Plan Feature's Artifact Pressure Gate" "Requirement Definition rejects Plan-borrowed persistence"
 assert_not_contains "$requirement_definition" "## Technical Design Slices" "Requirement Definition excludes implementation design"
 assert_contains "$source_localization" "skip directly to a selected-source check when the target is already proven concrete" "source localization known-target fast path"
 assert_contains "$source_localization" "Stages 1-2 expose no source bodies" "source localization progressive source exposure"
@@ -300,6 +334,13 @@ assert_contains "$task_execution" "project the observable Goal" "task execution 
 assert_contains "$task_execution" "Done When acceptance, and only material Boundaries" "task execution projects Requirement acceptance and boundaries"
 assert_contains "$task_execution" "The Native Plan owns only implementation/proof steps and live status" "task execution Plan implementation-only boundary"
 assert_contains "$task_execution" "material acceptance/risk to fitted evidence" "task execution maps acceptance to proof"
+assert_contains "$task_execution" "Technical evidence that changes only Current facts" "task execution technical evidence branch"
+assert_contains "$task_execution" "without editing the Anchor" "task execution technical evidence preserves Anchor"
+assert_contains "$task_execution" "would change Goal, Done When, scope, preservation, permission, or acceptance" "task execution normative evidence branch"
+assert_contains "$task_execution" 'updated and reaches `requirement-ready` again' "task execution Requirement re-readiness"
+assert_contains "$task_execution" "may Task Execution re-project the" "task execution reprojects only after Requirement"
+assert_not_contains "$task_execution" "Re-anchor only when the user or evidence changes the Requirement frame" "task execution rejects evidence-owned Requirement frame"
+assert_not_contains "$task_execution" "If evidence changes the premise, scope, ordering, or Done When, update the Anchor" "task execution rejects direct Anchor rewrite"
 assert_contains "$task_execution" "the result that would select the next read" "task execution next-read decision hook"
 assert_contains "$task_execution" "Ranked, sampled, truncated, or Top-N output is candidate evidence, not an exhaustive inventory" "task execution bounded-output completeness boundary"
 assert_contains "$task_execution" "harness's native Plan/Task surface" "task execution native plan preference"
@@ -465,8 +506,20 @@ assert_contains "$plan_feature" "A choice that changes desired behavior" "plan r
 assert_contains "$plan_feature" "## Artifact Pressure Gate" "plan artifact creation has a pressure gate"
 assert_contains "$plan_feature" "Complexity or activity alone is not pressure" "plan rejects size-only materialization"
 assert_contains "$plan_feature" "A durable Plan names and consumes its governing Requirement" "plan preserves Requirement provenance"
+assert_contains "$plan_feature" "An explicit request to create or update only the Requirement/PRD stays in" "plan rejects Requirement-only artifact intake"
+assert_contains "$plan_feature" "Requirement Definition and never borrows this Gate" "plan cannot lend its artifact gate"
+assert_contains "$plan_feature" "return to Requirement Definition to materialize that owner first" "plan returns missing durable Requirement owner"
+assert_contains "$plan_feature" "use separate dossier carriers" "plan separates durable dossier carriers"
+assert_contains "$plan_feature" '`prd.md` owns the Requirement and `design.md` owns the Implementation Plan' "plan assigns separate durable owners"
+assert_contains "$plan_feature" '`design.md` declares `requirement: prd.md`' "plan links Requirement one way"
+assert_contains "$plan_feature" 'A Requirement-only dossier may stop at `prd.md`' "requirement-only dossier remains complete"
+assert_contains "$plan_feature" 'A new implementation Plan never uses `prd.md` as its technical or lifecycle owner' "plan rejects prd technical ownership"
+assert_contains "$plan_feature" "Requirement-only artifact delivery never enters this workflow" "plan completion excludes Requirement-only delivery"
+assert_contains "$plan_feature" "without copying or modifying it" "plan durable consumer is read-only"
+assert_not_contains "$plan_feature" "Requirement-only PRD uses Plan Feature's Artifact Pressure Gate" "plan rejects borrowed Requirement persistence"
 assert_not_contains "$plan_feature" 'Record at least two real options' "plan no longer forces two options"
 assert_not_contains "$plan_feature" 'Create only `prd.md` initially' "plan no longer auto-creates prd"
+assert_not_contains "$plan_feature" 'or a dossier `prd.md` only when it already needs independently readable' "plan no longer assigns dossier prd to technical Plan"
 assert_contains "$plan_feature" "change-contract.md" "plan semantic-contract hook"
 assert_contains "$plan_feature" "source-localization.md" "plan technical-owner hook"
 assert_contains "$plan_feature" "A durable implementation Plan is a revisable technical contract" "plan technical contract boundary"
@@ -475,6 +528,8 @@ assert_contains "$plan_feature" "without" "composition mirror-state prohibition 
 assert_contains "$plan_feature" "mirroring Component content or live status" "composition rejects durable mirror state"
 assert_contains "$plan_feature" "## Database-Change Artifact Gate" "schema changes have a canonical artifact gate"
 assert_contains "$plan_feature" "dossier and naturally" "schema change requires a Plan-local SQL artifact"
+assert_contains "$plan_feature" '`prd.md` Requirement,' "schema dossier retains Requirement owner"
+assert_contains "$plan_feature" '`design.md` Plan, and SQL surface remain separate owners' "schema dossier retains separate Plan owner"
 assert_contains "$plan_feature" "include forward change, read-only verification" "SQL artifact contains migration and proof"
 assert_contains "$plan_feature" "safe rollback" "SQL artifact contains honest recovery"
 assert_contains "$plan_feature" "never grants database-write authority" "SQL artifact preserves DB authority"
@@ -814,14 +869,29 @@ assert_contains "$plan_large" "A suspected risk or consumer list is a candidate 
 assert_contains "$plan_large" "Keep tightly coupled angles together" "large-plan keeps coupled design integrated"
 assert_contains "$plan_large" "Never create one file per lens" "large-plan rejects lens file explosion"
 assert_contains "$plan_large" "conversation when no artifact is justified" "large-plan supports artifact-free synthesis"
+assert_contains "$plan_large" 'or `design.md` when a durable Requirement dossier exists' "large-plan uses design carrier"
+assert_contains "$plan_large" '`prd.md` remains the Governing Requirement and never becomes the Large Plan synthesis' "large-plan rejects prd synthesis ownership"
 assert_contains "$plan_large" "Do not dispatch broad “scan the subsystem” work before that boundary" "large-plan bounds parallel evidence scans"
 assert_not_contains "$plan_large" "Each selected lens gets a naturally named sibling file" "large-plan removes automatic lens files"
+assert_not_contains "$plan_large" 'otherwise `prd.md` or the existing one-file Plan' "large-plan removes prd Plan carrier"
+
+business_global_model="$(<references/business-global-model.md)"
+profile_business_model="$(<templates/skill/workflows/profile-business-model.md.example)"
+assert_contains "$business_global_model" "Reuse an authoritative Governing Requirement for the same scope" "gap intake reuses Requirement owner"
+assert_contains "$business_global_model" 'separate `design.md` consumer' "gap intake separates Plan carrier"
+assert_contains "$business_global_model" "It is not an Implementation Plan" "gap prd excludes implementation Plan"
+assert_contains "$profile_business_model" 'separate `design.md` consumer instead of putting technical Plan content in `prd.md`' "business-model workflow separates carriers"
+assert_contains "$profile_business_model" "Plan Feature may write implementation design only to the separate Plan carrier" "business-model handoff protects Plan destination"
+assert_contains "$profile_business_model" "keep the Requirement draft and stop" "paused gap intake remains Requirement-only"
 
 plan_archive="$(<docs/plans/README.md)"
 assert_contains "$plan_archive" "Complexity changes analysis depth, not materialization timing" "plan archive separates complexity and materialization"
 assert_contains "$plan_archive" "Use one dated file for a focused one-file record" "plan archive supports focused one-file carrier"
 assert_contains "$plan_archive" "Use a directory when the durable object is a named dossier" "plan archive supports pressure-triggered dossier carrier"
 assert_contains "$plan_archive" 'A correct dossier may contain only `prd.md`' "plan archive does not require eager siblings"
+assert_contains "$plan_archive" '`design.md` is admitted, it declares `requirement: prd.md`' "plan archive links separate design owner"
+assert_contains "$plan_archive" 'resulting dossier as `design.md` with Git history preserved' "plan archive migrates active one-file Plan to design"
+assert_contains "$plan_archive" 'Historical frozen dossiers may already use `prd.md` as their Plan entry' "plan archive preserves frozen legacy"
 assert_contains "$plan_archive" "Headings are not the completeness unit" "plan archive rejects section-count completeness"
 assert_contains "$plan_archive" "Can this Plan still independently complete, freeze, and be directly consumed later?" "plan archive distinguishes Component from true subplan"
 assert_contains "$plan_archive" 'a durable Integrating Plan points to it with one-way `consumes`' "plan archive preserves independent Component paths"

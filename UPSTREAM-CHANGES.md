@@ -50,7 +50,7 @@ The archive file has the same format and is read on demand if a downstream agent
 
 ## 2026-08-13 - Separate Requirement Definition from implementation planning
 
-- Upstream commit: pending in this working tree
+- Upstream commit: the commit containing this entry
 - Changed areas:
   - Added `workflows/define-requirement.md` as the independently selectable
     interaction owner for desired goal, scope/preservation, decision-bearing
@@ -68,6 +68,13 @@ The archive file has the same format and is read on demand if a downstream agent
     that preserve the Requirement, Task Interfaces/order, risks/recovery, and
     acceptance-to-proof mapping. Normative gaps return to Requirement
     Definition, and tests or proof commands cannot invent acceptance.
+  - Requirement Definition and Plan Feature now apply independent Artifact
+    Pressure Gates. A requested Requirement-only PRD may finish at
+    `requirement-ready`; when both durable owners exist, `prd.md` owns only
+    normative Requirement meaning and `design.md` links it one way while owning
+    Current -> Target, tasks, proof, and lifecycle. Technical evidence may
+    rebind/replan directly only while Requirement meaning and Task Anchor remain
+    unchanged.
   - Task Execution, Change Managed, Fix Bug, review/closure, business-model, and
     durable Plan consumers now preserve the order `requirement-ready -> Task
     Anchor -> implementation-ready -> Native Plan -> mutation`. The Anchor is a

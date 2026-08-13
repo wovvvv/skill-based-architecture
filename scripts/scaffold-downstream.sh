@@ -1139,13 +1139,22 @@ clarify, correct, or confirm desired behavior before implementation planning.
    \`requirement-ready\` without another confirmation turn. Otherwise present the
    current understanding, name the real risk/conflict, ask the minimum normative
    question, and stop.
+5. Discuss one load-bearing normative topic at a time. When it is unresolved,
+   include current understanding, decisive evidence/constraints, material
+   risk/trade-off, the Agent recommendation, and at most one minimum question;
+   when it is clear, ask none.
 
 ## Boundary
 
 Acceptance belongs to the Requirement; tests, browser/runtime checks, and human
 review are later proof choices. This procedure does not produce an
-implementation Plan, Task Breakdown, code mutation, or proof command. Create no
-default Requirement file, question log, or second planning record.
+implementation Plan, Task Breakdown, code mutation, or proof command. Keep the
+Requirement Session-only by default. Create or update the smallest Governing
+Requirement only when the user explicitly requests a Requirement/PRD artifact,
+or an independent reader, review, recovery, validator, lifecycle, or handoff
+needs it; first prove the real project code root and local archive contract.
+Complexity and activity alone are not pressure. A later Plan links this owner
+one way and cannot copy, narrow, resolve, or update it.
 EOF
 }
 
@@ -1178,6 +1187,9 @@ Requirement. Desired-behavior discussion returns to Requirement Definition.
 The Plan is a revisable implementation means and does not execute mutation.
 Ordinary planning creates no persistent artifact unless explicit handoff,
 review, recovery, conflict, or lifecycle pressure requires one.
+Requirement-only artifact delivery stays in Requirement Definition.
+Any durable implementation Plan is a separate one-way consumer under the local archive contract.
+It never stores technical Plan content or lifecycle state in the Governing Requirement file.
 EOF
 }
 
@@ -1340,6 +1352,8 @@ render_fitted_conformance() {
           echo "      - 'return \`requirement-ready\` without another confirmation turn'"
           echo "      - 'current understanding, name the real risk/conflict, ask the minimum normative question, and stop'"
           echo "      - 'does not produce an implementation Plan, Task Breakdown, code mutation, or proof command'"
+          echo "      - 'Create or update the smallest Governing Requirement only when the user explicitly requests a Requirement/PRD artifact'"
+          echo "      - 'A later Plan links this owner one way and cannot copy, narrow, resolve, or update it'"
           echo "    must_not_contain:"
           echo "      - 'Make one risk-sized change'"
           ;;
@@ -1350,6 +1364,8 @@ render_fitted_conformance() {
           echo "      - 'Project Goal, Done When, and material Boundaries into a Task Anchor'"
           echo "      - 'Reach \`implementation-ready\` before deriving technical options'"
           echo "      - 'return the implementation Plan'"
+          echo "      - 'Any durable implementation Plan is a separate one-way consumer'"
+          echo "      - 'never stores technical Plan content or lifecycle state in the Governing Requirement file'"
           echo "    must_not_contain:"
           echo "      - 'Make one risk-sized change'"
           ;;

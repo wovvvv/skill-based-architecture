@@ -1083,19 +1083,33 @@ required_files:
 required_sections:
   - file: workflows/define-requirement.md
     must_contain:
-      - "This workflow produces `requirement-ready`, not an implementation Plan"
+      - "produces `requirement-ready` and, only under its own"
       - "ask the minimum normative question needed to choose among those meanings"
       - "Code may constrain or falsify a premise; it cannot choose desired"
+      - "Keep the Requirement Contract in the current Session by default"
+      - "update the smallest Governing Requirement only when the user explicitly asks"
+      - "Exclude Current -> Target implementation design"
+      - "Requirement does not enter Plan Feature or authorize mutation"
+      - "Plan Feature cannot copy, narrow, resolve, or update the Governing"
       - "Requirement Definition does not derive implementation steps"
-      - "normative question; never return an implementation Plan or mutation"
     must_not_contain:
       - "## Question Gate"
       - "## Decision Mainline"
+      - "Do not create a Requirement file, Task Anchor, or Plan here"
+      - "Requirement-only PRD uses Plan Feature's Artifact Pressure Gate"
   - file: workflows/plan-feature.md
     must_contain:
       - "It is not the Requirement Definition owner"
       - "If later evidence changes desired meaning, return to Requirement Definition"
       - "The proof implementation is subordinate to acceptance"
+      - "Requirement Definition and never borrows this Gate"
+      - "return to Requirement Definition to materialize that owner first"
+      - "use separate dossier carriers"
+      - "`prd.md` owns the Requirement and `design.md` owns the Implementation Plan"
+      - "`design.md` declares `requirement: prd.md`"
+      - "A Requirement-only dossier may stop at `prd.md`"
+      - "A new implementation Plan never uses `prd.md` as its technical or lifecycle owner"
+      - "Requirement-only artifact delivery never enters this workflow"
       - "Then let Task Execution derive the Native Plan"
     must_contain_in_order:
       - "Consume the Requirement"
@@ -1106,12 +1120,20 @@ required_sections:
     must_not_contain:
       - "## Question Gate"
       - "## Decision Mainline"
+      - "Requirement-only PRD uses Plan Feature's Artifact Pressure Gate"
+      - "a new implementation Plan uses `prd.md` as its technical or lifecycle owner"
   - file: workflows/task-execution.md
     must_contain:
       - "Apparent code locality never makes requirement-bearing work Simple"
       - "reclassify before more mutation"
       - "After `requirement-ready` and before implementation-binding discovery"
       - "After source localization makes the Change Contract `implementation-ready`"
+      - "Technical evidence that changes only Current facts"
+      - "without editing the Anchor"
+      - "updated and reaches `requirement-ready` again"
+    must_not_contain:
+      - "Re-anchor only when the user or evidence changes the Requirement frame"
+      - "If evidence changes the premise, scope, ordering, or Done When, update the Anchor"
   - file: protocol-blocks/change-contract.md
     must_contain:
       - "desired goal and observable user/business outcome"
@@ -1160,6 +1182,17 @@ YAML
     requirement_rules \
     requirement_acceptance \
     incomplete_no_guess \
+    requirement_session_default \
+    requirement_explicit_artifact_pressure \
+    requirement_artifact_excludes_implementation \
+    requirement_one_way_plan_consumer \
+    plan_separate_dossier_carriers \
+    plan_design_requirement_link \
+    plan_prd_not_plan_owner \
+    old_absolute_no_requirement_file \
+    plan_borrowed_requirement_persistence \
+    plan_prd_technical_owner \
+    technical_evidence_edits_anchor \
     current_vs_desired \
     anchor_projection \
     implementation_ready_ordering \
@@ -1213,6 +1246,54 @@ YAML
         owner="$requirement_owner"
         needle="ask the minimum normative question needed to choose among those meanings"
         ;;
+      requirement_session_default)
+        owner="$requirement_owner"
+        needle="Keep the Requirement Contract in the current Session by default"
+        ;;
+      requirement_explicit_artifact_pressure)
+        owner="$requirement_owner"
+        needle="update the smallest Governing Requirement only when the user explicitly asks"
+        ;;
+      requirement_artifact_excludes_implementation)
+        owner="$requirement_owner"
+        needle="Exclude Current -> Target implementation design"
+        ;;
+      requirement_one_way_plan_consumer)
+        owner="$requirement_owner"
+        needle="Plan Feature cannot copy, narrow, resolve, or update the Governing"
+        ;;
+      plan_separate_dossier_carriers)
+        owner="$plan_owner"
+        needle="use separate dossier carriers"
+        ;;
+      plan_design_requirement_link)
+        owner="$plan_owner"
+        needle='`design.md` declares `requirement: prd.md`'
+        ;;
+      plan_prd_not_plan_owner)
+        owner="$plan_owner"
+        needle='A new implementation Plan never uses `prd.md` as its technical or lifecycle owner'
+        ;;
+      old_absolute_no_requirement_file)
+        owner="$requirement_owner"
+        needle="Do not create a Requirement file, Task Anchor, or Plan here"
+        replacement=$'\nDo not create a Requirement file, Task Anchor, or Plan here.\n'
+        ;;
+      plan_borrowed_requirement_persistence)
+        owner="$plan_owner"
+        needle="Requirement-only PRD uses Plan Feature's Artifact Pressure Gate"
+        replacement=$'\nRequirement-only PRD uses Plan Feature\x27s Artifact Pressure Gate.\n'
+        ;;
+      plan_prd_technical_owner)
+        owner="$plan_owner"
+        needle='a new implementation Plan uses `prd.md` as its technical or lifecycle owner'
+        replacement=$'\na new implementation Plan uses `prd.md` as its technical or lifecycle owner.\n'
+        ;;
+      technical_evidence_edits_anchor)
+        owner="$task_owner"
+        needle="If evidence changes the premise, scope, ordering, or Done When, update the Anchor"
+        replacement=$'\nIf evidence changes the premise, scope, ordering, or Done When, update the Anchor and remaining Plan before more mutation.\n'
+        ;;
       current_vs_desired)
         owner="$contract_owner"
         needle="Bind Current -> Target without changing the Requirement"
@@ -1235,7 +1316,7 @@ YAML
         ;;
       requirement_no_mutation)
         owner="$requirement_owner"
-        needle="normative question; never return an implementation Plan or mutation"
+        needle="Requirement does not enter Plan Feature or authorize mutation"
         ;;
       plan_question_gate)
         owner="$plan_owner"
@@ -1309,7 +1390,11 @@ YAML
         needle="the user's outcome, not only accepted, queued"
         ;;
     esac
-    if [[ "$mutation" == "plan_question_gate" || "$mutation" == "plan_decision_mainline" ]]; then
+    if [[ "$mutation" == "plan_question_gate" || "$mutation" == "plan_decision_mainline" || \
+          "$mutation" == "old_absolute_no_requirement_file" || \
+          "$mutation" == "plan_borrowed_requirement_persistence" || \
+          "$mutation" == "plan_prd_technical_owner" || \
+          "$mutation" == "technical_evidence_edits_anchor" ]]; then
       printf '%s' "$replacement" >> "$owner"
     elif [[ "$mutation" == "plan_order_reversal" ]]; then
       MUTATION_NEEDLE="$needle" MUTATION_REPLACEMENT="$replacement" perl -0pi -e \
@@ -1426,6 +1511,8 @@ JSON
   assert_in_order "$plan_skill/workflows/plan-feature.md" \
     'requirement-ready' 'Task Anchor' 'implementation-ready' 'implementation Plan'
   grep -qF -- 'does not execute mutation' "$plan_skill/workflows/plan-feature.md"
+  grep -qF -- 'Any durable implementation Plan is a separate one-way consumer' "$plan_skill/workflows/plan-feature.md"
+  grep -qF -- 'never stores technical Plan content or lifecycle state in' "$plan_skill/workflows/plan-feature.md"
   ! grep -qF -- 'Make one risk-sized change' "$plan_skill/workflows/plan-feature.md"
   assert_path_contract "$plan_root" plan-requirement
 
